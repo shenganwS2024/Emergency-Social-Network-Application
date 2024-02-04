@@ -1,0 +1,60 @@
+﻿Use Case: Join Community
+
+
+Participating Actors
+The use case is initiated by a Citizen. 
+
+
+Brief Description
+The use case allows the Citizen to join the community by providing a new username and password. The Citizen is added to the ESN directory. A welcome message is displayed.
+
+
+Flow of Events
+
+
+Basic Flow
+1. The use case starts when the Citizen accesses the system using its home page and elects to join the community.
+2. The system asks the Citizen to provide a username and password.
+3. The Citizen provides a username and password.  
+4. The system validates the username and password (according to the Username Rule, Password Rule, and Basic Security Rule below). 
+5. The system asks the Citizen to confirm the creation of a new user.
+6. The Citizen confirms that a new user needs to be created.
+7. The system creates and saves a new Citizen member, including his username and password. 
+8. The system adds the new Citizen to the ESN directory (internal list of users).
+9. The system welcomes the new Citizen member with a short welcome message, including a brief explanation of the meaning of the various statuses that could be shared and how to share a status (refer to Share Status for more information on what to display). 
+10. The system asks the Citizen to acknowledge that they understand the provided explanation.
+11. The Citizen acknowledges that they understand the explanation.
+12. The system returns to the home page. The use case ends.
+        
+Alternative Flows [all mandatory]
+* A1 - Login. In step 4, if the user is already a community member (the username already exists and the password is correct), then nothing happens. The use case ends (this flow will be refined in the next iteration).
+* A2. In step 4, if the username already exists but the password is incorrect (does not match the existing username), the system informs the Citizen that he needs to re-enter the username and/or password. The use case returns to step 3.
+* A3. In step 4, if the username does not satisfy the system’s username selection requirements (defined under Username Rule below), the system asks the Citizen to provide a different username. The use case returns to step 3.
+* A4. In step 4, if the password does not satisfy the system’s password strength requirements (defined under Password Rule below), the system asks the Citizen to provide a different password. The use case returns to step 3.
+* A5. In step 6, if the Citizen does not want to create a new user, the system returns to step 2.
+
+
+Rules
+* Username Rule: Usernames are provided by users and should be at least 3 characters long. They should not be in the list of banned usernames. They should not already exist. Usernames are NOT case sensitive. 
+* Password Rule: Passwords are provided by users and should be at least 4 characters long. Passwords ARE case sensitive.
+* Basic Security Rule (will be enforced in iteration 2): Authentication and client-server communication should follow standard security guidelines and practices. In particular, passwords should not be sent in the clear, nor stored as plain text. It should not be possible for an attacker to sniff a password in mid-transmission. The most practical way to achieve the latter is to use HTTPS/SSL. You may defer using HTTPS/SSL to Iteration 2: that is when you will deploy your application on the cloud using Heroku or Render (which should allow SSL for the default subdomains) or a similar cloud hosting service. Until Iteration 2, you may serve your app on localhost and use ngrok (https://ngrok.com/) to expose your localhost port temporarily on the internet using an SSH tunnel. This method will temporarily satisfy the basic security requirement. You can then use the temporary ngrok supplied URL as your application’s entry point during demos (using a phone browser). After Iteration 2, you should switch to proper cloud hosting via HTTPS/SSL. 
+
+
+Notes:
+* Responsiveness: While most users will use the application on a mobile device, the size of their devices will vary. Therefore, the application must be responsive to adjust to various screen sizes.
+* Browser Restriction: Your application should work on a Chrome browser. It’s not necessary to support other browsers.
+* FAQs about the Use Case:
+* Question: Can the Citizen correct entry errors (in username or password) after joining the community?  
+Answer: No, only the Administrator can make such changes. Users should eventually be able to do so, but this is a future feature. 
+* Question: Can the Citizen un-join?  
+Answer: No, only the Administrator can cancel an account. Users should eventually be able to do so, but this is a future feature.
+* Question: Could the Citizen take a “selfie” and upload it? 
+Answer: This is a potential future feature: don’t add bells and whistles, or implement anything extra that you think is cool. 
+
+
+Heads-up for Upcoming Iterations
+   * RESTfulness: The use case (and ultimately the whole application) must comply with REST guidelines, providing RESTful operation. The most practical way to achieve this is to rely on web tokens rather than sessions and cookies that store application state. Once a client is authenticated, the server provides the client with a unique web token, which remains valid until the client logs out or until it expires. The web token is transmitted by the client with each subsequent request to prove that the client has already been authenticated. Cookies, however, can be used to store tokens on the client side. See below (Sessions vs. Tokens) for more information on this. 
+   * Sessions vs. Tokens:
+Normally, you have two choices with respect to managing authentication: sessions with cookies and web tokens. See this blog that explains both with advantages and disadvantages: https://dzone.com/articles/cookies-vs-tokens-the-definitive-guide
+Remember that your service should be RESTful, meaning the server side should not keep track of client state. Sessions break this RESTfulness principle. Web tokens (e.g., JWT) avoid this and are also considered to be a more modern alternative to the session/cookie approach. It allows all requests to carry all the information they need for the server to process the request using only that information (no session look-up to determine the client state).
+You may still use a cookie with the web token approach to store a token in the browser, but only for that purpose (as local storage), and still maintain RESTfulness. This is a bit twisted, but it's ok since client state is minimal and helps avoid server state. It's explained here: https://stormpath.com/blog/where-to-store-your-jwts-cookies-vs-html5-web-storage
