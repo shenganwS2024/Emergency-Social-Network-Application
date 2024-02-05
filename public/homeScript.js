@@ -1,8 +1,21 @@
-const bannedUsernames = require('./bannedUsernames.json').reservedUsernames;
-console.log(bannedUsernames)
+let bannedUsernames = ""
+fetch('./bannedUsernames.json')
+  .then(response => response.json())
+  .then(data => {
+    bannedUsernames = data.reservedUsernames;
+    // Use the bannedUsernames array as needed
+  })
+  .catch(error => console.error('Error loading JSON file:', error));
+//console.log(bannedUsernames)
 
 document.getElementById('joinBtn').addEventListener('click', function() {
     showPage('registration-form');
+});
+
+document.getElementById('notConfirmBtn').addEventListener('click', function() {
+  document.getElementById('username').value='';
+  document.getElementById('password').value='';
+  showPage('registration-form');
 });
 
 document.getElementById('registerForm').addEventListener('submit', function(event) {
@@ -29,19 +42,18 @@ document.getElementById('registerForm').addEventListener('submit', function(even
                 // if the username doesn't exist, creat new user and show confirmation page
                 showPage('confirmation-page');
 
-              }else {
+              }
+              else if (response.status === 409) {
+                alert('Conflict: Username already exists and password is incorrect. Please re-enter');
+                document.getElementById('username').value='';
+                document.getElementById('password').value='';
+              }
+              else {
                 const errorText = await response.text()
                 alert(errorText)
               }
             })
             .catch(error => {
-                // username exist, password wrong
-                if(error.message === '409') {
-                    alert('Conflict: Username already exists and password is incorrect. Please re-enter');
-                    document.getElementById('username').value='';
-                    document.getElementById('password').value='';
-                      
-            }
         // send to server and check if exist
     })
   }
