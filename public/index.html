@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>ESN Community Registration</title>
+    <!-- Link to CSS for styling -->
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Join Community Page BF1 -->
+        <section id="home-page" class="active-page">
+            <h1>Welcome to the ESN Community!</h1>
+            <button id="joinBtn">Join the Community</button>
+        </section>
+
+        <!-- Create Account BF23-->
+        <section id="registration-form" class="hidden">
+            <h2>Create Your Account</h2>
+            <form id="registerForm">
+                <!-- Validate BF4-->
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Create Account</button>
+            </form>
+        </section>
+
+        <!-- Confirm Creation BF5 -->
+        <section id="confirmation-page" class="hidden">
+            <h2>Confirm Account Creation</h2>
+            <!-- BF6 -->
+            <button id="confirmBtn">Confirm</button>
+            <!-- BF78 S-->
+
+        </section>
+
+        <!-- Welcome Page BF9-->
+        <section id="welcome-page" class="hidden">
+            <h2>Welcome, New Citizen!</h2>
+            <p>Here's how to share a status...</p>
+            <table border="1">
+        <tr>
+            <th>Status</th>
+            <th>Explanation</th>
+            <th>Color Code</th>
+        </tr>
+        <tr>
+            <td>OK</td>
+            <td>I am OK: I do not need help.</td>
+            <td>Green</td>
+        </tr>
+        <tr>
+            <td>Help</td>
+            <td>I need help, but this is not a life threatening emergency.</td>
+            <td>Yellow</td>
+        </tr>
+        <tr>
+            <td>Emergency</td>
+            <td>I need help now: this is a life threatening emergency!</td>
+            <td>Red</td>
+        </tr>
+        <tr>
+            <td>Undefined</td>
+            <td>The user has not provided any status info.</td>
+            <td>Undefined</td>
+        </tr>
+    </table>
+            <!--Acknowledgement BF10 11 12-->
+            <button id="acknowledgeBtn">I Understand</button>
+        </section>
+    </div>
+
+    <!-- Link to JavaScript for interactivity -->
+    <script src="homeScript.js"></script>
+</body>
+</html>
