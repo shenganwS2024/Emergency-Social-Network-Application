@@ -8,6 +8,8 @@ fetch('./bannedUsernames.json')
   .catch(error => console.error('Error loading JSON file:', error));
 //console.log(bannedUsernames)
 
+showPage('home-page')
+
 document.getElementById('joinBtn').addEventListener('click', function() {
     showPage('registration-form');
 });

@@ -13,7 +13,7 @@ const bcrypt = require('bcryptjs');
 // const session = require('express-session')
 
 //Connet to my local mongodb on port 27017
-mongoose.connect('mongodb://localhost:27017/ESN', {});
+mongoose.connect('mongodb+srv://yus2:1111@fse.dty3o9p.mongodb.net/ESN', {});
 
 //Configuration for session management
 

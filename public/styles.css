@@ -5,3 +5,39 @@
 .active-page {
     display: block;
 }
+
+#registerForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#registerForm label,
+#registerForm input {
+    margin-bottom: 10px; 
+}
+
+#registerForm button {
+    margin-top: 20px; 
+}
+
+#joinBtn, #acknowledgeBtn{
+    display: block;
+    margin: 0 auto;
+
+}
+
+h1,h2,h3{
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    gap: 10px; 
+}
+
+table{
+    margin-bottom: 10px;
+}
+
