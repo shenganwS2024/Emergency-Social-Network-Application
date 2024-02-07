@@ -27,7 +27,7 @@
 
 }
 
-h1,h2,h3{
+h1,h2,h3, p{
     text-align: center;
 }
 
@@ -36,8 +36,14 @@ h1,h2,h3{
     justify-content: center; 
     gap: 10px; 
 }
+.table-container {
+    display: flex;
+    justify-content: center; 
+    gap: 10px; 
+}
 
 table{
     margin-bottom: 10px;
+    align-items:center ;
 }
 
