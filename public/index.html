@@ -9,7 +9,7 @@
 <body>
     <div id="app">
         <!-- Join Community Page BF1 -->
-        <section id="home-page" class="active-page">
+        <section id="home-page" class="hidden">
             <h1>Welcome to the ESN Community!</h1>
             <button id="joinBtn">Join the Community</button>
         </section>
@@ -31,8 +31,10 @@
         <section id="confirmation-page" class="hidden">
             <h2>Confirm Account Creation</h2>
             <!-- BF6 -->
-            <button id="confirmBtn">Confirm</button>
-            <button id="notConfirmBtn">Nope</button>
+            <div class="button-container">
+                <button id="confirmBtn">Confirm</button>
+                <button id="notConfirmBtn">Nope</button>
+            </div>
             <!-- BF78 S-->
 
         </section>
@@ -41,33 +43,36 @@
         <section id="welcome-page" class="hidden">
             <h2>Welcome, New Citizen!</h2>
             <p>Here's how to share a status...</p>
+        <div class = "table-container">
             <table border="1">
-        <tr>
-            <th>Status</th>
-            <th>Explanation</th>
-            <th>Color Code</th>
-        </tr>
-        <tr>
-            <td>OK</td>
-            <td>I am OK: I do not need help.</td>
-            <td>Green</td>
-        </tr>
-        <tr>
-            <td>Help</td>
-            <td>I need help, but this is not a life threatening emergency.</td>
-            <td>Yellow</td>
-        </tr>
-        <tr>
-            <td>Emergency</td>
-            <td>I need help now: this is a life threatening emergency!</td>
-            <td>Red</td>
-        </tr>
-        <tr>
-            <td>Undefined</td>
-            <td>The user has not provided any status info.</td>
-            <td>Undefined</td>
-        </tr>
-    </table>
+                <tr>
+                    <th>Status</th>
+                    <th>Explanation</th>
+                    <th>Color Code</th>
+                </tr>
+                <tr>
+                    <td>OK</td>
+                    <td>I am OK: I do not need help.</td>
+                    <td>Green</td>
+                </tr>
+                <tr>
+                    <td>Help</td>
+                    <td>I need help, but this is not a life threatening emergency.</td>
+                    <td>Yellow</td>
+                </tr>
+                <tr>
+                    <td>Emergency</td>
+                    <td>I need help now: this is a life threatening emergency!</td>
+                    <td>Red</td>
+                </tr>
+                <tr>
+                    <td>Undefined</td>
+                    <td>The user has not provided any status info.</td>
+                    <td>Undefined</td>
+                </tr>
+            </table>
+        </div>
+            
             <!--Acknowledgement BF10 11 12-->
             <button id="acknowledgeBtn">I Understand</button>
         </section>
