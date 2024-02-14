@@ -20,3 +20,57 @@ Server-side: node.js, express.js, socket.io, passport.js, JWT
 DB: Mongo
 Reasons: flexible and easy to get started for new learners.
 Testing: Jest
+
+### API Documentation
+
+#### POST Requests
+
+#### Register User
+
+<details>
+ <summary><code>POST</code> <code><b>/register</b></code> <code>(registers a new user)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the new user         |
+> | `password`| required   | string    | Password for the new user account|
+> | `status`  | optional   | string    | Status of the new user           |
+> | `role`    | optional   | string    | Role assigned to the new user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User registered successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error registering new user`                        |
+
+</details>
+
+---
+
+#### Validate User
+
+<details>
+ <summary><code>POST</code> <code><b>/validate</b></code> <code>(Validates user login credentials)</code></summary>
+
+##### Parameters
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | User's unique username      |
+> | password  | required  | string    | User's password             |
+
+##### Responses
+
+> | http code | content-type                 | response                                 |
+> |-----------|------------------------------|------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Ready for login`                        |
+> | `201`     | `text/plain;charset=UTF-8`   | `New Account`                            |
+> | `409`     | `text/plain;charset=UTF-8`   | `Incorrect password`                     |
+> | `500`     | `text/plain;charset=UTF-8`   | `Error validating new user`              |
+
+</details>
+
+---
