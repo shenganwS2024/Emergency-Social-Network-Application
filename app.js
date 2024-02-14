@@ -1,8 +1,8 @@
 console.log("entry point")
 
-const app = require('./server'); // Import the app from server.js
+import http from './server.js' // Import the app from server.js
 const port = 3000;
 
-app.listen(port, () => {
+http.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
