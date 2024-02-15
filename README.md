@@ -27,7 +27,7 @@ Testing: Jest
 
 #### POST Requests
 
-#### Register User
+#### User Registration
 
 <details>
  <summary><code>POST</code> <code><b>/registration</b></code> <code>(registers a new user)</code></summary>
@@ -52,7 +52,7 @@ Testing: Jest
 
 ---
 
-#### Validate User
+#### User Validation
 
 <details>
  <summary><code>POST</code> <code><b>/validation</b></code> <code>(Validates user login credentials)</code></summary>
@@ -77,7 +77,7 @@ Testing: Jest
 
 ---
 
-#### Login User
+#### User Login
 
 <details>
  <summary><code>POST</code> <code><b>/login</b></code> <code>(Allows citizens to get access to the system)</code></summary>
