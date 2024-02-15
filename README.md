@@ -30,7 +30,7 @@ Testing: Jest
 #### Register User
 
 <details>
- <summary><code>POST</code> <code><b>/register</b></code> <code>(registers a new user)</code></summary>
+ <summary><code>POST</code> <code><b>/registration</b></code> <code>(registers a new user)</code></summary>
 
 ##### Parameters
 
@@ -55,7 +55,7 @@ Testing: Jest
 #### Validate User
 
 <details>
- <summary><code>POST</code> <code><b>/validate</b></code> <code>(Validates user login credentials)</code></summary>
+ <summary><code>POST</code> <code><b>/validation</b></code> <code>(Validates user login credentials)</code></summary>
 
 ##### Parameters
 
