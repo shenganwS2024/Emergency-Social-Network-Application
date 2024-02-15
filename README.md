@@ -97,6 +97,8 @@ Testing: Jest
 > | `401`     | `application/json`           | `{"error": "Invalid credentials"}` |
 > | `500`     | `application/json`           | `{"error": "Internal server error"}` |
 
+</details>
+
 ---
 
 #### User Logout
@@ -116,6 +118,7 @@ Testing: Jest
 > | `200`     | `application/json`           | `{ "token": "jwt_token"}` |
 > | `401`     | `application/json`           | `{"error": "Invalid credentials"}` |
 > | `500`     | `application/json`           | `{"error": "Internal server error"}` |
+</details>
 
 ---
 
@@ -138,8 +141,11 @@ Testing: Jest
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `post successfully`                           |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
 
 ---
+
+#### GET Requests
 #### All Messages
 
 <details>
