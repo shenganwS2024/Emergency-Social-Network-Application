@@ -98,3 +98,61 @@ Testing: Jest
 > | `500`     | `application/json`           | `{"error": "Internal server error"}` |
 
 ---
+
+#### User Logout
+
+<details>
+ <summary><code>POST</code> <code><b>/logout</b></code> <code>(Allows citizens to logout the system)</code></summary>
+
+##### Parameters
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `application/json`           | `{ "token": "jwt_token"}` |
+> | `401`     | `application/json`           | `{"error": "Invalid credentials"}` |
+> | `500`     | `application/json`           | `{"error": "Internal server error"}` |
+
+---
+
+#### New Post
+
+<details>
+ <summary><code>POST</code> <code><b>/newPost</b></code> <code>(Allows citizens to post new message to the system)</code></summary>
+
+##### Parameters
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | User's unique username      |
+> | content   | required  | string    | User's post content         |
+> | timeStamp | required  | Date      | time when posting           |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `post successfully`                           |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
+---
+#### All Messages
+
+<details>
+ <summary><code>GET</code> <code><b>/allMessages</b></code> <code>(Allows citizens to get all the previous messages)</code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get messages successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
+---
