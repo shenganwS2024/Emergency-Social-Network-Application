@@ -149,7 +149,7 @@ Testing: Jest
 #### All Messages
 
 <details>
- <summary><code>GET</code> <code><b>/allMessages</b></code> <code>(Allows citizens to get all the previous messages)</code></summary>
+ <summary><code>GET</code> <code><b>/messages</b></code> <code>(Allows citizens to get all the previous messages)</code></summary>
 
 ##### Parameters
 
