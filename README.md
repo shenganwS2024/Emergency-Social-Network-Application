@@ -52,30 +52,6 @@ Testing: Jest
 
 ---
 
-#### User Validation
-
-<details>
- <summary><code>POST</code> <code><b>/validation</b></code> <code>(Validates user login credentials)</code></summary>
-
-##### Parameters
-
-> | name      | type      | data type | description                 |
-> |-----------|-----------|-----------|-----------------------------|
-> | username  | required  | string    | User's unique username      |
-> | password  | required  | string    | User's password             |
-
-##### Responses
-
-> | http code | content-type                 | response                                 |
-> |-----------|------------------------------|------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Ready for login`                        |
-> | `201`     | `text/plain;charset=UTF-8`   | `New Account`                            |
-> | `409`     | `text/plain;charset=UTF-8`   | `Incorrect password`                     |
-> | `500`     | `text/plain;charset=UTF-8`   | `Error validating new user`              |
-
-</details>
-
----
 
 #### User Login
 
@@ -125,7 +101,7 @@ Testing: Jest
 #### New Post
 
 <details>
- <summary><code>POST</code> <code><b>/newPost</b></code> <code>(Allows citizens to post new message to the system)</code></summary>
+ <summary><code>POST</code> <code><b>/posts</b></code> <code>(Allows citizens to post new message to the system)</code></summary>
 
 ##### Parameters
 
