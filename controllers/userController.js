@@ -109,4 +109,25 @@ async function validateUser(req, res) {
       res.status(500).send('Error logout')
     }
   }
-  export { validateUser, registerUser, logoutUser };
+
+  async function UserAcknowledged(req, res) {
+    try {
+      const { id } = req.body    //online_status
+      const userFound = await Users.findById(id)
+      if (userFound) {
+        try {
+          userFound.acknowledged = true; 
+          await userFound.save();
+        } catch (error) {
+            throw error; 
+        }
+        res.status(200).send('User acknowledged successfully')
+      }
+      else {
+        res.status(404).send('User not found during acknowledgement')
+      }
+    } catch (error) {
+      res.status(500).send('Error acknowledgement')
+    }
+  }
+  export { validateUser, registerUser, logoutUser, UserAcknowledged };
