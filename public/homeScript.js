@@ -1,3 +1,5 @@
+
+
 let bannedUsernames = ''
 fetch('./bannedUsernames.json')
   .then((response) => response.json())
@@ -38,8 +40,25 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
       body: JSON.stringify({ username, password }),
     })
       .then(async (response) => {
+        console.log("before 200")
         if (response.status === 200) {
-          // if Both username and password is correct, do nothing
+          // if Both username and password is correct, log the user in and get the user and message date from the server
+
+        const data = await response.json(); // Parse the JSON data from the response
+        //store the user and message data
+        const messages = data.data.messages; 
+        console.log(data)
+        console.log(messages);
+        //const users = data.data.users;
+        //localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('messages', JSON.stringify(messages));
+        localStorage.setItem('Token', data.token);
+        localStorage.setItem('userID', data.userID);
+
+        
+        window.location.href = 'chatroom.html';
+
+
         } else if (response.status === 201) {
           // if the username doesn't exist, creat new user and show confirmation page
           showPage('confirmation-page')
@@ -107,3 +126,4 @@ function validateUserInfo(username, password) {
     return true
   }
 }
+

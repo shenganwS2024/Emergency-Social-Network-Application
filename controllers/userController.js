@@ -52,10 +52,13 @@ async function validateUser(req, res) {
           let messages;
           try {
             messages = await Messages.find({});
+            console.log(messages);
           } catch (error) {
               console.error(error);
               res.status(500).send('Users post server error');
           }
+
+          
 
           return res.status(200).json({
             success: true,

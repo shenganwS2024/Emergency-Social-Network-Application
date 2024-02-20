@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- to allow the page to dynamically match with the screensize (pc, mobile , tablet...) -->
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- chatroom page -->
+        <div class="screen chatroom">
+            <div class="header">
+                <div class="logo">ESN Chat Room</div>
+                <button id="exit-chat">Logout</button>
+                <button id="directory-button">Directory</button>
+   
+            </div>
+            <div class="messages">
+        
+                <div class="message otherMessage">
+
+                </div>
+            </div>
+            <div class="typebox">
+                <textarea type="text" id="message-input"></textarea>
+            </div>
+
+            <div class="post">
+                <button id="send-msg">Post</button>
+            </div>
+
+
+        </div>
+
+    </div>
+    
+
+    <!-- make the socket client library and  avaliable to handle real-time messaging -->
+    <!-- <script src="socket.io/socket.io.js"></script> -->
+    <script src="ChatScreen.js"></script>
+
+
+    <style>
+        * {
+            margin: 0;
+            border: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+        
+        
+        }
+        
+        .app {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-left: 1px solid #eee;
+            border-right: 1px solid #eee;
+        
+        }
+        
+        .app>.screen {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .form h2 {
+            text-align: center;
+        }
+        
+        .screen .form {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .screen .form-input {
+            width: 100%;
+            margin: 20px 0px;
+        }
+        
+        .screen .h2 {
+            margin-bottom: 20px;
+            font-size: 30px;
+            color: #111;
+            border-bottom: 4px soild #555;
+            padding: 5px 0px;
+            display: inline-block;
+        }
+        
+        .screen .form-input label {
+            display: block;
+            margin-bottom: 5px;
+        
+        }
+        
+        .screen .form-input input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            font-size: 16px;
+        }
+        
+        .screen .form-input button {
+            padding: 10px 26px;
+            background: #89bbf5;
+            color: black;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 47%;
+            border: 1px solid black;
+        }
+        
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        
+        .chatroom .header {
+            background: #89bbf5;
+            color: black;
+            height: 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 20px;
+        }
+        
+        .logo {
+            background: #89bbf5;
+            font-size: 25px;
+            font-weight: bold;
+            display: flex;
+            justify-content: left;
+            /* align-items: center; */
+            width: 100%;
+        }
+        
+        .chatroom .header button {
+            padding: 5px 5px;
+            border: 1px solid black;
+            font-size: 18px;
+            font-weight: bold;
+            background: #fab855;
+            color: black;
+            cursor: pointer;
+            outline: none;
+            margin-right: 10px;
+        }
+        
+        .chatroom .messages {
+            width: 100%;
+            height: 50%;
+            background: #ffff;
+            overflow: auto;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .chatroom .messages .message {
+            display: flex;
+            padding: 5px 10px;
+            font-size: large;
+            padding-bottom: 10px;
+        }
+        
+        .chatroom .messages .message>div {
+            width: 100%;
+            background: #d2d2d28b;
+            padding: 3px 10px;
+        
+        }
+        
+        .chatroom .messages .message .name {
+            font-size: 25px;
+            color: black;
+            margin-right: 10px;
+            font-weight: bold;
+        
+        }
+        
+        .chatroom .messages .message .text {
+            word-wrap: break-word;
+            padding-bottom: 9px;
+        }
+        
+        .chatroom .messages .update {
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .chatroom .typebox #message-input {
+            width: 98%;
+            height: 200px;
+            border: 1px solid black;
+            border-radius: 2px;
+            outline-color: #111;
+            bottom: 2px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            margin-bottom: 20px;
+            height: 25vh;
+        }
+        
+        .post {
+            width: 98%;
+            height: 6%;
+            background-color: #89bbf5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .post #send-msg {
+            border-radius: 10px;
+            width: 20%;
+            height: 35px;
+            border: 1px solid black;
+            background-color: #fab855;
+            color: black;
+            font-weight: 900;
+            font-size: 22px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        
+        }
+        
+        .messageContainer {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        #time {
+            font-size: 15px;
+            font-weight: lighter;
+            align-items: flex-end;
+        }
+
+    /* User Directory */
+    .user-directory {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 50px;
+        right: 10px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        width: 200px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1000; /* Ensure the directory is above other elements */
+    }
+
+    .user {
+        margin-bottom: 5px;
+    }
+
+    .online {
+        color: green;
+    }
+
+    .offline {
+        color: red;
+    }
+    </style>
+</body>
+
+</html>

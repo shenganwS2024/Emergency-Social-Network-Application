@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <h1>ESN Directory</h1>
+    <style>
+        .user {
+            list-style-type: none;
+            margin: 5px;
+            padding: 0;
+            align-items: center;
+        }
+
+        .online {
+            color: green;
+        }
+
+        .offline {
+            color: black;
+        }
+        h1{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <ul id="userList"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const users = [
+                { name: 'Alice', isOnline: true },
+                { name: 'Bob', isOnline: false },
+                { name: 'Charlie', isOnline: true },
+                { name: 'David', isOnline: false }
+                // Add more users as needed
+            ];
+
+            displayUsers(users);
+        });
+
+        function displayUsers(users) {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = ''; // Clear existing list
+
+            // Sort users by online status first, then alphabetically
+            users.sort((a, b) => {
+                if (a.isOnline === b.isOnline) {
+                    return a.name.localeCompare(b.name);
+                }
+                return a.isOnline ? -1 : 1;
+            });
+
+            // Create list items for each user
+            users.forEach(user => {
+                const userElement = document.createElement('li');
+                userElement.textContent = user.name;
+                userElement.classList.add('user', user.isOnline ? 'online' : 'offline');
+                userList.appendChild(userElement);
+            });
+        }
+    </script>
+</body>
+</html>
