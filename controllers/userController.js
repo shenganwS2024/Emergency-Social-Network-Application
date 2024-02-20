@@ -93,64 +93,17 @@ async function validateUser(req, res) {
 
   async function logoutUser(req, res) {
     try {
-      const { userId,status } = req.body    //online_status
-      const userFound = await Users.findById(userId)
+      const { id,status } = req.body    //online_status
+      const userFound = await Users.findById(id)
       if (userFound) {
         updateUserStatus(userFound, false)
+        res.status(200).send('User logs out successfully')
       }
-      res.status(200).send('User logs out successfully')
+      else {
+        res.status(404).send('User not found during logout')
+      }
     } catch (error) {
       res.status(500).send('Error logout')
     }
   }
-  // async function loginUser(req, res, next) {
-  //   let { username, password } = req.body;
-
-  //   let existingUser;
-  //   try {
-  //       existingUser =
-  //           await Users.findOne({ username: username });
-  //   } catch {
-  //       const error =
-  //           new Error(
-  //               "Error! Something went wrong."
-  //           );
-  //       return next(error);
-  //   }
-  //   if (!existingUser || existingUser.password != password) {
-  //       const error =
-  //           Error(
-  //               "Wrong details please check at once"
-  //           );
-  //       return next(error);
-  //   }
-  //   let token;
-  //   try {
-  //       //Creating jwt token
-  //       token = jwt.sign(
-  //           {
-  //               userId: existingUser.id,
-  //               username: existingUser.username
-  //           },
-  //           "secretkeyappearshere",
-  //           { expiresIn: "1h" }
-  //       );
-  //   } catch (err) {
-  //       console.log(err);
-  //       const error =
-  //           new Error("Error! Something went wrong.");
-  //       return next(error);
-  //   }
-
-  //   res
-  //       .status(200)
-  //       .json({
-  //           success: true,
-  //           data: {
-  //               userId: existingUser.id,
-  //               username: existingUser.username,
-  //               token: token,
-  //           },
-  //       });
-  // }
   export { validateUser, registerUser, logoutUser };
