@@ -12,15 +12,17 @@ document.getElementById('directory-button').addEventListener('click', function()
     window.location.href = 'ESN%20Directory.html';
 });
 
-// get the user and message data from the server
-//const users = JSON.parse(localStorage.getItem('users'));
-const messages = JSON.parse(localStorage.getItem('messages'));
-
-messages.forEach((message) => {
-    // Render message based on whether its mine or others' 
-    console.log("rendering messages");
-    renderMSG(message);
-})
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/messages')
+  .then(response => response.json())
+  .then(data => {
+      const messages = data.data.messages;
+      messages.forEach((message) => {
+          renderMSG(message);
+      });
+  })
+  .catch(error => console.error('Error fetching messages:', error));
+});
 
 // Handle user logout
 document.getElementById("exit-chat").addEventListener("click", () => {
@@ -72,10 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function renderMSG(message) {
-    console.log("before container");
+    //("before container");
     let msgContainer = app.querySelector(".chatroom .messages");
     let senderName = message.username;
-    console.log("after container");
+    //console.log("after container");
 
     let element = document.createElement("div")
     element.setAttribute("class", "message")
@@ -97,9 +99,9 @@ function renderMSG(message) {
             <div class = "text">${message.content}</div>
         </div>
         `;
-    console.log("before appending");
+    //console.log("before appending");
     msgContainer.appendChild(element);
-    console.log("after appending");
+    //console.log("after appending");
     // Ensures that the container scrolls to the bottom to show newest message 
     msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight;
 }

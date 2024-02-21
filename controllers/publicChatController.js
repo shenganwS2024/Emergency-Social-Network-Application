@@ -29,8 +29,10 @@ async function postNewMessage(req,res) {
         io.emit('chat message',newMessage)
         await newMessage.save();
         console.log('Message saved:', newMessage);
+        res.status(201).send({data:{message: newMessage}});
     } catch (error) {
         console.error('Error saving message:', error);
+        res.status(500).send('Error saving message');
     }
 }
 
