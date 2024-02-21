@@ -1,5 +1,4 @@
 import { Server } from 'socket.io';
-import { postNewMessage } from '../controllers/publicChatController.js';
 import jwt from 'jsonwebtoken';
 
 const socketConfig = (server) => {
@@ -21,17 +20,17 @@ const socketConfig = (server) => {
     io.on('connection', (socket) => {
         console.log('User connected');
 
-        socket.on('chat message', async (msg) => {
-            io.emit('chat message', msg);
-            await postNewMessage(msg);
+        // socket.on('chat message', async (msg) => {
+        //     io.emit('chat message', msg);
+        //     await postNewMessage(msg);
 
-        });
+        // });
 
         socket.on('disconnect', () => {
             console.log('User disconnected');
         });
     });
-
+    return io
 };
 
 export default socketConfig;

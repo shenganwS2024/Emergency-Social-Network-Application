@@ -1,5 +1,5 @@
 import Messages from '../models/Messages.js';
-//import {io} from '../server.js'
+import {io} from '../config/serverConfig.js'
 
 
 // Function to get the latest messages from the server
@@ -26,8 +26,6 @@ async function postNewMessage(req,res) {
             timestamp:timestamp,
             status:status
         });
-        console.log(newMessage);
-        
         io.emit('chat message',newMessage)
         await newMessage.save();
         console.log('Message saved:', newMessage);

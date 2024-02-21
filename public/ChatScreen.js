@@ -15,6 +15,7 @@ document.getElementById('directory-button').addEventListener('click', function()
 // get the user and message data from the server
 //const users = JSON.parse(localStorage.getItem('users'));
 const messages = JSON.parse(localStorage.getItem('messages'));
+
 messages.forEach((message) => {
     // Render message based on whether its mine or others' 
     console.log("rendering messages");
