@@ -32,9 +32,10 @@ async function validateUser(req, res) {
                       userId: userFound.id,
                       username: userFound.username
                   },
-                  "secretkeyappearshere",
+                  "fsesb2secretkey",
                   { expiresIn: "1h" }
               );
+              console.log('true token', token)
           } catch (err) {
               console.log(err);
               return res.status(500).send('Error creating token');

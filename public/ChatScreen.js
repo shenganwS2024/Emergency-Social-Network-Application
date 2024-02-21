@@ -1,7 +1,12 @@
 
-const socket = io();
-const app = document.querySelector(".app");
+console.log("localstorage token",localStorage.getItem('Token'))
+const socket = io('http://localhost:3000', {
 
+    query: {
+      token: localStorage.getItem('Token'),
+    },
+  });
+const app = document.querySelector(".app");
 
 socket.on('chat message', function(msg) {
 
@@ -135,7 +140,8 @@ function logout() {
         .finally(() => {
             //socket.emit("exituser");
             // Remove the token from localStorage
-            localStorage.removeItem('token');
+            console.log(localStorage.getItem('Token'))
+            localStorage.removeItem('Token');
 
             // Optionally, redirect the user to the login page or home page
             window.location.href = 'index.html';
