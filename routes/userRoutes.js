@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/validate', validateUser);
-router.post('/logout', logoutUser);
-router.post('/acknowledge', UserAcknowledged);
+router.put('/logout', logoutUser);
+router.put('/acknowledge', UserAcknowledged);
   
 export default router;

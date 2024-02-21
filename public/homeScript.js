@@ -28,6 +28,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
   event.preventDefault()
   let username = document.getElementById('username').value.trim()
   let password = document.getElementById('password').value.trim()
+  localStorage.setItem('username', username);
 
   // * Username Rule: Usernames are provided by users and should be at least 3 characters long. They should not be in the list of banned usernames. They should not already exist. Usernames are NOT case sensitive.
   // * Password Rule: Passwords are provided by users and should be at least 4 characters long. Passwords ARE case sensitive.
@@ -42,22 +43,25 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
       .then(async (response) => {
         console.log("before 200")
         if (response.status === 200) {
+          const data = await response.json();
+          console.log("after 200")
           // if Both username and password is correct, log the user in and get the user and message date from the server
+          console.log(data);
+          const userID = data.data.userID;
+          const users = data.data.users;
+          console.log(userID);
+          localStorage.setItem('userID', userID);
+          localStorage.setItem('users', JSON.stringify(users));
+          console.log("before acknolegement")
+          if(data.data.acknowledged === false){
+            console.log("before showPage")
+            showPage('welcome-page')
+            console.log("after acknolegement")
+          }else{
 
-        const data = await response.json(); // Parse the JSON data from the response
-        //store the user and message data
-        const messages = data.data.messages; 
-        console.log(data)
-        console.log(messages);
-        //const users = data.data.users;
-        //localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('messages', JSON.stringify(messages));
-        localStorage.setItem('Token', data.token);
-        localStorage.setItem('userID', data.userID);
+            window.location.href = 'ESN Directory.html';
 
-        
-        window.location.href = 'chatroom.html';
-
+          }
 
         } else if (response.status === 201) {
           // if the username doesn't exist, creat new user and show confirmation page
@@ -80,9 +84,10 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
 })
 
 document.getElementById('acknowledgeBtn').addEventListener('click', function () {
+  updateUserAcknowledgement(localStorage.getItem('userID'));
   document.getElementById('username').value = ''
   document.getElementById('password').value = ''
-  showPage('home-page')
+  window.location.href = 'ESN Directory.html';
 })
 
 function showPage(pageId) {
@@ -126,4 +131,36 @@ function validateUserInfo(username, password) {
     return true
   }
 }
+
+
+
+
+function updateUserAcknowledgement(userId) {
+  const data = {
+      id: userId, // Ensure this matches the expected field in your server-side code
+  };
+
+  fetch('/acknowledge', { // Make sure this URL matches your server endpoint
+      method: 'PUT', // Using PUT since it's typically used for updating resources
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.text(); // Assuming the server sends a plain text response
+  })
+  .then(responseText => {
+      console.log('Success:', responseText);
+      // Handle success response. Update the UI or notify the user as needed.
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+      // Handle errors here. Show an error message to the user, for example.
+  });
+}
+
 

@@ -1,6 +1,6 @@
 console.log("entry point")
 
-import http from './server.js' // Import the app from server.js
+import {http} from './server.js' // Import the app from server.js
 const port = 3000;
 
 http.listen(port, () => {

@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean, 
         default: false
     },
-    status: String,
+    status: {
+
+        type: String,
+        default: 'placeholder'
+    },
     role: String,
     acknowledged: {
         type: Boolean, 

@@ -1,5 +1,4 @@
 import Users from '../models/Users.js';
-import Messages from '../models/Messages.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -49,15 +48,6 @@ async function validateUser(req, res) {
               res.status(500).send('Users post server error');
           }
 
-          let messages;
-          try {
-            messages = await Messages.find({});
-            console.log(messages);
-          } catch (error) {
-              console.error(error);
-              res.status(500).send('Users post server error');
-          }
-
           
 
           return res.status(200).json({
@@ -66,8 +56,8 @@ async function validateUser(req, res) {
                 userID: userFound.id,
                 username: userFound.username,
                 token: token,
-                users: directory,       //Used for ESN display.
-                messages: messages
+                users: directory,
+                acknowledged: userFound.acknowledged      //Used for ESN display.
             },
         });
         } else {
