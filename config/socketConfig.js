@@ -22,10 +22,20 @@ const socketConfig = (server) => {
 
     io.on('connection', (socket) => {
         console.log('User connected');
+        if (socket.decoded && socket.decoded.name) {
+            socket.emit('updateInfo', `${socket.decoded.name} login`);
+        }
 
+        socket.on('chat message', async (msg) => {
+            io.emit('chat message', msg);
+
+        });
 
         socket.on('disconnect', () => {
             console.log('User disconnected');
+            if (socket.decoded && socket.decoded.name) {
+                socket.emit('updateInfo', `${socket.decoded.name} logout`);
+            }
         });
     });
     return io
