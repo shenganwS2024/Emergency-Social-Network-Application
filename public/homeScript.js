@@ -109,7 +109,8 @@ document.getElementById('confirmBtn').addEventListener('click', function () {
   })
     .then(async (response) => {
       if (response.status === 201) {
-        showPage('welcome-page')
+        alert('User registered successfully')
+        showPage('registration-form')
       } else {
         const errorText = await response.text()
         alert(errorText)

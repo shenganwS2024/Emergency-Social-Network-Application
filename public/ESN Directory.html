@@ -113,6 +113,11 @@
             localStorage.setItem('users', JSON.stringify(users));
             displayUsers(users); // Refresh the user list UI
           }
+          else{
+            users.push(update);
+            localStorage.setItem('users', JSON.stringify(users));
+            displayUsers(users);
+          }
         });
 
         document.getElementById('exit-chat').addEventListener('click', function () {

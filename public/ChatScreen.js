@@ -90,7 +90,7 @@ function renderMSG(message) {
     element.innerHTML = `
         <div>
         <div class ="messageContainer">
-            <div class ="name">${senderName}</div>
+            <div class ="name">${senderName+ "     ("+message.status+")"}</div>
             <div id="time">${new Date(message.timestamp).toLocaleString('en-US', {
         month: '2-digit',
         day: '2-digit',

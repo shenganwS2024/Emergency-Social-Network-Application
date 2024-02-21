@@ -28,7 +28,7 @@ const socketConfig = (server) => {
             Users.findOneAndUpdate({ username: socket.decoded.username }, { onlineStatus: true }, { new: true })
             .then(user => {
                 // Broadcast to all clients that the user list has been updated
-                io.emit('userStatusChanged', { username: user.username, onlineStatus: user.onlineStatus });
+                io.emit('userStatusChanged', { username: user.username, onlineStatus: user.onlineStatus, status: user.status});
             })
             .catch(err => console.error(err));
             socket.emit('updateInfo', `${socket.decoded.username} login`);
@@ -44,7 +44,7 @@ const socketConfig = (server) => {
                 Users.findOneAndUpdate({ username: socket.decoded.username }, { onlineStatus: false }, { new: true })
                 .then(user => {
                     // Broadcast to all clients that the user list has been updated
-                    io.emit('userStatusChanged', { username: user.username, onlineStatus: user.onlineStatus });
+                    io.emit('userStatusChanged', { username: user.username, onlineStatus: user.onlineStatus, status: user.status });
                 })
                 .catch(err => console.error(err));
                 socket.emit('updateInfo', `${socket.decoded.username} logout`);
