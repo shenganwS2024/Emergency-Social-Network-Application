@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
+import Users from '../models/Users.js';
 
 const socketConfig = (server) => {
     const io = new Server(server);
@@ -22,22 +23,35 @@ const socketConfig = (server) => {
 
     io.on('connection', (socket) => {
         console.log('User connected');
-        if (socket.decoded && socket.decoded.name) {
-            socket.emit('updateInfo', `${socket.decoded.name} login`);
+        if (socket.decoded && socket.decoded.username) {
+            // Use async/await syntax
+            Users.findOneAndUpdate({ username: socket.decoded.username }, { onlineStatus: true }, { new: true })
+            .then(user => {
+                // Broadcast to all clients that the user list has been updated
+                io.emit('userStatusChanged', { username: user.username, onlineStatus: user.onlineStatus });
+            })
+            .catch(err => console.error(err));
+            socket.emit('updateInfo', `${socket.decoded.username} login`);
         }
-
+    
         socket.on('chat message', async (msg) => {
             io.emit('chat message', msg);
-
         });
-
+    
         socket.on('disconnect', () => {
             console.log('User disconnected');
-            if (socket.decoded && socket.decoded.name) {
-                socket.emit('updateInfo', `${socket.decoded.name} logout`);
+            if (socket.decoded && socket.decoded.username) {
+                Users.findOneAndUpdate({ username: socket.decoded.username }, { onlineStatus: false }, { new: true })
+                .then(user => {
+                    // Broadcast to all clients that the user list has been updated
+                    io.emit('userStatusChanged', { username: user.username, onlineStatus: user.onlineStatus });
+                })
+                .catch(err => console.error(err));
+                socket.emit('updateInfo', `${socket.decoded.username} logout`);
             }
         });
     });
+    
     return io
 };
 

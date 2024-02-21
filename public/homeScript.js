@@ -52,7 +52,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
           console.log(userID);
           localStorage.setItem('userID', userID);
           localStorage.setItem('users', JSON.stringify(users));
-          localStorage.setItem('Token', data.data.token);
+          localStorage.setItem('token', data.data.token);
           console.log("before acknolegement")
           if(data.data.acknowledged === false){
             console.log("before showPage")

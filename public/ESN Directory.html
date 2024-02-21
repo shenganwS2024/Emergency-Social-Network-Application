@@ -93,11 +93,27 @@
       <button id="enter-chat">Chatroom</button>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const users = JSON.parse(localStorage.getItem('users'))
-        console.log(users)
-        displayUsers(users)
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        console.log(users);
+        displayUsers(users);
+        const token = localStorage.getItem('token');
+        const socket = io({
+        query: {
+            token: token, // Use the retrieved token here
+          },
+        });
+          
+        socket.on('userStatusChanged', function(update) {
+          const userIndex = users.findIndex(user => user.username === update.username);
+          if (userIndex !== -1) {
+            users[userIndex].onlineStatus = update.onlineStatus;
+            localStorage.setItem('users', JSON.stringify(users));
+            displayUsers(users); // Refresh the user list UI
+          }
+        });
 
         document.getElementById('exit-chat').addEventListener('click', function () {
           const userId = localStorage.getItem('userID') // Implement this function based on your app's logic

@@ -23,7 +23,7 @@ async function validateUser(req, res) {
         if (isMatch) {
           console.log('Password is correct!')
           // Update user status to online
-          await updateUserStatus(userFound, true);
+          // await updateUserStatus(userFound, true);
           let token;
           try {
               //Creating jwt token
@@ -90,7 +90,7 @@ async function validateUser(req, res) {
       const { id,status } = req.body    //online_status
       const userFound = await Users.findById(id)
       if (userFound) {
-        updateUserStatus(userFound, false)
+        //updateUserStatus(userFound, false)
         res.status(200).send('User logs out successfully')
       }
       else {

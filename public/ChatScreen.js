@@ -1,9 +1,9 @@
 
-console.log("localstorage token",localStorage.getItem('Token'))
+console.log("localstorage token",localStorage.getItem('token'))
 const socket = io('http://localhost:3000', {
 
     query: {
-      token: localStorage.getItem('Token'),
+      token: localStorage.getItem('token'),
     },
   });
 const app = document.querySelector(".app");
