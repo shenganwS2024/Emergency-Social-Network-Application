@@ -140,8 +140,8 @@ function logout() {
         .finally(() => {
             //socket.emit("exituser");
             // Remove the token from localStorage
-            console.log(localStorage.getItem('Token'))
-            localStorage.removeItem('Token');
+            console.log(localStorage.getItem('token'))
+            localStorage.removeItem('token');
 
             // Optionally, redirect the user to the login page or home page
             window.location.href = 'index.html';

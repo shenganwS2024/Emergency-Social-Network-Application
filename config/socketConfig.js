@@ -22,7 +22,7 @@ const socketConfig = (server) => {
       
 
     io.on('connection', (socket) => {
-        console.log('User connected');
+        console.log(`User ${ socket.decoded.username} connected`);
         if (socket.decoded && socket.decoded.username) {
             // Use async/await syntax
             Users.findOneAndUpdate({ username: socket.decoded.username }, { onlineStatus: true }, { new: true })
@@ -39,7 +39,7 @@ const socketConfig = (server) => {
         });
     
         socket.on('disconnect', () => {
-            console.log('User disconnected');
+            console.log(`User ${ socket.decoded.username} disconnected`);
             if (socket.decoded && socket.decoded.username) {
                 Users.findOneAndUpdate({ username: socket.decoded.username }, { onlineStatus: false }, { new: true })
                 .then(user => {
@@ -55,4 +55,4 @@ const socketConfig = (server) => {
     return io
 };
 
-export default socketConfig;
+ export default socketConfig;

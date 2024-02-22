@@ -33,7 +33,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
   // * Username Rule: Usernames are provided by users and should be at least 3 characters long. They should not be in the list of banned usernames. They should not already exist. Usernames are NOT case sensitive.
   // * Password Rule: Passwords are provided by users and should be at least 4 characters long. Passwords ARE case sensitive.
   if (validateUserInfo(username, password)) {
-    fetch('/validate', {
+    fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,6 +66,12 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
 
         } else if (response.status === 201) {
           // if the username doesn't exist, creat new user and show confirmation page
+          // console.log(" 201")
+          // console.log(response);
+          // const data = await response.json();
+          // console.log("sssss "+data);
+          // localStorage.setItem('token', data.data.token);
+          // console.log("sssss "+data.data.token);
           showPage('confirmation-page')
         } else if (response.status === 409) {
           alert('Conflict: Username already exists and password is incorrect. Please re-enter')
@@ -100,7 +106,7 @@ function showPage(pageId) {
 
 document.getElementById('confirmBtn').addEventListener('click', function () {
   // Save user data here
-  fetch('/register', {
+  fetch('/registration', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -109,8 +115,10 @@ document.getElementById('confirmBtn').addEventListener('click', function () {
   })
     .then(async (response) => {
       if (response.status === 201) {
-        alert('User registered successfully')
-        showPage('registration-form')
+        //alert('User registered successfully')
+        const data = await response.json()
+        localStorage.setItem('token', data.data.token)
+        showPage('welcome-page')
       } else {
         const errorText = await response.text()
         alert(errorText)
@@ -142,7 +150,7 @@ function updateUserAcknowledgement(userId) {
       id: userId, // Ensure this matches the expected field in your server-side code
   };
 
-  fetch('/acknowledge', { // Make sure this URL matches your server endpoint
+  fetch('/acknowledgement', { // Make sure this URL matches your server endpoint
       method: 'PUT', // Using PUT since it's typically used for updating resources
       headers: {
           'Content-Type': 'application/json',

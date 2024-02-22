@@ -95,6 +95,17 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      // window.addEventListener('beforeunload', function (e) {
+      //   e.preventDefault();
+      //   socket.disconnect();
+      // });
+
+      // window.addEventListener('load', function (e) {
+      //   e.preventDefault();
+      //   socket.connect();
+      // });
+
+
       document.addEventListener('DOMContentLoaded', () => {
         const users = JSON.parse(localStorage.getItem('users')) || [];
         console.log(users);

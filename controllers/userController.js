@@ -35,7 +35,7 @@ async function validateUser(req, res) {
                   "fsesb2secretkey",
                   { expiresIn: "1h" }
               );
-              console.log('true token', token)
+              console.log('login true token', token)
           } catch (err) {
               console.log(err);
               return res.status(500).send('Error creating token');
@@ -79,7 +79,23 @@ async function validateUser(req, res) {
       const { username, password, status, role } = req.body
       const user = new Users({ username, password, status, role })
       await user.save()
-      res.status(201).send('User registered successfully')
+      let token;
+      try {
+          //Creating jwt token
+          token = jwt.sign(
+              {
+                  userId: user.id,
+                  username: user.username
+              },
+              "fsesb2secretkey",
+              { expiresIn: "1h" }
+          );
+          console.log('register true token', token)
+      } catch (err) {
+          console.log(err);
+          return res.status(500).send('Error creating token');
+      }
+      res.status(201).json({data:{token:token}})
     } catch (error) {
       res.status(500).send('Error registering new user')
     }
@@ -121,4 +137,15 @@ async function validateUser(req, res) {
       res.status(500).send('Error acknowledgement')
     }
   }
-  export { validateUser, registerUser, logoutUser, UserAcknowledged };
+
+  async function getUser(req, res) {
+    try {
+      let directory = await Users.find({});
+      res.status(200).json({data:{users: directory}});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Users get server error');
+    }
+  }
+
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser};
