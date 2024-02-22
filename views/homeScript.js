@@ -1,3 +1,5 @@
+
+
 let bannedUsernames = ''
 fetch('./bannedUsernames.json')
   .then((response) => response.json())
@@ -26,11 +28,12 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
   event.preventDefault()
   let username = document.getElementById('username').value.trim()
   let password = document.getElementById('password').value.trim()
+  localStorage.setItem('username', username);
 
   // * Username Rule: Usernames are provided by users and should be at least 3 characters long. They should not be in the list of banned usernames. They should not already exist. Usernames are NOT case sensitive.
   // * Password Rule: Passwords are provided by users and should be at least 4 characters long. Passwords ARE case sensitive.
   if (validateUserInfo(username, password)) {
-    fetch('/validate', {
+    fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,10 +41,37 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
       body: JSON.stringify({ username, password }),
     })
       .then(async (response) => {
+        console.log("before 200")
         if (response.status === 200) {
-          // if Both username and password is correct, do nothing
+          const data = await response.json();
+          console.log("after 200")
+          // if Both username and password is correct, log the user in and get the user and message date from the server
+          console.log(data);
+          const userID = data.data.userID;
+          const users = data.data.users;
+          console.log(userID);
+          localStorage.setItem('userID', userID);
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem('token', data.data.token);
+          console.log("before acknolegement")
+          if(data.data.acknowledged === false){
+            console.log("before showPage")
+            showPage('welcome-page')
+            console.log("after acknolegement")
+          }else{
+
+            window.location.href = 'ESN Directory.html';
+
+          }
+
         } else if (response.status === 201) {
           // if the username doesn't exist, creat new user and show confirmation page
+          // console.log(" 201")
+          // console.log(response);
+          // const data = await response.json();
+          // console.log("sssss "+data);
+          // localStorage.setItem('token', data.data.token);
+          // console.log("sssss "+data.data.token);
           showPage('confirmation-page')
         } else if (response.status === 409) {
           alert('Conflict: Username already exists and password is incorrect. Please re-enter')
@@ -61,9 +91,10 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
 })
 
 document.getElementById('acknowledgeBtn').addEventListener('click', function () {
+  updateUserAcknowledgement(localStorage.getItem('userID'));
   document.getElementById('username').value = ''
   document.getElementById('password').value = ''
-  showPage('home-page')
+  window.location.href = 'ESN Directory.html';
 })
 
 function showPage(pageId) {
@@ -75,7 +106,7 @@ function showPage(pageId) {
 
 document.getElementById('confirmBtn').addEventListener('click', function () {
   // Save user data here
-  fetch('/register', {
+  fetch('/registration', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -84,6 +115,9 @@ document.getElementById('confirmBtn').addEventListener('click', function () {
   })
     .then(async (response) => {
       if (response.status === 201) {
+        //alert('User registered successfully')
+        const data = await response.json()
+        localStorage.setItem('token', data.data.token)
         showPage('welcome-page')
       } else {
         const errorText = await response.text()
@@ -107,3 +141,36 @@ function validateUserInfo(username, password) {
     return true
   }
 }
+
+
+
+
+function updateUserAcknowledgement(userId) {
+  const data = {
+      id: userId, // Ensure this matches the expected field in your server-side code
+  };
+
+  fetch('/acknowledgement', { // Make sure this URL matches your server endpoint
+      method: 'PUT', // Using PUT since it's typically used for updating resources
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.text(); // Assuming the server sends a plain text response
+  })
+  .then(responseText => {
+      console.log('Success:', responseText);
+      // Handle success response. Update the UI or notify the user as needed.
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+      // Handle errors here. Show an error message to the user, for example.
+  });
+}
+
+

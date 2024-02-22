@@ -1,16 +1,18 @@
-import express from 'express';
-import { createServer } from 'http';
-import { userRoutes } from './config/index.js'
+
+import {express,app,http,io} from './config/serverConfig.js'
+
+import { userRoutes, messageRoutes } from './config/index.js'
 import connectDB from './config/database.js';
-const app = express();
-const http = createServer(app);
+
+
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('views'));
 
 connectDB();
 
 //Configuration for session management
 app.use(userRoutes);
+app.use(messageRoutes);
 
-export default http;
+export {http,io};

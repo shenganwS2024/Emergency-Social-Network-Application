@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User List</title>
+    <h1>ESN Directory</h1>
+    <style>
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #userListContainer {
+        flex-grow: 1;
+        overflow-y: auto; /* Enable vertical scrolling */
+        padding: 0 10px; /* Maintain padding */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Align content to start to avoid vertical centering */
+        align-items: center; /* Center content horizontally */
+        margin-bottom: 10px; /* Ensure there's space between the list and the footer */
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 5px 5px;
+        margin-top: 10px;
+        width: 100%; /* Ensure the ul spans the full width of its container */
+        display: flex; /* Use flexbox for the ul */
+        flex-direction: column;
+        align-items: center; /* Center the list items horizontally */
+      }
+
+      .user {
+        margin: 5px 5px; /* Adjust margin for top and bottom */
+        padding: 5px 5px; /* Add some padding */
+        align-items: center;
+      }
+
+      .online {
+        color: green;
+      }
+
+      .offline {
+        color: gray;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 20px; /* Provide some space at the top */
+        margin-bottom: 10px; /* And a little space below */
+        flex-shrink: 0; /* Prevent the title from shrinking */
+      }
+
+      #footer {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        box-sizing: border-box;
+        flex-shrink: 0; /* Prevent the footer from shrinking */
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      #exit-chat {
+        background-color: #f44336;
+        color: white;
+      }
+
+      #enter-chat {
+        background-color: #4caf50;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="userListContainer">
+      <ul id="userList"></ul>
+    </div>
+    <div id="footer">
+      <button id="exit-chat">Logout</button>
+      <button id="enter-chat">Chatroom</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // window.addEventListener('beforeunload', function (e) {
+      //   e.preventDefault();
+      //   socket.disconnect();
+      // });
+
+      // window.addEventListener('load', function (e) {
+      //   e.preventDefault();
+      //   socket.connect();
+      // });
+
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        console.log(users);
+        displayUsers(users);
+        const token = localStorage.getItem('token');
+        const socket = io({
+        query: {
+            token: token, // Use the retrieved token here
+          },
+        });
+          
+        socket.on('userStatusChanged', function(update) {
+          const userIndex = users.findIndex(user => user.username === update.username);
+          if (userIndex !== -1) {
+            users[userIndex].onlineStatus = update.onlineStatus;
+            localStorage.setItem('users', JSON.stringify(users));
+            displayUsers(users); // Refresh the user list UI
+          }
+          else{
+            users.push(update);
+            localStorage.setItem('users', JSON.stringify(users));
+            displayUsers(users);
+          }
+        });
+
+        document.getElementById('exit-chat').addEventListener('click', function () {
+          const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
+
+          // Data to be sent in the request
+          const data = {
+            id: userId,
+            status: false,
+          }
+
+          // Send a POST request to the server
+          fetch('/logout', {
+            method: 'POST', // or 'PUT' if updating the status
+            headers: {
+              'Content-Type': 'application/json',
+              // Add any other headers your server requires, such as authentication tokens
+            },
+            body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+          })
+            .then((response) => response.json()) // Parse the JSON response
+            .then((data) => {
+              console.log('Success:', data)
+              // Here you can also trigger any additional logout logic, like redirecting the user
+            })
+            .catch((error) => {
+              console.error('Error:', error)
+            })
+            .finally(() => {
+              //socket.emit("exituser");
+              // Remove the token from localStorage
+              localStorage.removeItem('token')
+
+              // Optionally, redirect the user to the login page or home page
+              window.location.href = 'index.html'
+            })
+          window.location.href = 'index.html'
+        })
+
+        document.getElementById('enter-chat').addEventListener('click', function () {
+          getPreviousMsgs()
+          window.location.href = 'chatroom.html'
+        })
+      })
+
+      function displayUsers(users) {
+        const userList = document.getElementById('userList')
+        userList.innerHTML = '' // Clear existing list
+
+        users.sort((a, b) => {
+          if (a.onlineStatus === b.onlineStatus) {
+            return a.username.localeCompare(b.username)
+          }
+          return a.onlineStatus ? -1 : 1
+        })
+
+        users.forEach((user) => {
+          const userElement = document.createElement('li')
+          // Updated part: Include the status in the textContent
+          userElement.textContent = `${user.username} (${user.status})`
+          userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
+          userList.appendChild(userElement)
+        })
+      }
+
+      function getPreviousMsgs() {
+        fetch('/messages', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('Token')}`,
+          },
+        })
+          .then(async (response) => {
+            console.log(response.status)
+            console.log('before 200')
+            if (response.status === 200) {
+              console.log('ssss')
+              const data = await response.json() // Parse the JSON data from the response
+              //store the user and message data
+              const messages = data.data.messages
+
+              console.log(messages)
+              //const users = data.data.users;
+              //localStorage.setItem('users', JSON.stringify(users));
+              localStorage.setItem('messages', JSON.stringify(messages))
+              localStorage.setItem('Token', data.data.token)
+              localStorage.setItem('userID', data.data.userID)
+            } else {
+              const errorText = await response.text()
+              alert(errorText)
+            }
+          })
+          .catch((error) => {
+            // send to server and check if exist
+          })
+      }
+    </script>
+  </body>
+</html>
