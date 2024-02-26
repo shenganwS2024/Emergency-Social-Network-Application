@@ -105,31 +105,39 @@
       //   socket.connect();
       // });
 
-
-      document.addEventListener('DOMContentLoaded', () => {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        console.log(users);
-        displayUsers(users);
-        const token = localStorage.getItem('token');
+      document.addEventListener('DOMContentLoaded', async () => {
+        //const users = JSON.parse(localStorage.getItem('users')) || [];
+        let users
+        try {
+          // Attempt to fetch the users
+          const userResponse = await fetch('/users')
+          const data = await userResponse.json()
+          users = data.data.users
+          console.log('users: ' + users)
+          displayUsers(users)
+        } catch (error) {
+          // Handle any fetch errors
+          console.error('Error fetching users:', error)
+        }
+        const token = localStorage.getItem('token')
         const socket = io({
-        query: {
+          query: {
             token: token, // Use the retrieved token here
           },
-        });
-          
-        socket.on('userStatusChanged', function(update) {
-          const userIndex = users.findIndex(user => user.username === update.username);
+        })
+
+        socket.on('userStatusChanged', function (update) {
+          const userIndex = users.findIndex((user) => user.username === update.username)
           if (userIndex !== -1) {
-            users[userIndex].onlineStatus = update.onlineStatus;
-            localStorage.setItem('users', JSON.stringify(users));
-            displayUsers(users); // Refresh the user list UI
+            users[userIndex].onlineStatus = update.onlineStatus
+            localStorage.setItem('users', JSON.stringify(users))
+            displayUsers(users) // Refresh the user list UI
+          } else {
+            users.push(update)
+            localStorage.setItem('users', JSON.stringify(users))
+            displayUsers(users)
           }
-          else{
-            users.push(update);
-            localStorage.setItem('users', JSON.stringify(users));
-            displayUsers(users);
-          }
-        });
+        })
 
         document.getElementById('exit-chat').addEventListener('click', function () {
           const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
@@ -163,13 +171,13 @@
               localStorage.removeItem('token')
 
               // Optionally, redirect the user to the login page or home page
-              window.location.href = 'index.html'
+              window.location.href = '/'
             })
-          window.location.href = 'index.html'
+          window.location.href = '/'
         })
 
         document.getElementById('enter-chat').addEventListener('click', function () {
-          getPreviousMsgs()
+          //getPreviousMsgs()
           window.location.href = 'chatroom.html'
         })
       })
@@ -194,38 +202,38 @@
         })
       }
 
-      function getPreviousMsgs() {
-        fetch('/messages', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('Token')}`,
-          },
-        })
-          .then(async (response) => {
-            console.log(response.status)
-            console.log('before 200')
-            if (response.status === 200) {
-              console.log('ssss')
-              const data = await response.json() // Parse the JSON data from the response
-              //store the user and message data
-              const messages = data.data.messages
+      // function getPreviousMsgs() {
+      //   fetch('/messages', {
+      //     method: 'GET',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       Authorization: `Bearer ${localStorage.getItem('Token')}`,
+      //     },
+      //   })
+      //     .then(async (response) => {
+      //       console.log(response.status)
+      //       console.log('before 200')
+      //       if (response.status === 200) {
+      //         console.log('ssss')
+      //         const data = await response.json() // Parse the JSON data from the response
+      //         //store the user and message data
+      //         const messages = data.data.messages
 
-              console.log(messages)
-              //const users = data.data.users;
-              //localStorage.setItem('users', JSON.stringify(users));
-              localStorage.setItem('messages', JSON.stringify(messages))
-              localStorage.setItem('Token', data.data.token)
-              localStorage.setItem('userID', data.data.userID)
-            } else {
-              const errorText = await response.text()
-              alert(errorText)
-            }
-          })
-          .catch((error) => {
-            // send to server and check if exist
-          })
-      }
+      //         console.log(messages)
+      //         //const users = data.data.users;
+      //         //localStorage.setItem('users', JSON.stringify(users));
+      //         // localStorage.setItem('messages', JSON.stringify(messages))
+      //         localStorage.setItem('Token', data.data.token)
+      //         localStorage.setItem('userID', data.data.userID)
+      //       } else {
+      //         const errorText = await response.text()
+      //         alert(errorText)
+      //       }
+      //     })
+      //     .catch((error) => {
+      //       // send to server and check if exist
+      //     })
+      // }
     </script>
   </body>
 </html>

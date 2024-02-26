@@ -95,7 +95,7 @@ async function validateUser(req, res) {
           console.log(err);
           return res.status(500).send('Error creating token');
       }
-      res.status(201).json({data:{token:token}})
+      res.status(201).json({data:{token:token, userID: user.id}})
     } catch (error) {
       res.status(500).send('Error registering new user')
     }
