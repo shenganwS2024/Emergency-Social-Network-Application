@@ -176,3 +176,22 @@ Testing: Jest
 </details>
 
 ---
+
+#### Users share status
+
+<details>
+ <summary><code>PUT</code> <code><b>/shareStatus</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `User status updated successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during status update`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+</details>
+
+---
