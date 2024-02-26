@@ -115,6 +115,7 @@ document.getElementById('confirmBtn').addEventListener('click', function () {
         //alert('User registered successfully')
         const data = await response.json()
         localStorage.setItem('token', data.data.token)
+        localStorage.setItem('userID', data.data.userID)
         showPage('welcome-page')
       } else {
         const errorText = await response.text()
