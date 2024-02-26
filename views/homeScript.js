@@ -1,5 +1,3 @@
-
-
 let bannedUsernames = ''
 fetch('./bannedUsernames.json')
   .then((response) => response.json())
@@ -28,7 +26,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
   event.preventDefault()
   let username = document.getElementById('username').value.trim()
   let password = document.getElementById('password').value.trim()
-  localStorage.setItem('username', username);
+  localStorage.setItem('username', username)
 
   // * Username Rule: Usernames are provided by users and should be at least 3 characters long. They should not be in the list of banned usernames. They should not already exist. Usernames are NOT case sensitive.
   // * Password Rule: Passwords are provided by users and should be at least 4 characters long. Passwords ARE case sensitive.
@@ -41,29 +39,28 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
       body: JSON.stringify({ username, password }),
     })
       .then(async (response) => {
-        console.log("before 200")
+        console.log('before 200')
         if (response.status === 200) {
-          const data = await response.json();
-          console.log("after 200")
+          const data = await response.json()
+          console.log('after 200')
           // if Both username and password is correct, log the user in and get the user and message date from the server
-          console.log(data);
-          const userID = data.data.userID;
-          const users = data.data.users;
-          console.log(userID);
-          localStorage.setItem('userID', userID);
-          localStorage.setItem('users', JSON.stringify(users));
-          localStorage.setItem('token', data.data.token);
-          console.log("before acknolegement")
-          if(data.data.acknowledged === false){
-            console.log("before showPage")
+          console.log(data)
+          const userID = data.data.userID
+          //const users = data.data.users
+          console.log(userID)
+          localStorage.setItem('userID', userID)
+          //localStorage.setItem('users', JSON.stringify(users))
+          localStorage.setItem('token', data.data.token)
+          console.log('before acknolegement')
+          console.log('name: ' + data.data.username)
+          console.log('ack: ' + data.data.acknowledged)
+          if (data.data.acknowledged === false) {
+            console.log('before showPage')
             showPage('welcome-page')
-            console.log("after acknolegement")
-          }else{
-
-            window.location.href = 'ESN Directory.html';
-
+            console.log('after acknolegement')
+          } else {
+            window.location.href = 'ESN Directory.html'
           }
-
         } else if (response.status === 201) {
           // if the username doesn't exist, creat new user and show confirmation page
           // console.log(" 201")
@@ -91,10 +88,10 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
 })
 
 document.getElementById('acknowledgeBtn').addEventListener('click', function () {
-  updateUserAcknowledgement(localStorage.getItem('userID'));
+  updateUserAcknowledgement(localStorage.getItem('userID'))
   document.getElementById('username').value = ''
   document.getElementById('password').value = ''
-  window.location.href = 'ESN Directory.html';
+  window.location.href = 'ESN Directory.html'
 })
 
 function showPage(pageId) {
@@ -142,35 +139,30 @@ function validateUserInfo(username, password) {
   }
 }
 
-
-
-
 function updateUserAcknowledgement(userId) {
   const data = {
-      id: userId, // Ensure this matches the expected field in your server-side code
-  };
+    id: userId,
+  }
 
-  fetch('/acknowledgement', { // Make sure this URL matches your server endpoint
-      method: 'PUT', // Using PUT since it's typically used for updating resources
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+  fetch('/acknowledgement', {
+    method: 'PUT', // Using PUT since it's typically used for updating resources
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
   })
-  .then(response => {
+    .then((response) => {
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok')
       }
-      return response.text(); // Assuming the server sends a plain text response
-  })
-  .then(responseText => {
-      console.log('Success:', responseText);
+      return response.text() // Assuming the server sends a plain text response
+    })
+    .then((responseText) => {
+      console.log('Success:', responseText)
       // Handle success response. Update the UI or notify the user as needed.
-  })
-  .catch((error) => {
-      console.error('Error:', error);
+    })
+    .catch((error) => {
+      console.error('Error:', error)
       // Handle errors here. Show an error message to the user, for example.
-  });
+    })
 }
-
-
