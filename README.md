@@ -180,7 +180,7 @@ Testing: Jest
 #### Users share status
 
 <details>
- <summary><code>PUT</code> <code><b>/shareStatus</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/status</b></code> <code></code></summary>
 
 ##### Parameters
 
