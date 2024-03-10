@@ -49,6 +49,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
           //const users = data.data.users
           console.log(userID)
           localStorage.setItem('userID', userID)
+          localStorage.setItem('username', username)
           //localStorage.setItem('users', JSON.stringify(users))
           localStorage.setItem('token', data.data.token)
           console.log('before acknolegement')

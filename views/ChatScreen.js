@@ -34,10 +34,11 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .catch((error) => console.error('Error fetching messages:', error))
 
-  document.getElementById('send-msg').addEventListener('click', function () {
+  document.getElementById('send-msg').addEventListener('click', async function () {
     const messageInput = document.getElementById('message-input')
     const messageText = messageInput.value.trim()
     const currentTime = new Date().toISOString()
+    const currentStatus = await getUserStatus(username)
 
     if (messageText) {
       // Create the payload
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         content: messageText,
         username: username,
         timestamp: currentTime,
-        status: 'placeholder',
+        status: currentStatus,
       }
       console.log(data)
 
@@ -70,6 +71,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })
 })
+
+function getUserStatus(username) {
+  return new Promise((resolve, reject) => {
+    fetch(`/status/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Status got successfully:', data.data.status)
+        resolve(data.data.status.status)
+      })
+      .catch((error) => {
+        console.error('Error getting status:', error)
+        reject(error)
+      })
+  })
+}
 
 function renderMSG(message) {
   //("before container");
