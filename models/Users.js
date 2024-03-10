@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     status: {
 
         type: String,
-        default: 'placeholder'
+        default: 'undefined'
     },
     role: String,
     acknowledged: {

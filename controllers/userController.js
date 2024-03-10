@@ -148,4 +148,27 @@ async function validateUser(req, res) {
     }
   }
 
-  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser};
+  async function getOneStatus(req, res) {
+    try {
+      let userStatus = await Users.findOne({username: req.params.username}, 'status');
+      res.status(200).json({data:{status: userStatus}});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('User status get server error');
+    }
+  }
+
+  async function updateOneStatus(req, res) {
+    try {
+      const { status } = req.body
+      const userFound = await Users.findOne({ username: req.params.username })
+      userFound.status = status; 
+      await userFound.save();
+      res.status(200).send('User status update successful');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('User status update server error');
+    }
+  }
+
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, getOneStatus, updateOneStatus};
