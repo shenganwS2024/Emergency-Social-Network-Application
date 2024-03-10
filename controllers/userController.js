@@ -1,6 +1,7 @@
 import Users from '../models/Users.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { io } from '../config/serverConfig.js'
 
 // // helper function to update user status to online or offline
 // async function updateUserStatus(user, isOnline) {
@@ -159,6 +160,7 @@ async function updateOneStatus(req, res) {
     const userFound = await Users.findOne({ username: req.params.username })
     userFound.status = status
     userFound.statusTime = timestamp
+    io.emit('update status', { username: userFound.username, status: userFound.status })
     await userFound.save()
     res.status(200).send('User status update successful')
   } catch (error) {

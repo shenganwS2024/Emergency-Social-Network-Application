@@ -181,6 +181,14 @@
           }
         })
 
+        socket.on('update status', function (user) {
+          const userIndex = users.findIndex((eachUser) => eachUser.username === user.username)
+
+          users[userIndex].status = user.status
+
+          displayUsers(users)
+        })
+
         document.getElementById('exit-chat').addEventListener('click', function () {
           const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
 
