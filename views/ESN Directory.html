@@ -139,21 +139,55 @@ button#send-message, button#close-chat {
         border: 1px solid #ccc;
       }
 
-      #chat-message {
-        width: calc(100% - 20px);
-        margin-bottom: 10px;
-      }
+   
 
       #chat-message {
-  flex-shrink: 0; /* Prevent textarea from shrinking */
-  margin-top: auto; /* Push textarea to the bottom */
-  width: calc(100% - 40px); /* Adjust width accounting for padding */
+  height: 150px; /* Increase height for a bigger textarea */
+  width: calc(100% - 5px); /* Adjust width if needed, already set for wider appearance */
+  padding: 10px; /* Add padding for text inside */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  resize: none; /* Optional: Prevent resizing */
 }
+
+.message {
+  background-color: #f0f0f0; /* Light gray background for messages */
+  color: #333; /* Darker text color for contrast */
+  padding: 10px;
+  margin-bottom: 10px; /* Space between messages */
+  border-radius: 8px; /* Optional: Rounded corners for messages */
+  width: 95%; /* Adjust based on preference */
+  box-sizing: border-box;
+  word-wrap: break-word; /* Ensure long words do not overflow */
+}
+
 
 button#send-message, button#close-chat {
   flex-shrink: 0; /* Prevent buttons from shrinking */
-  margin-top: 10px; /* Space between textarea and buttons */
+  margin-top: 10px; /* Space between textarea and buttons */}
+
+  .message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px; /* Space between messages */
 }
+
+.message-header {
+  display: flex;
+  justify-content: space-between; /* Sender and timestamp on opposite ends */
+  margin-bottom: 5px; /* Space above the message text */
+}
+
+.sender {
+  font-weight: bold; /* Highlight the sender */
+}
+
+
+.timestamp {
+  font-size: 0.8rem; /* Slightly smaller font for the timestamp */
+  color: #666; /* Dimmed color for less emphasis */
+}
+
+
     </style>
   </head>
   <body>
@@ -366,7 +400,7 @@ const app = document.querySelector('.modal-content')
 function openChatModal(username) {
   document.getElementById('chat-username').textContent = username;
 
-  socket.on('privateMessage', function (msg) {
+  socket.on('chat-message', function (msg) {
     renderMSG(msg)
 })
 const reciever = username
@@ -403,41 +437,52 @@ username = localStorage.getItem('username')
 }
 
 function renderMSG(message) {
-  // Ensure we find the messages container within the currently active modal
   let chatModal = document.getElementById('chat-modal'); // Ensure this ID matches your chat modal
   let msgContainer = chatModal.querySelector('.messages'); // Select the messages container within the chat modal
 
-  let senderName = message.username;
-  
-  let element = document.createElement('div');
-  element.setAttribute('class', 'message');
+  let messageElement = document.createElement('div');
+  messageElement.classList.add('message');
 
-  element.innerHTML = `
-    <div>
-      <div class="messageContainer">
-        <div class="name">${senderName + ' (' + message.status + ')'}</div>
-        <div id="time">${new Date(message.timestamp)
-          .toLocaleString('en-US', {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          })
-          .replace(/\//g, '.')
-          .replace(', ', ' ')
-          .replace(' AM', 'AM')
-          .replace(' PM', 'PM')}</div>
-      </div>
-      <div class="text">${message.content}</div>
-    </div>`;
+  // Format the timestamp
+  let formattedTimestamp = new Date(message.timestamp).toLocaleString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
 
-  msgContainer.appendChild(element); // Append the new message element to the container
+  // Construct the message header
+  let messageHeader = document.createElement('div');
+  messageHeader.classList.add('message-header');
+
+  let senderElement = document.createElement('span');
+  senderElement.classList.add('sender');
+  senderElement.textContent = message.username+ " (" + message.status + ")";
+
+
+  let timestampElement = document.createElement('span');
+  timestampElement.classList.add('timestamp');
+  timestampElement.textContent = formattedTimestamp;
+
+  // Append sender and status to the header
+  messageHeader.appendChild(senderElement);
+  // messageHeader.appendChild(statusElement);
+  messageHeader.appendChild(timestampElement);
+
+  // Construct the message body
+  let messageBody = document.createElement('div');
+  messageBody.textContent = message.content;
+
+  // Append the header and body to the message element
+  messageElement.appendChild(messageHeader);
+  messageElement.appendChild(messageBody);
+
+  // Append the message element to the container
+  msgContainer.appendChild(messageElement);
 
   // Ensure the container scrolls to show the newest message
   msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight;
 }
+
 
 function getUserStatus(username) {
   return new Promise((resolve, reject) => {
