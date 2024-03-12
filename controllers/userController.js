@@ -169,4 +169,24 @@ async function updateOneStatus(req, res) {
   }
 }
 
-export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, getOneStatus, updateOneStatus }
+async function updateChatChecked(req, res) {
+  try {
+    let active_user = req.params.active_username;
+    let passive_user = req.params.passive_username;
+    let join_or_leave = req.params.join_or_leave;
+    const roomName = [active_user, passive_user].sort().join('_');
+    if (join_or_leave === 'join') {
+      io.emit('joinPrivateRoom', { username: active_user, roomName: roomName });
+    }
+    else{
+      io.emit('leavePrivateRoom', { username: active_user, roomName: roomName });
+    }
+    res.status(200).send('User chatChecked update successful')
+  } catch (error) {
+    console.log("update check error")
+    console.error(error)
+    res.status(500).send('User status update server error')
+  }
+}
+
+export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, getOneStatus, updateOneStatus, updateChatChecked }

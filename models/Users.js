@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  //chatChecked: {user1_user2: True, user1_user4: False}
+  //const roomName = [sender, receiver].sort().join('_');
+  chatChecked: {
+    type: Map,
+    of: Boolean
+  }
 })
 
 userSchema.pre('save', async function (next) {

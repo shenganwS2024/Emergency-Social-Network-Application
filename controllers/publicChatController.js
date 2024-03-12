@@ -5,7 +5,18 @@ import {io} from '../config/serverConfig.js'
 // Function to get the latest messages from the server
 async function getLatestMessages(req, res) {
     try {
-        let messages = await Messages.find({});
+        let sender = req.params.senderName;
+        let receiver = req.params.receiverName;
+        let messages;
+        if (receiver === "public") {
+            messages = await Messages.find({receiver: receiver});
+        }
+        else {
+            messages = await Messages.find({$or: [
+                { username: sender, receiver: receiver},
+                { username: receiver, receiver: sender }
+              ]});
+        }
         
         res.status(200).json({data:{messages: messages}});
         
@@ -17,6 +28,8 @@ async function getLatestMessages(req, res) {
 
 // function to post a new message to the server
 async function postNewMessage(req,res) {
+    let sender = req.params.senderName;
+    let receiver = req.params.receiverName;
     const { username, content, timestamp,status } = req.body;
     console.log(req.body);
     try {
@@ -24,11 +37,17 @@ async function postNewMessage(req,res) {
             username:username,
             content:content,
             timestamp:timestamp,
-            status:status
+            status:status,
+            receiver: receiver
         });
-        io.emit('chat message',newMessage)
         await newMessage.save();
         console.log('Message saved:', newMessage);
+        if (receiver === "public") {
+            io.emit('chat message', newMessage)
+        }
+        else {
+            io.emit('privateMessagePostCheckChatChecked', {sender: sender, receiver: receiver, message: newMessage});
+        }
         res.status(201).send({data:{message: newMessage}});
     } catch (error) {
         console.error('Error saving message:', error);

@@ -3,7 +3,7 @@ import { } from '../controllers/userController.js'
 import express from 'express';
 const router = express.Router();
 
-router.get('/messages', getLatestMessages);
-router.post('/messages', postNewMessage);
+router.get('/messages/:senderName/:receiverName', getLatestMessages);
+router.post('/messages/:senderName/:receiverName', postNewMessage);
   
 export default router;

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- <script type = "module" src='./ChatScreen.js'></script> -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User List</title>
     <h1>ESN Directory</h1>
     <style>
+      
       body,
       html {
         height: 100%;
@@ -84,29 +86,39 @@
       }
 
       .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-      }
+  display: none; /* Keep as is to show/hide modal */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Dimmed background */
+}
 
-      .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 300px;
-        text-align: center;
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
+.modal-content {
+  background-color: #fefefe;
+  margin: 0; /* Adjusted for full-screen */
+  padding: 20px;
+  border: none; /* Remove border for full-screen modal */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  box-sizing: border-box; /* Include padding in element's total width and height */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+}
+
+#chat-message {
+  flex-shrink: 0; /* Prevent textarea from shrinking */
+  margin-top: auto; /* Push textarea to the bottom */
+  width: calc(100% - 40px); /* Adjust width accounting for padding */
+}
+
+button#send-message, button#close-chat {
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  margin-top: 10px; /* Space between textarea and buttons */
+}
 
       .status-option {
         display: block;
@@ -114,6 +126,34 @@
         padding: 10px 20px;
         font-size: 16px;
       }
+
+      .modal-content {
+        position: relative;
+      }
+
+      #message-container {
+        width: 100%;
+        height: 300px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+      }
+
+      #chat-message {
+        width: calc(100% - 20px);
+        margin-bottom: 10px;
+      }
+
+      #chat-message {
+  flex-shrink: 0; /* Prevent textarea from shrinking */
+  margin-top: auto; /* Push textarea to the bottom */
+  width: calc(100% - 40px); /* Adjust width accounting for padding */
+}
+
+button#send-message, button#close-chat {
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  margin-top: 10px; /* Space between textarea and buttons */
+}
     </style>
   </head>
   <body>
@@ -135,6 +175,21 @@
       </div>
     </div>
 
+    <div id="chat-modal" class="modal">
+      <div class="modal-content">
+        <h2>Chat with <span id="chat-username">Username</span></h2>
+        <div class="chatroom">
+          <div class = "messages">
+
+          </div>
+
+        </div>
+        <textarea id="chat-message" placeholder="Write a message..."></textarea>
+        <button id="send-message">Send</button>
+        <button id="close-chat">Back</button>
+      </div>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       // window.addEventListener('beforeunload', function (e) {
@@ -146,7 +201,12 @@
       //   e.preventDefault();
       //   socket.connect();
       // });
-
+      const socket = io('http://localhost:3000', {
+  query: {
+    token: localStorage.getItem('token'),
+  },
+})
+const app = document.querySelector('.modal-content')
       document.addEventListener('DOMContentLoaded', async () => {
         //const users = JSON.parse(localStorage.getItem('users')) || [];
         let users
@@ -230,28 +290,174 @@
           //getPreviousMsgs()
           window.location.href = 'chatroom.html'
         })
+
+        document.getElementById('send-message').addEventListener('click', async function () {
+    const messageInput = document.getElementById('chat-message')
+    const messageText = messageInput.value.trim()
+    const currentTime = new Date().toISOString()
+    
+    const username = localStorage.getItem('username')
+    const reciever = document.getElementById('chat-username').textContent
+    const currentStatus = await getUserStatus(username)
+
+    if (messageText) {
+      // Create the payload
+      const data = {
+        content: messageText,
+        username: username,
+        timestamp: currentTime,
+        status: currentStatus,
+        username: username,
+        reciever: reciever,
+
+      }
+      console.log(data)
+
+      // Send the data to the server
+      fetch(`/messages/${username}/${reciever}`, {
+        method: 'POST', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Success:', data)
+          messageInput.value = '' // Clear the input after sending
+        })
+        .catch((error) => {
+          console.error('Error:', error)
+        })
+    } else {
+      alert('Please enter a message before posting.')
+    }
+  })
       })
 
       function displayUsers(users) {
-        const userList = document.getElementById('userList')
-        userList.innerHTML = '' // Clear existing list
+    const userList = document.getElementById('userList');
+    userList.innerHTML = ''; // Clear existing list
 
-        users.sort((a, b) => {
-          if (a.onlineStatus === b.onlineStatus) {
-            return a.username.localeCompare(b.username)
-          }
-          return a.onlineStatus ? -1 : 1
-        })
+    // Sort users first by online status (online users first), then alphabetically
+    users.sort((a, b) => {
+        if (a.onlineStatus === b.onlineStatus) {
+            return a.username.localeCompare(b.username); // Sort alphabetically if online status is the same
+        }
+        return b.onlineStatus ? 1 : -1; // Sort by online status, online users first
+    });
 
-        users.forEach((user) => {
-          const userElement = document.createElement('li')
-          // Updated part: Include the status in the textContent
-          userElement.textContent = `${user.username} (${user.status})`
-          userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
-          userList.appendChild(userElement)
-        })
-      }
+    users.forEach((user) => {
+        const userElement = document.createElement('li');
+        userElement.textContent = `${user.username} (${user.status})`;
+        userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline');
+        
+        // Add click event listener to each user for opening the chat modal
+        userElement.addEventListener('click', function() {
+           updateChatStatus(localStorage.getItem('username'), user.username, 'join')
 
+            openChatModal(user.username);
+        });
+
+        userList.appendChild(userElement);
+    });
+}
+
+function openChatModal(username) {
+  document.getElementById('chat-username').textContent = username;
+
+  socket.on('privateMessage', function (msg) {
+    renderMSG(msg)
+})
+const reciever = username
+username = localStorage.getItem('username')
+ 
+  fetch(`/messages/${username}/${reciever}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const messages = data.data.messages
+      messages.forEach((message) => {
+          renderMSG(message)
+        
+      })
+    })
+    .catch((error) => console.error('Error fetching messages:', error))
+
+    document.getElementById('chat-username').textContent = reciever;
+    const chatModal = document.getElementById('chat-modal');
+    chatModal.style.display = 'block';
+
+    // Placeholder for loading message history
+    // Implement fetching message history here and display in #message-container
+
+    document.getElementById('close-chat').addEventListener('click', function() {
+      updateChatStatus(localStorage.getItem('username'), reciever, 'leave')
+        chatModal.style.display = 'none';
+        const messagesContainer = chatModal.querySelector('.messages');
+    messagesContainer.innerHTML = ''; // This line clears the chat messages
+    });
+
+    document.getElementById('send-message').addEventListener('click', function() {
+        // Implement sending message functionality here
+    });
+}
+
+function renderMSG(message) {
+  // Ensure we find the messages container within the currently active modal
+  let chatModal = document.getElementById('chat-modal'); // Ensure this ID matches your chat modal
+  let msgContainer = chatModal.querySelector('.messages'); // Select the messages container within the chat modal
+
+  let senderName = message.username;
+  
+  let element = document.createElement('div');
+  element.setAttribute('class', 'message');
+
+  element.innerHTML = `
+    <div>
+      <div class="messageContainer">
+        <div class="name">${senderName + ' (' + message.status + ')'}</div>
+        <div id="time">${new Date(message.timestamp)
+          .toLocaleString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          })
+          .replace(/\//g, '.')
+          .replace(', ', ' ')
+          .replace(' AM', 'AM')
+          .replace(' PM', 'PM')}</div>
+      </div>
+      <div class="text">${message.content}</div>
+    </div>`;
+
+  msgContainer.appendChild(element); // Append the new message element to the container
+
+  // Ensure the container scrolls to show the newest message
+  msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight;
+}
+
+function getUserStatus(username) {
+  return new Promise((resolve, reject) => {
+    fetch(`/status/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Status got successfully:', data.data.status)
+        resolve(data.data.status.status)
+      })
+      .catch((error) => {
+        console.error('Error getting status:', error)
+        reject(error)
+      })
+  })
+}
       const shareStatusButton = document.getElementById('share-status')
       const statusModal = document.getElementById('status-modal')
       const statusOptions = document.getElementsByClassName('status-option')
@@ -292,6 +498,36 @@
             console.error('Error updating status:', error)
           })
       }
+
+      async function updateChatStatus(activeUsername, passiveUsername, joinOrLeave) {
+    try {
+        // Construct the URL based on the parameters
+        const url = `/alert/${activeUsername}/${passiveUsername}/${joinOrLeave}`;
+
+        // Make a PUT request to the server
+        const response = await fetch(url, {
+            method: 'PUT'
+        });
+
+        // Check if the request was successful
+        if (response.ok) {
+            console.log('User chatChecked update successful');
+
+            // Depending on the action, emit the respective event
+            if (joinOrLeave === 'join') {
+                socket.emit('joinPrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
+            } else if (joinOrLeave === 'leave') {
+                socket.emit('leavePrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
+            }
+        } else {
+            // Handle server errors or unsuccessful requests
+            console.error('Failed to update chat status.');
+        }
+    } catch (error) {
+        // Handle errors in the request or in the execution of the function
+        console.error('Error updating chat status:', error);
+    }
+}
     </script>
   </body>
 </html>

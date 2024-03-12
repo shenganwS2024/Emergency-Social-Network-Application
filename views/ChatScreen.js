@@ -1,3 +1,5 @@
+// import {io} from '../config/serverConfig.js'
+
 console.log('localstorage token', localStorage.getItem('token'))
 const socket = io('http://localhost:3000', {
   query: {
@@ -7,7 +9,10 @@ const socket = io('http://localhost:3000', {
 const app = document.querySelector('.app')
 
 socket.on('chat message', function (msg) {
-  renderMSG(msg)
+  if (msg.receiver === 'public'){
+    renderMSG(msg)
+  }
+  
 })
 
 document.getElementById('directory-button').addEventListener('click', function () {
@@ -24,12 +29,13 @@ document.getElementById('exit-chat').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', function () {
   // Assuming you have a way to get the current user's username
   const username = localStorage.getItem('username')
-  fetch('/messages')
+  fetch(`/messages/${username}/public`)
     .then((response) => response.json())
     .then((data) => {
       const messages = data.data.messages
       messages.forEach((message) => {
-        renderMSG(message)
+          renderMSG(message)
+        
       })
     })
     .catch((error) => console.error('Error fetching messages:', error))
@@ -51,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log(data)
 
       // Send the data to the server
-      fetch('/messages', {
+      fetch(`/messages/${username}/public`, {
         method: 'POST', // or 'PUT'
         headers: {
           'Content-Type': 'application/json',
@@ -165,3 +171,4 @@ function logout() {
       window.location.href = '/'
     })
 }
+
