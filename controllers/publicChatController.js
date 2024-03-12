@@ -1,6 +1,7 @@
 import Messages from '../models/Messages.js';
+import Users from '../models/Users.js'
 import {io} from '../config/serverConfig.js'
-
+import userRoomMap from '../config/globalMap.js'
 
 // Function to get the latest messages from the server
 async function getLatestMessages(req, res) {
@@ -47,9 +48,24 @@ async function postNewMessage(req,res) {
         }
         else {
             const roomName = [sender, receiver].sort().join('_');
-            io.to(roomName).emit('privateMessage', newMessage);
+            io.emit(roomName, newMessage);
             console.log("message sent to room ",roomName)
-            io.to(roomName).emit('privateMessagePostUpdateChatChecked', {sender: sender, receiver: receiver, message: newMessage});
+            let users = userRoomMap[roomName]
+            let newValue = false;
+            if (users && users.includes(receiver)) {
+                newValue = true;
+            }
+            Users.findOneAndUpdate(
+                { username: receiver },
+                { $set: { [`chatChecked.${roomName}`]: newValue }}, 
+                { new: true }
+            ).then(updatedDocument => {
+                io.emit("alertUpdated", {roomName: roomName, checked: newValue});
+                console.log('Updated document:', updatedDocument);
+            }).catch(error => {
+                console.error('Error updating the document:', error);
+            });
+
         }
         res.status(201).send({data:{message: newMessage}});
     } catch (error) {

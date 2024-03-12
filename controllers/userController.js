@@ -2,16 +2,7 @@ import Users from '../models/Users.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { io } from '../config/serverConfig.js'
-
-// // helper function to update user status to online or offline
-// async function updateUserStatus(user, isOnline) {
-//   try {
-//     user.onlineStatus = isOnline
-//     await user.save()
-//   } catch (error) {
-//     throw error
-//   }
-// }
+import userRoomMap from '../config/globalMap.js'
 
 async function validateUser(req, res) {
   try {
@@ -176,11 +167,36 @@ async function updateChatChecked(req, res) {
     let join_or_leave = req.params.join_or_leave;
     const roomName = [active_user, passive_user].sort().join('_');
     if (join_or_leave === 'join') {
-      io.emit('joinPrivateRoom', { username: active_user, roomName: roomName });
+      console.log(`${active_user} joined room ${roomName}`);
+      if (!userRoomMap[roomName]) {
+        //userRoomMap example: userRoomMap: {userA_userB: [userA,userB], userA_userC: [userC]}
+        userRoomMap[roomName] = [];
+      }
+      userRoomMap[roomName].push(active_user);
+      const newValue = true;
+      Users.findOneAndUpdate(
+        { username: active_user },
+        { $set: { [`chatChecked.${roomName}`]: newValue }}, 
+        { new: true }
+      ).then(updatedDocument => {
+        io.emit("alertUpdated", {roomName: roomName, checked: newValue});
+        console.log('Updated document:', updatedDocument);
+      }).catch(error => {
+        console.error('Error updating the document:', error);
+      });
     }
     else{
-      io.emit('leavePrivateRoom', { username: active_user, roomName: roomName });
+      console.log(`${active_user} left room ${roomName}`);
+      let users = userRoomMap[roomName];
+      if (users && users.includes(active_user)) {
+        users.splice(users.indexOf(active_user), 1);
+        console.log(`User ${active_user} left private room ${roomName}`)
+        if (users.length === 0) {
+          delete userRoomMap[roomName];
+        }
+      }
     }
+    console.log("current userRoomMap: ",userRoomMap)
     res.status(200).send('User chatChecked update successful')
   } catch (error) {
     console.log("update check error")

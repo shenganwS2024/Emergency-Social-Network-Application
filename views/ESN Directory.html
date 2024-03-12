@@ -398,15 +398,17 @@ const app = document.querySelector('.modal-content')
 }
 
 function openChatModal(username) {
-  socket.off('privateMessage');
   document.getElementById('chat-username').textContent = username;
-  socket.on('privateMessage', function (msg) {
+  
+  const receiver = username;
+  username = localStorage.getItem('username')
+  const roomName = [username, receiver].sort().join('_');
+  socket.off(roomName);
+  socket.on(roomName, function (msg) {
+    console.log("socket listening on", roomName, " with msg: ", msg.content)
     renderMSG(msg)
   })
-const reciever = username
-username = localStorage.getItem('username')
- 
-  fetch(`/messages/${username}/${reciever}`)
+  fetch(`/messages/${username}/${receiver}`)
     .then((response) => response.json())
     .then((data) => {
       const messages = data.data.messages
@@ -417,7 +419,7 @@ username = localStorage.getItem('username')
     })
     .catch((error) => console.error('Error fetching messages:', error))
 
-    document.getElementById('chat-username').textContent = reciever;
+    document.getElementById('chat-username').textContent = receiver;
     const chatModal = document.getElementById('chat-modal');
     chatModal.style.display = 'block';
 
@@ -425,7 +427,7 @@ username = localStorage.getItem('username')
     // Implement fetching message history here and display in #message-container
 
     document.getElementById('close-chat').addEventListener('click', function() {
-      updateChatStatus(localStorage.getItem('username'), reciever, 'leave')
+      updateChatStatus(localStorage.getItem('username'), receiver, 'leave')
         chatModal.style.display = 'none';
         const messagesContainer = chatModal.querySelector('.messages');
     messagesContainer.innerHTML = ''; // This line clears the chat messages
@@ -560,11 +562,11 @@ function getUserStatus(username) {
             console.log('User chatChecked update successful');
 
             // Depending on the action, emit the respective event
-            if (joinOrLeave === 'join') {
-                socket.emit('joinPrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
-            } else if (joinOrLeave === 'leave') {
-                socket.emit('leavePrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
-            }
+            // if (joinOrLeave === 'join') {
+            //     socket.emit('joinPrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
+            // } else if (joinOrLeave === 'leave') {
+            //     socket.emit('leavePrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
+            // }
         } else {
             // Handle server errors or unsuccessful requests
             console.error('Failed to update chat status.');

@@ -37,52 +37,6 @@ const socketConfig = (server) => {
       socket.emit('updateInfo', `${socket_username} login`)
     }
 
-    socket.on('joinPrivateRoom', ({ username, roomName }) => {
-      socket.join(roomName);
-      if (!userRoomMap[roomName]) {
-        userRoomMap[roomName] = [];
-      }
-      userRoomMap[roomName].push(socket_username);
-      console.log(`${socket_username} joined room ${roomName}`);
-
-      const newValue = true;
-      Users.findOneAndUpdate(
-        { username: username },
-        { $set: { [`chatChecked.${roomName}`]: newValue }}, 
-        { new: true }
-      ).then(updatedDocument => {
-        console.log('Updated document:', updatedDocument);
-      }).catch(error => {
-        console.error('Error updating the document:', error);
-      });
-    });
-
-    socket.on('leavePrivateRoom', ({ username, roomName }) => {
-      socket.leave(roomName);
-      let users = userRoomMap[roomName];
-      if (users && users.includes(socket_username)) {
-        users.splice(users.indexOf(socket_username), 1);
-        console.log(`User ${socket_username} left private room ${roomName}`)
-        if (users.length === 0) {
-          delete userRoomMap[roomName];
-        }
-      }
-    });
-
-    // socket.on('privateMessagePostUpdateChatChecked', ({ sender, receiver, message }) => {
-    //   const roomName = [sender, receiver].sort().join('_');
-    //   let users = userRoomMap[roomName];
-    //   //if (users.includes(socket_username) && users.includes(socket_username))
-      
-    //   console.log("reached privateMessagePostUpdateChatChecked")
-    // });
-
-    // socket.on('privateMessage', (newMessage) => {
-    //   //if (users.includes(socket_username) && users.includes(socket_username))
-      
-    //   console.log("reached privateMessage", newMessage)
-    // });
-
     socket.on('disconnect', () => {
       console.log(`User ${socket_username} disconnected`)
       for (const [room, users] of Object.entries(userRoomMap)) {
