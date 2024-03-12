@@ -345,7 +345,7 @@ const app = document.querySelector('.modal-content')
         reciever: reciever,
 
       }
-      console.log(data)
+      // console.log(data)
 
       // Send the data to the server
       fetch(`/messages/${username}/${reciever}`, {
@@ -389,7 +389,7 @@ const app = document.querySelector('.modal-content')
         // Add click event listener to each user for opening the chat modal
         userElement.addEventListener('click', function() {
            updateChatStatus(localStorage.getItem('username'), user.username, 'join')
-
+            
             openChatModal(user.username);
         });
 
@@ -399,8 +399,9 @@ const app = document.querySelector('.modal-content')
 
 function openChatModal(username) {
   document.getElementById('chat-username').textContent = username;
-
-  socket.on('chat-message', function (msg) {
+  
+  socket.on('privateMessage', function (msg) {
+    console.log("listening to privateMsg", msg.content)
     renderMSG(msg)
 })
 const reciever = username
@@ -437,6 +438,7 @@ username = localStorage.getItem('username')
 }
 
 function renderMSG(message) {
+  
   let chatModal = document.getElementById('chat-modal'); // Ensure this ID matches your chat modal
   let msgContainer = chatModal.querySelector('.messages'); // Select the messages container within the chat modal
 

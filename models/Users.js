@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   chatChecked: {
     type: Map,
     of: Boolean
-  }
+  },
 })
 
 userSchema.pre('save', async function (next) {

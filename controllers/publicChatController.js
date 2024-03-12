@@ -41,12 +41,15 @@ async function postNewMessage(req,res) {
             receiver: receiver
         });
         await newMessage.save();
-        console.log('Message saved:', newMessage);
+        //console.log('Message saved:', newMessage);
         if (receiver === "public") {
             io.emit('chat message', newMessage)
         }
         else {
-            io.emit('privateMessagePostCheckChatChecked', {sender: sender, receiver: receiver, message: newMessage});
+            const roomName = [sender, receiver].sort().join('_');
+            io.to(roomName).emit('privateMessage', newMessage);
+            console.log("message sent to room ",roomName)
+            io.to(roomName).emit('privateMessagePostUpdateChatChecked', {sender: sender, receiver: receiver, message: newMessage});
         }
         res.status(201).send({data:{message: newMessage}});
     } catch (error) {
