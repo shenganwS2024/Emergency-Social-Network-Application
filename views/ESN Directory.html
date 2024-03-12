@@ -398,12 +398,13 @@ const app = document.querySelector('.modal-content')
 }
 
 function openChatModal(username) {
+  socket.off('privateMessage');
   document.getElementById('chat-username').textContent = username;
-  
+  console.log("sup?")
   socket.on('privateMessage', function (msg) {
     console.log("listening to privateMsg", msg.content)
     renderMSG(msg)
-})
+  })
 const reciever = username
 username = localStorage.getItem('username')
  
