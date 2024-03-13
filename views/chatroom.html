@@ -43,6 +43,72 @@
     <!-- make the socket client library and  avaliable to handle real-time messaging -->
     <script src="socket.io/socket.io.js"></script> 
     <script src="ChatScreen.js"></script>
+    <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const socket = io('http://localhost:3000', {
+        query: {
+            token: localStorage.getItem('token'),
+        },
+    });
+
+    // Listen to the 'alertUpdated' event from the server
+    socket.on('alertUpdated', (data) => {
+        const currentUserString = localStorage.getItem('currentUser');
+        if (!currentUserString) return;
+
+        let currentUser = JSON.parse(currentUserString);
+        let username = currentUser.username;
+        let secondName = data.sender === username ? data.receiver : data.sender;
+        const roomName = [username, secondName].sort().join('_');
+
+        // Update the chatChecked property based on the data from the socket event
+        if(currentUser.chatChecked[roomName] !== undefined) {
+            currentUser.chatChecked[roomName] = data.checked;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateDirectoryAlertIcon();
+        }
+    });
+
+    // Function to update the directory button with an alert icon if needed
+    function updateDirectoryAlertIcon() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser || !currentUser.chatChecked) return;
+
+        const hasUnreadMessages = Object.values(currentUser.chatChecked).includes(false);
+        const directoryButton = document.getElementById('directory-button');
+        if (!directoryButton) return;
+
+        // Ensure the button position is set to relative to position the alert icon correctly
+        directoryButton.style.position = 'relative';
+
+        let alertIcon = directoryButton.querySelector('.alert-icon');
+
+        if (hasUnreadMessages) {
+            if (!alertIcon) {
+                alertIcon = document.createElement('span');
+                alertIcon.textContent = '🚨';
+                alertIcon.style.color = 'red';
+                alertIcon.style.position = 'absolute';
+                alertIcon.style.right = '0';
+                alertIcon.style.top = '0';
+                alertIcon.classList.add('alert-icon');
+                directoryButton.appendChild(alertIcon);
+            }
+        } else {
+            if (alertIcon) {
+                directoryButton.removeChild(alertIcon);
+            }
+        }
+    }
+
+    // Initial check to display the alert icon if needed
+    updateDirectoryAlertIcon();
+
+    // Your existing DOMContentLoaded logic...
+});
+        </script>
+        
 
 
     <style>

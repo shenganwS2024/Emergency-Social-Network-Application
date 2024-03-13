@@ -1,3 +1,5 @@
+// import {io} from '../config/serverConfig.js'
+
 console.log('localstorage token', localStorage.getItem('token'))
 const socket = io('http://localhost:3000', {
   query: {
@@ -7,7 +9,10 @@ const socket = io('http://localhost:3000', {
 const app = document.querySelector('.app')
 
 socket.on('chat message', function (msg) {
-  renderMSG(msg)
+  if (msg.receiver === 'public'){
+    renderMSG(msg)
+  }
+  
 })
 
 document.getElementById('directory-button').addEventListener('click', function () {
@@ -24,20 +29,22 @@ document.getElementById('exit-chat').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', function () {
   // Assuming you have a way to get the current user's username
   const username = localStorage.getItem('username')
-  fetch('/messages')
+  fetch(`/messages/${username}/public`)
     .then((response) => response.json())
     .then((data) => {
       const messages = data.data.messages
       messages.forEach((message) => {
-        renderMSG(message)
+          renderMSG(message)
+        
       })
     })
     .catch((error) => console.error('Error fetching messages:', error))
 
-  document.getElementById('send-msg').addEventListener('click', function () {
+  document.getElementById('send-msg').addEventListener('click', async function () {
     const messageInput = document.getElementById('message-input')
     const messageText = messageInput.value.trim()
     const currentTime = new Date().toISOString()
+    const currentStatus = await getUserStatus(username)
 
     if (messageText) {
       // Create the payload
@@ -45,12 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
         content: messageText,
         username: username,
         timestamp: currentTime,
-        status: 'placeholder',
+        status: currentStatus,
       }
       console.log(data)
 
       // Send the data to the server
-      fetch('/messages', {
+      fetch(`/messages/${username}/public`, {
         method: 'POST', // or 'PUT'
         headers: {
           'Content-Type': 'application/json',
@@ -70,6 +77,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })
 })
+
+function getUserStatus(username) {
+  return new Promise((resolve, reject) => {
+    fetch(`/status/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Status got successfully:', data.data.status)
+        resolve(data.data.status.status)
+      })
+      .catch((error) => {
+        console.error('Error getting status:', error)
+        reject(error)
+      })
+  })
+}
 
 function renderMSG(message) {
   //("before container");
@@ -144,3 +171,4 @@ function logout() {
       window.location.href = '/'
     })
 }
+
