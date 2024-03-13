@@ -60,7 +60,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
             showPage('welcome-page')
             console.log('after acknolegement')
           } else {
-            window.location.href = 'ESN Directory.html'
+            window.location.href = 'ESN_Directory.html'
           }
         } else if (response.status === 201) {
           // if the username doesn't exist, creat new user and show confirmation page
