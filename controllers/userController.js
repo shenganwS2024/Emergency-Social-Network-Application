@@ -4,6 +4,27 @@ import jwt from 'jsonwebtoken'
 import { io } from '../config/serverConfig.js'
 import userRoomMap from '../config/globalMap.js'
 
+
+function validateUserInfo(username, password) {
+  let bannedUsernames = ''
+  fetch('../views/bannedUsernames.json')
+    .then((response) => response.json())
+    .then((data) => {
+      bannedUsernames = data.reservedUsernames
+    })
+    .catch((error) => console.error('Error loading JSON file:', error))
+  username = username.toLowerCase()
+  if (username.length < 3 || bannedUsernames.includes(username)) {
+    alert('Username should be at least 3 characters and not banned ')
+    return false
+  } else if (password.length < 4) {
+    alert('Password should be at least 4 characters long')
+    return false
+  } else {
+    return true
+  }
+}  
+
 async function validateUser(req, res) {
   try {
     const { username, password, status, role } = req.body
@@ -66,6 +87,9 @@ async function validateUser(req, res) {
 async function registerUser(req, res) {
   try {
     const { username, password, status, role } = req.body
+    if(validateUserInfo(username, password) !== true) {
+      return res.status(500).send('Invalid username or password')
+    }
     const user = new Users({ username, password, status, role })
     await user.save()
     let token
@@ -179,7 +203,7 @@ async function updateChatChecked(req, res) {
         { $set: { [`chatChecked.${roomName}`]: newValue }}, 
         { new: true }
       ).then(updatedDocument => {
-        io.emit("alertUpdated", {receiver:passive_user, checked: newValue});
+        io.emit("alertUpdated", {sender: active_user, receiver:passive_user, checked: newValue});
         console.log('Updated document:', updatedDocument);
       }).catch(error => {
         console.error('Error updating the document:', error);

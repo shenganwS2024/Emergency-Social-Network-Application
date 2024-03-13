@@ -365,11 +365,17 @@
 
         socket.on('alertUpdated', (data) => {
           console.log('current user', currentUser)
-
+          let username = currentUser.username;
+          let secondName = data.sender;
+          if (username === secondName) {
+            secondName = data.receiver;
+          }
+          const roomName = [username, secondName].sort().join('_');
           console.log('currentUser.chatChecked', currentUser.chatChecked)
-          console.log(currentUser.chatChecked[[currentUser.username, data.receiver].sort().join('_')])
-        if(currentUser.chatChecked[[currentUser.username, data.receiver].sort().join('_')]) {
-          currentUser.chatChecked[[currentUser.username, data.receiver].sort().join('_')] = data.status
+          console.log("roomName", roomName)
+          console.log(currentUser.chatChecked[roomName])
+        if(currentUser.chatChecked[roomName]!==undefined) {
+          currentUser.chatChecked[roomName] = data.checked
           console.log('alertUpdated2')
           displayUsers(users, currentUser)
         }

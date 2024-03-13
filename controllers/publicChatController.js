@@ -60,7 +60,7 @@ async function postNewMessage(req,res) {
                 { $set: { [`chatChecked.${roomName}`]: newValue }}, 
                 { new: true }
             ).then(updatedDocument => {
-                io.emit("alertUpdated", {receiver: receiver, checked: newValue});
+                io.emit("alertUpdated", {sender: sender, receiver: receiver, checked: newValue});
                 console.log('Updated document:', updatedDocument);
             }).catch(error => {
                 console.error('Error updating the document:', error);
