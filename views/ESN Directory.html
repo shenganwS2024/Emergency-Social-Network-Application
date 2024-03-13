@@ -365,20 +365,13 @@
         })
 
         socket.on('alertUpdated', (data) => {
-          console.log('current user', currentUser)
-          let username = currentUser.username;
-          let secondName = data.sender;
-          if (username === secondName) {
-            secondName = data.receiver;
-          }
-          const roomName = [username, secondName].sort().join('_');
+          const roomName = [data.sender, data.receiver].sort().join('_');
           console.log('currentUser.chatChecked', currentUser.chatChecked)
           console.log("roomName", roomName)
-          console.log(currentUser.chatChecked[roomName])
         if(currentUser.chatChecked[roomName]!==undefined) {
           currentUser.chatChecked[roomName] = data.checked
           localStorage.setItem('currentUser', JSON.stringify(currentUser))
-          console.log('alertUpdated2')
+          console.log("currentUser.chatChecked2", localStorage.getItem('currentUser').chatChecked)
           displayUsers(users, currentUser)
         }
       })
