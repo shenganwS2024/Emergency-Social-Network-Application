@@ -1,8 +1,23 @@
-import Users from '../models/Users.js'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { io } from '../config/serverConfig.js'
-import userRoomMap from '../config/globalMap.js'
+
+import Users from '../models/Users.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import reservedUsernames from '../views/bannedUsernames.json';
+
+async function validateUserInfo(username, password) {
+  let bannedUsernames = reservedUsernames.reservedUsernames;
+
+  username = username.toLowerCase();
+
+  if (username.length < 3 || bannedUsernames.includes(username)) {
+    return false;
+  } else if (password.length < 4) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 
 
 function validateUserInfo(username, password) {
@@ -86,6 +101,7 @@ async function validateUser(req, res) {
 
 async function registerUser(req, res) {
   try {
+    
     const { username, password, status, role } = req.body
     if(validateUserInfo(username, password) !== true) {
       return res.status(500).send('Invalid username or password')
@@ -94,6 +110,7 @@ async function registerUser(req, res) {
     await user.save()
     let token
     try {
+
       //Creating jwt token
       token = jwt.sign(
         {
@@ -107,6 +124,7 @@ async function registerUser(req, res) {
     } catch (err) {
       console.log(err)
       return res.status(500).send('Error creating token')
+
     }
     res.status(201).json({ data: { token: token, userID: user.id } })
   } catch (error) {
@@ -229,4 +247,5 @@ async function updateChatChecked(req, res) {
   }
 }
 
-export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, getOneStatus, updateOneStatus, updateChatChecked }
+
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked};
