@@ -1,7 +1,7 @@
 // import {io} from '../config/serverConfig.js'
 
 console.log('localstorage token', localStorage.getItem('token'))
-const socket = io('http://localhost:3000', {
+const socket = io('https://s24esnb2.onrender.com', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -9,10 +9,9 @@ const socket = io('http://localhost:3000', {
 const app = document.querySelector('.app')
 
 socket.on('chat message', function (msg) {
-  if (msg.receiver === 'public'){
+  if (msg.receiver === 'public') {
     renderMSG(msg)
   }
-  
 })
 
 document.getElementById('directory-button').addEventListener('click', function () {
@@ -34,8 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then((data) => {
       const messages = data.data.messages
       messages.forEach((message) => {
-          renderMSG(message)
-        
+        renderMSG(message)
       })
     })
     .catch((error) => console.error('Error fetching messages:', error))
@@ -171,4 +169,3 @@ function logout() {
       window.location.href = '/'
     })
 }
-
