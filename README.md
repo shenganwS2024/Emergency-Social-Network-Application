@@ -83,7 +83,7 @@ Testing: Jest
 <details>
  <summary><code>POST</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to post new message)</code></summary>
 
-##### Parameters: e.g./messages/${userA}/${userB}
+##### Parameters: e.g./messages/{userA}/{userB}
 
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
@@ -117,7 +117,7 @@ Testing: Jest
 <details>
  <summary><code>GET</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to get messages)</code></summary>
 
-##### Parameters: e.g./messages/${userA}/${userB}
+##### Parameters: e.g./messages/{userA}/{userB}
 
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
@@ -226,6 +226,16 @@ Testing: Jest
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
 > | username  | required  | string    | the user that we want status from     |
+>
+> 
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | timestamp  | required  | Date      | time when updating         |
+> | status     | required  | string    | status for updating         |
+
+
 
 ##### Responses
 
@@ -242,9 +252,9 @@ Testing: Jest
 #### Alert User for notification
 
 <details>
- <summary><code>PUT</code> <code><b>//alert/:active_username/:passive_username/:join_or_leave</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/alert/:active_username/:passive_username/:join_or_leave</b></code> <code></code></summary>
 
-##### Parameters: e.g. /alert/${userA}/${userB}/‘join'
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
 > | active_username  | required  | string    | the user that send the message     |
