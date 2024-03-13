@@ -244,6 +244,7 @@
           const data = await userResponse.json()
           users = data.data.users
           currentUser = users.find((user) => user.username === localStorage.getItem('username'))
+          localStorage.setItem('currentUser', JSON.stringify(currentUser))
 
           console.log('users: ' + users)
           displayUsers(users, currentUser)
@@ -376,6 +377,7 @@
           console.log(currentUser.chatChecked[roomName])
         if(currentUser.chatChecked[roomName]!==undefined) {
           currentUser.chatChecked[roomName] = data.checked
+          localStorage.setItem('currentUser', JSON.stringify(currentUser))
           console.log('alertUpdated2')
           displayUsers(users, currentUser)
         }
