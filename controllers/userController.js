@@ -1,6 +1,21 @@
 import Users from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import reservedUsernames from '../views/bannedUsernames.json';
+
+async function validateUserInfo(username, password) {
+  let bannedUsernames = reservedUsernames.reservedUsernames;
+
+  username = username.toLowerCase();
+
+  if (username.length < 3 || bannedUsernames.includes(username)) {
+    return false;
+  } else if (password.length < 4) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 // helper function to update user status to online or offline
 async function updateUserStatus(user, isOnline) { 
@@ -77,6 +92,9 @@ async function validateUser(req, res) {
   async function registerUser(req, res) {
     try {
       const { username, password, status, role } = req.body
+      if(validateUserInfo(username, password) !== true) {
+        return res.status(500).send('Invalid username or password')
+      }
       const user = new Users({ username, password, status, role })
       await user.save()
       let token;
@@ -148,4 +166,4 @@ async function validateUser(req, res) {
     }
   }
 
-  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser};
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo};
