@@ -2,10 +2,11 @@
 import Users from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { io } from '../config/serverConfig.js'
+import userRoomMap from '../config/globalMap.js'
 // import reservedUsernames from '../views/bannedUsernames.json' ;
-import { createRequire } from "module"; // Bring in the ability to create the 'require' method
-const require = createRequire(import.meta.url); // construct the require method
-const reservedUsernames = require("../views/bannedUsernames.json")
+import reservedUsernames from '../views/bannedUsernames.json' assert { type: 'json' };
+
 
 async function validateUserInfo(username, password) {
   let bannedUsernames = reservedUsernames.reservedUsernames;
@@ -83,16 +84,14 @@ async function validateUser(req, res) {
 
 async function registerUser(req, res) {
   try {
-    
     const { username, password, status, role } = req.body
-    if(validateUserInfo(username, password) !== true) {
+    if(validateUserInfo(username, password) === false) {
       return res.status(500).send('Invalid username or password')
     }
     const user = new Users({ username, password, status, role })
     await user.save()
     let token
     try {
-
       //Creating jwt token
       token = jwt.sign(
         {
@@ -106,7 +105,6 @@ async function registerUser(req, res) {
     } catch (err) {
       console.log(err)
       return res.status(500).send('Error creating token')
-
     }
     res.status(201).json({ data: { token: token, userID: user.id } })
   } catch (error) {
@@ -228,6 +226,5 @@ async function updateChatChecked(req, res) {
     res.status(500).send('User status update server error')
   }
 }
-
 
   export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked};

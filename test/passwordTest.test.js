@@ -1,5 +1,6 @@
 import { validateUserInfo } from '../controllers/userController';
 
+
 describe('Test Cases to validate password rule', () => {
     it('Password is shorter than required', async () => {
       const username = 'testuser';
