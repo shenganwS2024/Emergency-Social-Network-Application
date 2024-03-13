@@ -8,6 +8,7 @@ import userRoomMap from '../config/globalMap.js'
 import reservedUsernames from '../views/bannedUsernames.json' assert { type: 'json' };
 
 
+
 async function validateUserInfo(username, password) {
   let bannedUsernames = reservedUsernames.reservedUsernames;
 
