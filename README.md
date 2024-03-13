@@ -81,15 +81,25 @@ Testing: Jest
 #### New Post
 
 <details>
- <summary><code>POST</code> <code><b>/messages</b></code> <code>(Allows citizens to post new message to the system)</code></summary>
+ <summary><code>POST</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to post new message)</code></summary>
 
-##### Parameters
+##### Parameters: e.g./messages/${userA}/${userB}
 
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
-> | username  | required  | string    | User's unique username      |
-> | content   | required  | string    | User's post content         |
-> | timeStamp | required  | Date      | time when posting           |
+> | senderName  | required  | string    | sender's unique username      |
+> | receiverName   | required  | string    | receiver 's unique username        |
+>
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username   | required  | string    | sender's name          |
+> | content    | required  | string    | message content for posting        |
+> | timestamp  | required  | Date      | time when posting         |
+> | status     | required  | string    | status when posting         |
+> | receiver   | required  | string    | receiver's name        |
 
 ##### Responses
 
@@ -105,9 +115,14 @@ Testing: Jest
 #### All Messages
 
 <details>
- <summary><code>GET</code> <code><b>/messages</b></code> <code>(Allows citizens to get all the previous messages)</code></summary>
+ <summary><code>GET</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to get messages)</code></summary>
 
-##### Parameters
+##### Parameters: e.g./messages/${userA}/${userB}
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | senderName  | required  | string    | sender's unique username      |
+> | receiverName   | required  | string    | receiver 's unique username        |
 
 
 ##### Responses
@@ -136,6 +151,31 @@ Testing: Jest
 </details>
 
 ---
+
+#### status
+
+<details>
+ <summary><code>GET</code> <code><b>/status/:username</b></code> <code>(Allows the information fetch for all users)</code></summary>
+
+
+##### Parameters: e.g./status/${userA}
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that we want status from     |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get user status successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+
 
 #### PUT Requests
 
@@ -177,13 +217,15 @@ Testing: Jest
 
 ---
 
-#### Users share status
+#### Update users share status
 
 <details>
- <summary><code>PUT</code> <code><b>/status</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/status/:username</b></code> <code></code></summary>
 
-##### Parameters
-
+##### Parameters: e.g. /status/${userA}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that we want status from     |
 
 ##### Responses
 
@@ -191,6 +233,29 @@ Testing: Jest
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `User status updated successfully`                   | 
 > | `404`     | `text/plain;charset=UTF-8`   | `User not found during status update`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+</details>
+
+---
+
+
+#### Alert User for notification
+
+<details>
+ <summary><code>PUT</code> <code><b>//alert/:active_username/:passive_username/:join_or_leave</b></code> <code></code></summary>
+
+##### Parameters: e.g. /alert/${userA}/${userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | active_username  | required  | string    | the user that send the message     |
+> | passive_username  | required  | string    | the user that receive the message     |
+> | join_or_leave  | required  | string    | to show or make the alert disappear     |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `User check updated successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
 </details>
 
