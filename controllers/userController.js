@@ -179,7 +179,7 @@ async function updateChatChecked(req, res) {
         { $set: { [`chatChecked.${roomName}`]: newValue }}, 
         { new: true }
       ).then(updatedDocument => {
-        io.emit("alertUpdated", {roomName: roomName, checked: newValue});
+        io.emit("alertUpdated", {receiver:passive_user, checked: newValue});
         console.log('Updated document:', updatedDocument);
       }).catch(error => {
         console.error('Error updating the document:', error);

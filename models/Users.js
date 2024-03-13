@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   //const roomName = [sender, receiver].sort().join('_');
   chatChecked: {
     type: Map,
-    of: Boolean
+    of: Boolean, 
   },
 })
 
