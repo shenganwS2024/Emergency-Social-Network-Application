@@ -1,14 +1,5 @@
 import { validateUserInfo } from '../controllers/userController';
 
-
-// Use your test URI here
-//const TestDBUri = 'mongodb+srv://yus2:1111@fse.dty3o9p.mongodb.net/ESNTestDB';
-//
-//beforeAll(async () => {
-//    await DBConnection.getInstance(TestDBUri);
-//});
-
-
 describe('Test Cases to validate username rule', () => {
     it('Valid username', async () => {
         const username = 'testuser';
@@ -52,10 +43,3 @@ describe('Test Cases to validate username rule', () => {
       expect(result).toBe(true);
   });
 });
-
-//afterAll(async () => {
-//    // clean the database
-//    await mongoose.connection.db.dropDatabase();
-//    await DBConnection.close();
-//});
-

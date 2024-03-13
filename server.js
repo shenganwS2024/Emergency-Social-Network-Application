@@ -9,10 +9,15 @@ import DBConnection from './config/database.js';
 app.use(express.json());
 app.use(express.static('views'));
 
-//const DBUri = 'mongodb+srv://yus2:1111@fse.dty3o9p.mongodb.net/ESN';
-//DBConnection.getInstance(DBUri).then((connection) => {
-//    console.log('Database is connected');
-//});
+
+
+
+if (process.env.NODE_ENV !== 'test') {
+    const DBUri = 'mongodb+srv://yus2:1111@fse.dty3o9p.mongodb.net/ESN';
+    DBConnection.getInstance(DBUri).then((connection) => {
+    console.log('Database is connected');
+    });
+  }
 
 //Configuration for session management
 app.use(userRoutes);
