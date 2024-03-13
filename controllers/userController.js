@@ -2,7 +2,10 @@
 import Users from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import reservedUsernames from '../views/bannedUsernames.json';
+// import reservedUsernames from '../views/bannedUsernames.json' ;
+import { createRequire } from "module"; // Bring in the ability to create the 'require' method
+const require = createRequire(import.meta.url); // construct the require method
+const reservedUsernames = require("../views/bannedUsernames.json")
 
 async function validateUserInfo(username, password) {
   let bannedUsernames = reservedUsernames.reservedUsernames;
@@ -18,27 +21,6 @@ async function validateUserInfo(username, password) {
   }
 }
 
-
-
-function validateUserInfo(username, password) {
-  let bannedUsernames = ''
-  fetch('../views/bannedUsernames.json')
-    .then((response) => response.json())
-    .then((data) => {
-      bannedUsernames = data.reservedUsernames
-    })
-    .catch((error) => console.error('Error loading JSON file:', error))
-  username = username.toLowerCase()
-  if (username.length < 3 || bannedUsernames.includes(username)) {
-    alert('Username should be at least 3 characters and not banned ')
-    return false
-  } else if (password.length < 4) {
-    alert('Password should be at least 4 characters long')
-    return false
-  } else {
-    return true
-  }
-}  
 
 async function validateUser(req, res) {
   try {
