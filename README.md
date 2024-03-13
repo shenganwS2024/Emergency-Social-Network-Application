@@ -158,7 +158,7 @@ Testing: Jest
  <summary><code>GET</code> <code><b>/status/:username</b></code> <code>(Allows the information fetch for all users)</code></summary>
 
 
-##### Parameters: e.g./status/${userA}
+##### Parameters: e.g./status/{userA}
 
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
