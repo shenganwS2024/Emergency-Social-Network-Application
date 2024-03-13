@@ -228,7 +228,7 @@
       //   e.preventDefault();
       //   socket.connect();
       // });
-      const socket = io('http://localhost:3000', {
+      const socket = io('https://s24esnb2.onrender.com', {
         query: {
           token: localStorage.getItem('token'),
         },
@@ -365,30 +365,24 @@
         })
 
         socket.on('alertUpdated', (data) => {
-          const roomName = [data.sender, data.receiver].sort().join('_');
-        if(currentUser.chatChecked[roomName]!==undefined) {
-          if (data.checked) {
-            if (data.sender === currentUser.username) {
-              currentUser.chatChecked[roomName] = data.checked
+          const roomName = [data.sender, data.receiver].sort().join('_')
+          if (currentUser.chatChecked[roomName] !== undefined) {
+            if (data.checked) {
+              if (data.sender === currentUser.username) {
+                currentUser.chatChecked[roomName] = data.checked
+              }
+            } else {
+              if (data.receiver === currentUser.username) {
+                currentUser.chatChecked[roomName] = data.checked
+              }
             }
+            localStorage.setItem('currentUser', JSON.stringify(currentUser))
+            displayUsers(users, currentUser)
           }
-          else{
-            if (data.receiver === currentUser.username) {
-              currentUser.chatChecked[roomName] = data.checked
-            }
-          }
-          localStorage.setItem('currentUser', JSON.stringify(currentUser))
-          displayUsers(users, currentUser)
-        }
-      })
-      
-      
-      
+        })
       })
 
-      
       function displayUsers(users, currentUser) {
-        
         const userList = document.getElementById('userList')
         userList.innerHTML = '' // Clear existing list
 
