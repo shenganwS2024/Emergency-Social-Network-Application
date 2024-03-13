@@ -366,7 +366,8 @@
 
         socket.on('alertUpdated', (data) => {
           const roomName = [data.sender, data.receiver].sort().join('_')
-          if (currentUser.chatChecked[roomName] !== undefined) {
+
+          if (currentUser.chatChecked !== undefined && currentUser.chatChecked[roomName] !== undefined) {
             if (data.checked) {
               if (data.sender === currentUser.username) {
                 currentUser.chatChecked[roomName] = data.checked
@@ -376,13 +377,27 @@
                 currentUser.chatChecked[roomName] = data.checked
               }
             }
-            localStorage.setItem('currentUser', JSON.stringify(currentUser))
-            displayUsers(users, currentUser)
+          } else {
+            if (currentUser.chatChecked === undefined && data.checked === false) {
+              if (data.receiver === currentUser.username) {
+                currentUser.chatChecked = {}
+                currentUser.chatChecked[roomName] = false
+                console.log('new user', currentUser.chatChecked)
+              }
+            } else if (currentUser.chatChecked && data.checked === false) {
+              if (data.receiver === currentUser.username) {
+                currentUser.chatChecked[roomName] = false
+              }
+            }
           }
+          localStorage.setItem('currentUser', JSON.stringify(currentUser))
+          displayUsers(users, currentUser)
         })
       })
 
       function displayUsers(users, currentUser) {
+        console.log('inside displayUser', currentUser.chatChecked)
+
         const userList = document.getElementById('userList')
         userList.innerHTML = '' // Clear existing list
 
@@ -439,9 +454,18 @@
         const receiver = username
         username = localStorage.getItem('username')
         const roomName = [username, receiver].sort().join('_')
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+        if (currentUser.chatChecked === undefined) {
+          console.log('current user ', currentUser)
+          currentUser.chatChecked = {}
+          console.log('current user2 ', currentUser.chatChecked)
+        }
+        currentUser.chatChecked[roomName] = true
+        localStorage.setItem('currentUser', JSON.stringify(currentUser))
 
         socket.on(roomName, function (msg) {
           console.log('socket listening on', roomName, ' with msg: ', msg.content)
+
           renderMSG(msg)
         })
         fetch(`/messages/${username}/${receiver}`)
