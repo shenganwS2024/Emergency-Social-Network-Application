@@ -6,7 +6,8 @@ export default {
     '^.+\\.(js|jsx)$': 'babel-jest',
   },
   testMatch: [
-    "**/test/**/*.js",
+    "**/tests/unit/**/*.test.js",
+    "**/tests/integration/**/*.test.js"
   ],
   // Additional configuration...
 };
