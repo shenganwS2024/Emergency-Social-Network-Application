@@ -1,4 +1,4 @@
-import { validateUserInfo } from '../controllers/userController';
+import { validateUserInfo } from '../../controllers/userController';
 
 
 describe('Test Cases to validate password rule', () => {

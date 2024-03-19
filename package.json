@@ -5,7 +5,9 @@
   "main": "App.js",
   "scripts": {
     "start": "NODE_ENV=production node app.js",
-    "test": "NODE_ENV=test jest"
+    "test": "NODE_ENV=test jest",
+    "test:unit": "NODE_ENV=test jest tests/unit --coverage",
+    "test:integration": "NODE_ENV=test jest tests/integration"
   },
   "repository": {
     "type": "git",

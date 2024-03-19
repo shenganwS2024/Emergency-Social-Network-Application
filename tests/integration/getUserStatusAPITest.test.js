@@ -2,8 +2,8 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import bcrypt from 'bcryptjs';
-import { app } from '../server.js'; 
-import User from '../models/Users'; 
+import { app } from '../../server.js'; 
+import User from '../../models/Users.js'; 
 
 let mongod;
 
