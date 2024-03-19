@@ -27,6 +27,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: yarn test
+    - run: npm run test:unit
     - name: Deploy to cloud
       run: curl ${{ secrets.REDNER_DEPLOY_HOOK }} 
