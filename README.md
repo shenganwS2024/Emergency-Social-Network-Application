@@ -22,6 +22,7 @@ Server-side: node.js, express.js, socket.io, passport.js, JWT
 DB: Mongo
 Reasons: flexible and easy to get started for new learners.
 Testing: Jest
+CICD: Sigrid
 
 ### API Documentation
 
@@ -106,9 +107,7 @@ Testing: Jest
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `post successfully`                           |                         
-> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
-</details>
-
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       | </details>
 ---
 
 #### GET Requests
