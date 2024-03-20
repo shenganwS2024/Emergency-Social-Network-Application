@@ -163,14 +163,15 @@ CICD: Sigrid
 #### All Messages
 
 <details>
- <summary><code>GET</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to get messages)</code></summary>
+ <summary><code>GET</code> <code><b>/messages/:senderName/:receiverName/:pageNumber</b></code> <code>(Allows citizens to get messages)</code></summary>
 
-##### Parameters: e.g./messages/{userA}/{userB}
+##### Parameters: e.g./messages/{userA}/{userB}/{1}
 
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
 > | senderName  | required  | string    | sender's unique username      |
-> | receiverName   | required  | string    | receiver 's unique username        |
+> | receiverName   | required  | string    | receiver 's unique username       |
+> | criteria| optional|string| criteria to search for|
 
 
 ##### Responses
@@ -185,9 +186,13 @@ CICD: Sigrid
 #### All Users
 
 <details>
- <summary><code>GET</code> <code><b>/users</b></code> <code>(Allows the information fetch for all users)</code></summary>
+ <summary><code>GET</code> <code><b>/users/:pageNumber</b></code> <code>(Allows the information fetch for all users)</code></summary>
 
-##### Parameters
+##### Parameters: e.g.users/{1}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | criteria| optional|string| criteria to search for|
+
 
 
 ##### Responses
@@ -226,11 +231,13 @@ CICD: Sigrid
 #### Announcement
 
 <details>
- <summary><code>GET</code> <code><b>/announcement</b></code> <code>(get all the previous announcement)</code></summary>
+ <summary><code>GET</code> <code><b>/announcement/:pageNumber</b></code> <code>(get all the previous announcement)</code></summary>
 
 
-##### Parameters: 
-
+##### Parameters: e.g.announcement/{1}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | criteria| optional|string| criteria to search for|
 
 ##### Responses
 
