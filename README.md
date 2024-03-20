@@ -140,6 +140,25 @@ CICD: Sigrid
 
 ---
 
+
+#### Speed Test
+
+<details>
+ <summary><code>POST</code> <code><b>/speedTest</b></code> <code>(start the speedTest)</code></summary>
+
+##### Parameters
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `SpeedTest start successfully `                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
 #### GET Requests
 #### All Messages
 
