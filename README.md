@@ -107,7 +107,37 @@ CICD: Sigrid
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `post successfully`                           |                         
-> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       | </details>
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
+
+</details>
+
+---
+
+
+#### Post Announcement
+
+<details>
+ <summary><code>POST</code> <code><b>/announcement</b></code> <code>(post new announcement)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the new user         |
+> | `text`| required   | string    | Password for the new user account|
+> | `timestamp`  | required   | Date    | times when posting          |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post announcement successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new announcement`                        |
+
+</details>
+
 ---
 
 #### GET Requests
@@ -174,7 +204,24 @@ CICD: Sigrid
 
 ---
 
+#### announcement
 
+<details>
+ <summary><code>GET</code> <code><b>/announcement</b></code> <code>(get all the previous announcement)</code></summary>
+
+
+##### Parameters: 
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get announcement successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
 
 #### PUT Requests
 
