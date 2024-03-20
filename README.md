@@ -115,7 +115,7 @@ CICD: Sigrid
 ---
 
 
-#### Post Announcement
+#### New Announcement
 
 <details>
  <summary><code>POST</code> <code><b>/announcement</b></code> <code>(post new announcement)</code></summary>
@@ -204,7 +204,7 @@ CICD: Sigrid
 
 ---
 
-#### announcement
+#### Announcement
 
 <details>
  <summary><code>GET</code> <code><b>/announcement</b></code> <code>(get all the previous announcement)</code></summary>
