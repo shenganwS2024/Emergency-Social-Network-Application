@@ -24,6 +24,8 @@
     </div>
     <button id="startTest">Start Test</button>
     <button id="exitTest">Exit Test</button>
+    <button id="stopTest">Stop Test</button>
+
 
     <div class="results" id="testResults" style="display:none;">
         <h2>Test Results</h2>
@@ -49,7 +51,7 @@ const receiverName = 'public'; // Use 'public' to denote public messages
 function sendPostRequest() {
     const messageData = {
         username: senderName,
-        content: 'Test message',
+        content: 'Testmessage111111111',
         timestamp: new Date().toISOString(),
         status: 'sent' // Example status
     };
@@ -102,6 +104,13 @@ function sendGetRequest() {
             sendPostRequest();
         }
     }, interval);
+
+    function stopTest() {
+        if(postInterval) clearInterval(postInterval);
+        if(getInterval) clearInterval(getInterval);
+        
+    }
+    document.getElementById('stopTest').addEventListener('click', stopTest);
    
 
 }

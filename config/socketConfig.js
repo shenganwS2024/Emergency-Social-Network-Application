@@ -45,8 +45,9 @@ const socketConfig = (server) => {
           console.log(`User ${socket_username} disconnected from private room ${room}`)
         }
       }
-
+      console.log("before change")
       if (socket.decoded && socket_username) {
+        console.log("able to update online ")
         Users.findOneAndUpdate({ username: socket_username }, { onlineStatus: false }, { new: true })
           .then((user) => {
             // Broadcast to all clients that the user list has been updated
