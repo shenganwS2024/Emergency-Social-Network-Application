@@ -34,7 +34,7 @@
     </div>
 
     <script>
-        document.getElementById('startTest').addEventListener('click', function() {
+        document.getElementById('startTest') .addEventListener('click', function() {
     const duration = parseInt(document.getElementById('duration').value, 10);
     const interval = parseInt(document.getElementById('interval').value, 10);
     parseInt(document.getElementById('duration').value, '');
@@ -85,12 +85,12 @@ function sendGetRequest() {
     .catch((error) => console.error('Error:', error));
 }
 
-
+let getInterval;
     const postInterval = setInterval(() => {
         if (Date.now() >= endTime) {
             clearInterval(postInterval);
             // Start GET requests after POST requests are completed
-            const getInterval = setInterval(() => {
+            getInterval = setInterval(() => {
                 if (Date.now() >= endTime + duration * 1000) {
                     clearInterval(getInterval);
                     document.getElementById('testResults').style.display = 'block';
