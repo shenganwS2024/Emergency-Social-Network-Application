@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User List</title>
     <h1>ESN Directory</h1>
+    <button id="speed-test-btn">Speed Test</button>
     <style>
       body,
       html {
@@ -184,6 +185,17 @@
         font-size: 0.8rem; /* Slightly smaller font for the timestamp */
         color: #666; /* Dimmed color for less emphasis */
       }
+
+      #speed-test-btn {
+        margin-left: 10px; /* Adjust as needed */
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4caf50; /* Green */
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
     </style>
   </head>
   <body>
@@ -278,6 +290,26 @@
           users[userIndex].status = user.status
 
           displayUsers(users, currentUser)
+        })
+        document.getElementById('speed-test-btn').addEventListener('click', function () {
+          window.location.href = 'SpeedTest.html'
+          let isSpeedTestMode = true;
+
+          const body = {
+            isSpeedTestMode: isSpeedTestMode,
+          };
+
+          fetch(`speedTest`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body),
+            })
+            .then((response) => response.json())
+            .catch((error) => {
+              console.error('Error:', error)
+            })
         })
 
         document.getElementById('exit-chat').addEventListener('click', function () {

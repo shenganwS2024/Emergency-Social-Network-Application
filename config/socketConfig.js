@@ -50,11 +50,13 @@ const socketConfig = (server) => {
         Users.findOneAndUpdate({ username: socket_username }, { onlineStatus: false }, { new: true })
           .then((user) => {
             // Broadcast to all clients that the user list has been updated
-            io.emit('userStatusChanged', {
-              username: user.username,
-              onlineStatus: user.onlineStatus,
-              status: user.status,
-            })
+            if (user) {
+              io.emit('userStatusChanged', {
+                username: user.username,
+                onlineStatus: user.onlineStatus,
+                status: user.status,
+              })
+            }
           })
           .catch((err) => console.error(err))
         socket.emit('updateInfo', `${socket_username} logout`)
