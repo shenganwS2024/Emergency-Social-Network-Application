@@ -1,6 +1,6 @@
 import { PRODUCTION_DB_URI, TEST_DB_URI, io } from '../config/serverConfig.js';
 import DBAccessDAO from '../dao/DBAccessDAO.js';
-
+import Users from '../models/Users.js'
 let isSpeedTestMode = false;
 
 // async function checkSpeedTestMode(req, res, next) {
@@ -10,42 +10,42 @@ let isSpeedTestMode = false;
 //     next();
 // }
 
+const checkAllUsersOffline = async () => {
+    let onlineUsersCount = await Users.countDocuments({ onlineStatus: true });
+    return onlineUsersCount === 0;
+  };
+  
+  // Function to wait for a specific time
+  const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 async function switchDatabase(req, res) {
     try {
         isSpeedTestMode = req.body.isSpeedTestMode;
         const username = req.body.username;
-
+        let newDbUri = isSpeedTestMode ? TEST_DB_URI : PRODUCTION_DB_URI;
+        console.log("currentDB: ",newDbUri)
         if(isSpeedTestMode){
-            // Emit and wait for all clients to acknowledge the logout.
-            const loggedOut = await new Promise((resolve, reject) => {
-                let loggedOutUsers = 0;
-                io.emit('speed test logout', { username: username }, () => {
-                    loggedOutUsers++;
-                    if (loggedOutUsers === io.engine.clientsCount) {
-                        resolve(true);
-                    }
-                });
-
-                // Failsafe timeout in case some clients don't respond.
-                setTimeout(() => {
-                    if (loggedOutUsers < io.engine.clientsCount) {
-                        console.error('Not all users logged out');
-                        reject('Logout timeout');
-                    }
-                }, 5000); // Adjust timeout as needed.
-            });
-
-            if (!loggedOut) {
-                throw new Error('Not all users logged out');
+            io.emit('speed test logout', { username: username })
+            while (true) {
+                const allOffline = await checkAllUsersOffline();
+                if (allOffline) {
+                    console.log("All users are offline. Proceeding with database switch.");
+                    break;
+                } else {
+                    console.log("Waiting for all users to go offline...");
+                    await wait(2000);  // Wait for 2 seconds before checking again
+                }
             }
+
+            await DBAccessDAO.switchDatabase(newDbUri);
+
         }
         else{
             await DBAccessDAO.destroyTestDatabase();
+            await DBAccessDAO.switchDatabase(newDbUri);
         }
     
 
-        let newDbUri = isSpeedTestMode ? TEST_DB_URI : PRODUCTION_DB_URI;
-        await DBAccessDAO.switchDatabase(newDbUri);
 
         res.status(200).json({ message: 'Database switched successfully' });
     } catch (error) {
