@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESN Speed Test</title>
+    <style>
+        /* Add CSS styles for better appearance */
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-input { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; }
+        .results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>ESN Speed Test</h1>
+    <div class="form-input">
+        <label for="duration">Test Duration (seconds):</label>
+        <input type="number" id="duration" value=''>
+    </div>
+    <div class="form-input">
+        <label for="interval">Request Interval (milliseconds):</label>
+        <input type="number" id="interval" value=''>
+    </div>
+    <button id="startTest">Start Test</button>
+    <button id="exitTest">Exit Test</button>
+
+    <div class="results" id="testResults" style="display:none;">
+        <h2>Test Results</h2>
+        <p id="postResult">POST Performance: </p>
+        <p id="getResult">GET Performance: </p>
+    </div>
+
+    <script>
+        document.getElementById('startTest').addEventListener('click', function() {
+    const duration = parseInt(document.getElementById('duration').value, 10);
+    const interval = parseInt(document.getElementById('interval').value, 10);
+    parseInt(document.getElementById('duration').value, '');
+    parseInt(document.getElementById('interval').value, '');
+    const startTime = Date.now();
+    const senderName = 'Admin'; // Placeholder sender name
+const receiverName = 'public'; // Use 'public' to denote public messages
+
+    let endTime = startTime + duration * 1000;
+    let postCount = 0;
+    let getCount = 0;
+
+    // Updated function to send POST requests
+function sendPostRequest() {
+    const messageData = {
+        username: senderName,
+        content: 'Test message',
+        timestamp: new Date().toISOString(),
+        status: 'sent' // Example status
+    };
+    const postUrl = `/messages/${senderName}/${receiverName}`;
+    
+    fetch(postUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        postCount++;
+    })
+    .catch((error) => console.error('Error:', error));
+}
+
+// Updated function to send GET requests
+function sendGetRequest() {
+    const getUrl = `/messages/${senderName}/${receiverName}`;
+    
+    fetch(getUrl)
+    .then(response => response.json())
+    .then(data => {
+        console.log('Messages:', data.data.messages);
+        getCount++;
+    })
+    .catch((error) => console.error('Error:', error));
+}
+
+
+    const postInterval = setInterval(() => {
+        if (Date.now() >= endTime) {
+            clearInterval(postInterval);
+            // Start GET requests after POST requests are completed
+            const getInterval = setInterval(() => {
+                if (Date.now() >= endTime + duration * 1000) {
+                    clearInterval(getInterval);
+                    document.getElementById('testResults').style.display = 'block';
+                    document.getElementById('postResult').innerText += `${postCount / duration} requests/second`;
+                    document.getElementById('getResult').innerText += `${getCount / duration} requests/second`;
+                } else {
+                    sendGetRequest();
+                }
+            }, interval);
+        } else {
+            sendPostRequest();
+        }
+    }, interval);
+   
+
+}
+);
+
+document.getElementById('exitTest').addEventListener('click', async function () {
+    let isSpeedTestMode = false;
+
+    const body = {
+        isSpeedTestMode: isSpeedTestMode,
+    };
+
+    try {
+        await fetch(`speedTest`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        window.location.href = 'ESN Directory.html';
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+
+    </script>
+</body>
+</html>
