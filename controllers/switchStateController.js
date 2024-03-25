@@ -9,7 +9,8 @@ async function checkSpeedTestMode(req, res) {
 
 const checkAllUsersOffline = async () => {
     let onlineUsersCount = await Users.countDocuments({ onlineStatus: true });
-    return onlineUsersCount === 0;
+    console.log("how many online:", onlineUsersCount)
+    return onlineUsersCount <= 1;
   };
   
   // Function to wait for a specific time
@@ -43,7 +44,7 @@ async function switchDatabase(req, res) {
         }
         else{
             
-            if(newDbUri === TEST_DB_URI){
+            if(newDbUri === PRODUCTION_DB_URI){
                 await DBAccessDAO.destroyTestDatabase();
             }
             

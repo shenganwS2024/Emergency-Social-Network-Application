@@ -30,7 +30,7 @@ const socketConfig = (server) => {
           // Broadcast to all clients that the user list has been updated
           io.emit('userStatusChanged', {
             username: user.username,
-            onlineStatus: user.onlineStatus,
+            onlineStatus: true,
           })
         })
         .catch((err) => console.error(err))

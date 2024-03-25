@@ -56,80 +56,84 @@
                 body: JSON.stringify(body),
             })
             .then((response) => response.json())
+            .then(data => {
+                // This code runs only after the first fetch and all its related async operations are complete
+                console.log('First fetch success:', data);
+
+                const duration = parseInt(document.getElementById('duration').value, 10);
+                const interval = parseInt(document.getElementById('interval').value, 10);
+                parseInt(document.getElementById('duration').value, '');
+                parseInt(document.getElementById('interval').value, '');
+                const startTime = Date.now();
+                const senderName = 'Admin'; // Placeholder sender name
+                const receiverName = 'public'; // Use 'public' to denote public messages
+
+                let endTime = startTime + duration * 1000;
+                let postCount = 0;
+                let getCount = 0;
+
+                // Updated function to send POST requests
+                function sendPostRequest() {
+                    const messageData = {
+                        username: senderName,
+                        content: 'Testmessage111111111',
+                        timestamp: new Date().toISOString(),
+                        status: 'sent' // Example status
+                    };
+                    const postUrl = `/messages/${senderName}/${receiverName}`;
+                    
+                    fetch(postUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(messageData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success:', data);
+                        postCount++;
+                    })
+                    .catch((error) => console.error('Error:', error));
+                }
+
+                // Updated function to send GET requests
+                function sendGetRequest() {
+                    const getUrl = `/messages/${senderName}/${receiverName}`;
+                    
+                    fetch(getUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Messages:', data.data.messages);
+                        getCount++;
+                    })
+                    .catch((error) => console.error('Error:', error));
+                }
+
+                let getInterval;
+                const postInterval = setInterval(() => {
+                    if (Date.now() >= endTime) {
+                        clearInterval(postInterval);
+                        // Start GET requests after POST requests are completed
+                        getInterval = setInterval(() => {
+                            if (Date.now() >= endTime + duration * 1000) {
+                                clearInterval(getInterval);
+                                document.getElementById('testResults').style.display = 'block';
+                                document.getElementById('postResult').innerText += `${postCount / duration} requests/second`;
+                                document.getElementById('getResult').innerText += `${getCount / duration} requests/second`;
+                            } else {
+                                sendGetRequest();
+                            }
+                        }, interval);
+                    } else {
+                        sendPostRequest();
+                    }
+                }, interval);
+            })
             .catch((error) => {
                 console.error('Error:', error)
             })
 
-        
-    const duration = parseInt(document.getElementById('duration').value, 10);
-    const interval = parseInt(document.getElementById('interval').value, 10);
-    parseInt(document.getElementById('duration').value, '');
-    parseInt(document.getElementById('interval').value, '');
-    const startTime = Date.now();
-    const senderName = 'Admin'; // Placeholder sender name
-const receiverName = 'public'; // Use 'public' to denote public messages
-
-    let endTime = startTime + duration * 1000;
-    let postCount = 0;
-    let getCount = 0;
-
-    // Updated function to send POST requests
-function sendPostRequest() {
-    const messageData = {
-        username: senderName,
-        content: 'Testmessage111111111',
-        timestamp: new Date().toISOString(),
-        status: 'sent' // Example status
-    };
-    const postUrl = `/messages/${senderName}/${receiverName}`;
-    
-    fetch(postUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(messageData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        postCount++;
-    })
-    .catch((error) => console.error('Error:', error));
-}
-
-// Updated function to send GET requests
-function sendGetRequest() {
-    const getUrl = `/messages/${senderName}/${receiverName}`;
-    
-    fetch(getUrl)
-    .then(response => response.json())
-    .then(data => {
-        console.log('Messages:', data.data.messages);
-        getCount++;
-    })
-    .catch((error) => console.error('Error:', error));
-}
-
-let getInterval;
-    const postInterval = setInterval(() => {
-        if (Date.now() >= endTime) {
-            clearInterval(postInterval);
-            // Start GET requests after POST requests are completed
-            getInterval = setInterval(() => {
-                if (Date.now() >= endTime + duration * 1000) {
-                    clearInterval(getInterval);
-                    document.getElementById('testResults').style.display = 'block';
-                    document.getElementById('postResult').innerText += `${postCount / duration} requests/second`;
-                    document.getElementById('getResult').innerText += `${getCount / duration} requests/second`;
-                } else {
-                    sendGetRequest();
-                }
-            }, interval);
-        } else {
-            sendPostRequest();
-        }
-    }, interval);
 
     function stopTest() {
         if(postInterval) clearInterval(postInterval);
