@@ -56,7 +56,8 @@
           isSpeedTestMode: isSpeedTestMode,
           username: localStorage.getItem('username'),
         }
-
+        let postInterval = null;
+        let getInterval = null;
         fetch(`speedTest`, {
           method: 'POST',
           headers: {
@@ -119,8 +120,8 @@
                 .catch((error) => console.error('Error:', error))
             }
 
-            let getInterval
-            const postInterval = setInterval(() => {
+            
+            postInterval = setInterval(() => {
               if (Date.now() >= endTime) {
                 clearInterval(postInterval)
                 // Start GET requests after POST requests are completed
