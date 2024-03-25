@@ -259,7 +259,7 @@
           localStorage.setItem('currentUser', JSON.stringify(currentUser))
 
           console.log('users: ' + users)
-          
+
           displayUsers(users, currentUser)
         } catch (error) {
           // Handle any fetch errors
@@ -283,6 +283,7 @@
 
 
         socket.on('userStatusChanged', function (update) {
+          console.log("status changed!",update.username,update.onlineStatus)
           const userIndex = users.findIndex((user) => user.username === update.username)
           if (userIndex !== -1) {
             users[userIndex].onlineStatus = update.onlineStatus
