@@ -34,7 +34,7 @@
       document.addEventListener('DOMContentLoaded', function () {
 
        console.log('localstorage token', localStorage.getItem('token'))
-const socket = io('https://s24esnb2.onrender.com', {
+const socket = io('http://localhost:3000/', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -47,22 +47,27 @@ socket.on('announcement', function (msg) {
 
 })
 
-fetch(`/announcement/${0}`)
+  fetch(`/announcement/${0}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
     .then((response) => response.json())
     .then((data) => {
-      const messages = data.data.messages
+      const messages = data.data.announcements
+      console.log(messages)
       messages.forEach((message) => {
         renderMSG(message)
       })
     })
-    .catch((error) => console.error('Error fetching messages:', error))
+    .catch((error) => console.error('Error fetching announcements:', error))
 
 document.getElementById('send-msg').addEventListener('click', async function () {
     const username = localStorage.getItem('username')
     const messageInput = document.getElementById('message-input')
     const messageText = messageInput.value.trim()
     const currentTime = new Date().toISOString()
-    const currentStatus = await getUserStatus(username)
 
     if (messageText) {
       // Create the payload
@@ -70,7 +75,6 @@ document.getElementById('send-msg').addEventListener('click', async function () 
         content: messageText,
         username: username,
         timestamp: currentTime,
-        status: currentStatus,
       }
       console.log(data)
 
@@ -91,7 +95,7 @@ document.getElementById('send-msg').addEventListener('click', async function () 
           console.error('Error:', error)
         })
     } else {
-      alert('Please enter a message before posting.')
+      alert('Please enter a announcement before posting.')
     }
 
 })
@@ -104,25 +108,6 @@ document.getElementById('send-msg').addEventListener('click', async function () 
   window.location.href = 'chatroom.html'
 })
 
-function getUserStatus(username) {
-  return new Promise((resolve, reject) => {
-    fetch(`/status/${username}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Status got successfully:', data.data.status)
-        resolve(data.data.status.status)
-      })
-      .catch((error) => {
-        console.error('Error getting status:', error)
-        reject(error)
-      })
-  })
-}
 
 function renderMSG(message) {
   //("before container");
@@ -136,7 +121,7 @@ function renderMSG(message) {
   element.innerHTML = `
         <div>
         <div class ="messageContainer">
-            <div class ="name">${senderName + '     (' + message.status + ')'}</div>
+            <div class ="name">${senderName}</div>
             <div id="time">${new Date(message.timestamp)
               .toLocaleString('en-US', {
                 month: '2-digit',
