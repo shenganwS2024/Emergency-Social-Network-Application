@@ -273,17 +273,13 @@
         })
 
         socket.on('speed test logout', function (user) {
-    
-          if(user.username !== localStorage.getItem('username')){
-            
+          if (user.username !== localStorage.getItem('username')) {
             logout()
           }
-          
         })
 
-
         socket.on('userStatusChanged', function (update) {
-          console.log("status changed!",update.username,update.onlineStatus)
+          console.log('status changed!', update.username, update.onlineStatus)
           const userIndex = users.findIndex((user) => user.username === update.username)
           if (userIndex !== -1) {
             users[userIndex].onlineStatus = update.onlineStatus
@@ -308,8 +304,7 @@
         })
 
         document.getElementById('exit-chat').addEventListener('click', function () {
-          logout();
-          
+          logout()
         })
 
         document.getElementById('enter-chat').addEventListener('click', function () {
@@ -580,43 +575,42 @@
         }
       })
 
-      function logout(){
-            const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
+      function logout() {
+        const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
 
-          // Data to be sent in the request
-          const data = {
-            id: userId,
-            status: false,
-          }
+        // Data to be sent in the request
+        const data = {
+          id: userId,
+          status: false,
+        }
 
-          // Send a POST request to the server
-          fetch('/logout', {
-            method: 'POST', // or 'PUT' if updating the status
-            headers: {
-              'Content-Type': 'application/json',
-              // Add any other headers your server requires, such as authentication tokens
-            },
-            body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+        // Send a POST request to the server
+        fetch('/logout', {
+          method: 'POST', // or 'PUT' if updating the status
+          headers: {
+            'Content-Type': 'application/json',
+            // Add any other headers your server requires, such as authentication tokens
+          },
+          body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+        })
+          .then((response) => response.json()) // Parse the JSON response
+          .then((data) => {
+            console.log('Success:', data)
+            // Here you can also trigger any additional logout logic, like redirecting the user
           })
-            .then((response) => response.json()) // Parse the JSON response
-            .then((data) => {
-              console.log('Success:', data)
-              // Here you can also trigger any additional logout logic, like redirecting the user
-            })
-            .catch((error) => {
-              console.error('Error:', error)
-            })
-            .finally(() => {
-              //socket.emit("exituser");
-              // Remove the token from localStorage
-              localStorage.removeItem('token')
+          .catch((error) => {
+            console.error('Error:', error)
+          })
+          .finally(() => {
+            //socket.emit("exituser");
+            // Remove the token from localStorage
+            localStorage.removeItem('token')
 
-              // Optionally, redirect the user to the login page or home page
-              window.location.href = '/'
-            })
-          window.location.href = '/'
-
-          }
+            // Optionally, redirect the user to the login page or home page
+            window.location.href = '/'
+          })
+        window.location.href = '/'
+      }
 
       function updateUserStatus(status) {
         const username = localStorage.getItem('username')
