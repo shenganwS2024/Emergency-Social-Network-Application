@@ -1,14 +1,11 @@
 import { PRODUCTION_DB_URI, TEST_DB_URI, io } from '../config/serverConfig.js';
 import DBAccessDAO from '../dao/DBAccessDAO.js';
 import Users from '../models/Users.js'
-let isSpeedTestMode = false;
+import { getIsSpeedTestMode, setIsSpeedTestMode } from '../config/globalVariables.js';
 
-// async function checkSpeedTestMode(req, res, next) {
-//     if (isSpeedTestMode) {
-//         res.status(503).json({ message: 'System is currently undergoing a speed test, please try again later.' });
-//     }
-//     next();
-// }
+async function checkSpeedTestMode(req, res) {
+    res.status(200).json({ data: { isSpeedTestMode : getIsSpeedTestMode() } })
+}
 
 const checkAllUsersOffline = async () => {
     let onlineUsersCount = await Users.countDocuments({ onlineStatus: true });
@@ -20,10 +17,11 @@ const checkAllUsersOffline = async () => {
 
 async function switchDatabase(req, res) {
     try {
-        isSpeedTestMode = req.body.isSpeedTestMode;
+        setIsSpeedTestMode(req.body.isSpeedTestMode);
         const username = req.body.username;
+        let isSpeedTestMode = getIsSpeedTestMode();
         let newDbUri = isSpeedTestMode ? TEST_DB_URI : PRODUCTION_DB_URI;
-        console.log("currentDB: ",newDbUri)
+        console.log ("currentDB: ",newDbUri)
         if(isSpeedTestMode){
             io.emit('speed test logout', { username: username })
             while (true) {
@@ -32,6 +30,9 @@ async function switchDatabase(req, res) {
                     console.log("All users are offline. Proceeding with database switch.");
                     break;
                 } else {
+                    if(!isSpeedTestMode){
+                        break;
+                    }
                     console.log("Waiting for all users to go offline...");
                     await wait(2000);  // Wait for 2 seconds before checking again
                 }
@@ -41,7 +42,11 @@ async function switchDatabase(req, res) {
 
         }
         else{
-            await DBAccessDAO.destroyTestDatabase();
+            
+            if(newDbUri === TEST_DB_URI){
+                await DBAccessDAO.destroyTestDatabase();
+            }
+            
             await DBAccessDAO.switchDatabase(newDbUri);
         }
     
@@ -54,4 +59,4 @@ async function switchDatabase(req, res) {
     }
 }
 
-export { switchDatabase, PRODUCTION_DB_URI, TEST_DB_URI };
+export { switchDatabase, PRODUCTION_DB_URI, TEST_DB_URI, checkSpeedTestMode };

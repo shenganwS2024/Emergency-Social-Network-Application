@@ -32,9 +32,35 @@
         <p id="postResult">POST Performance: </p>
         <p id="getResult">GET Performance: </p>
     </div>
-
+    <script src="/socket.io/socket.io.js"></script>
     <script>
+        const socket = io('http://localhost:3000/', {
+        query: {
+          token: localStorage.getItem('token'),
+        },
+      })
+        
         document.getElementById('startTest') .addEventListener('click', function() {
+            let isSpeedTestMode = true;
+
+            const body = {
+            isSpeedTestMode: isSpeedTestMode,
+            username: localStorage.getItem('username'),
+            };
+
+            fetch(`speedTest`, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            })
+            .then((response) => response.json())
+            .catch((error) => {
+                console.error('Error:', error)
+            })
+
+        
     const duration = parseInt(document.getElementById('duration').value, 10);
     const interval = parseInt(document.getElementById('interval').value, 10);
     parseInt(document.getElementById('duration').value, '');

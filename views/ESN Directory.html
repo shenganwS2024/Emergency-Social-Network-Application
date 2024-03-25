@@ -259,6 +259,7 @@
           localStorage.setItem('currentUser', JSON.stringify(currentUser))
 
           console.log('users: ' + users)
+          
           displayUsers(users, currentUser)
         } catch (error) {
           // Handle any fetch errors
@@ -303,24 +304,6 @@
         })
         document.getElementById('speed-test-btn').addEventListener('click', function () {
           window.location.href = 'SpeedTest.html'
-          let isSpeedTestMode = true;
-
-          const body = {
-            isSpeedTestMode: isSpeedTestMode,
-            username: localStorage.getItem('username'),
-          };
-
-          fetch(`speedTest`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(body),
-            })
-            .then((response) => response.json())
-            .catch((error) => {
-              console.error('Error:', error)
-            })
         })
 
         document.getElementById('exit-chat').addEventListener('click', function () {

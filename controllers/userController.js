@@ -3,7 +3,7 @@ import Users from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { io } from '../config/serverConfig.js'
-import userRoomMap from '../config/globalMap.js'
+import {userRoomMap} from '../config/globalVariables.js'
 // import reservedUsernames from '../views/bannedUsernames.json' ;
 import reservedUsernames from '../views/bannedUsernames.json' assert { type: 'json' };
 

@@ -22,7 +22,7 @@ document.getElementById('notConfirmBtn').addEventListener('click', function () {
 
 let currentUser = { username: '', password: '' }
 
-document.getElementById('registerForm').addEventListener('submit', function (event) {
+document.getElementById('registerForm').addEventListener('submit', async function (event) {
   event.preventDefault()
   let username = document.getElementById('username').value.trim()
   let password = document.getElementById('password').value.trim()
@@ -30,7 +30,25 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
 
   // * Username Rule: Usernames are provided by users and should be at least 3 characters long. They should not be in the list of banned usernames. They should not already exist. Usernames are NOT case sensitive.
   // * Password Rule: Passwords are provided by users and should be at least 4 characters long. Passwords ARE case sensitive.
-  if (validateUserInfo(username, password)) {
+  let speedTestMode = false;
+  try {
+    const response = await fetch('/speedTest', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    if (data.data.isSpeedTestMode === true) {
+      console.log('Speed Test Mode is on. Please try again later');
+      speedTestMode = true;
+      alert('Speed Test Mode is on. Please try again later');
+    }
+  } catch (error) {
+    console.error('Error getting status:', error);
+  }
+
+  if (validateUserInfo(username, password) && !speedTestMode) {
     fetch('/login', {
       method: 'POST',
       headers: {

@@ -1,7 +1,7 @@
 import Messages from '../models/Messages.js';
 import Users from '../models/Users.js'
 import {io} from '../config/serverConfig.js'
-import userRoomMap from '../config/globalMap.js'
+import {userRoomMap} from '../config/globalVariables.js'
 
 // Function to get the latest messages from the server
 async function getLatestMessages(req, res) {
