@@ -31,6 +31,7 @@
     <!-- make the socket client library and  avaliable to handle real-time messaging -->
     <script src="socket.io/socket.io.js"></script>
     <script>
+        const app = document.querySelector('.app')
       document.addEventListener('DOMContentLoaded', function () {
 
        console.log('localstorage token', localStorage.getItem('token'))
@@ -39,9 +40,9 @@ const socket = io('http://localhost:3000/', {
     token: localStorage.getItem('token'),
   },
 })
-const app = document.querySelector('.app')
 
-socket.on('announcement', function (msg) {
+
+socket.on('new announcement', function (msg) {
 
     renderMSG(msg)
 

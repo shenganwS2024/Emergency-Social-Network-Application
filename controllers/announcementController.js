@@ -1,4 +1,5 @@
 import Announcements from '../models/Announcements.js';
+import { io } from '../server.js';
 
 // Function to get the latest messages from the server
 async function getLatestAnnouncements(req, res) {
@@ -7,7 +8,9 @@ async function getLatestAnnouncements(req, res) {
         let page = req.params.pageNumber;      
         let announcements = await Announcements.find({});
         let ret;
-        if (page === 0) {
+        console.log("page ", page)
+        if (page === '0') {
+            console.log("page 0");
             ret = announcements;
         }
         else {
@@ -43,6 +46,8 @@ async function postNewAnnouncement(req,res) {
             timestamp:timestamp
         });
         await newAnnouncement.save();
+        io.emit('new announcement', newAnnouncement);
+        
 
         res.status(201).send({data:{announcement: newAnnouncement}});
     } catch (error) {
