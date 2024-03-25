@@ -43,6 +43,8 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const abortController = new AbortController();
+const { signal } = abortController;
       const socket = io('http://localhost:3000/', {
         query: {
           token: localStorage.getItem('token'),
@@ -50,6 +52,15 @@
       })
 
       document.getElementById('startTest').addEventListener('click', function () {
+        const duration = parseInt(document.getElementById('duration').value, 10)
+        const interval = parseInt(document.getElementById('interval').value, 10)
+
+        if (interval > 5000) {
+        alert('Interval must be 5 seconds or less.');
+        return; // Stop the execution if the condition is not met
+    }
+
+        
         let isSpeedTestMode = true
 
         const body = {
@@ -58,6 +69,8 @@
         }
         let postInterval = null;
         let getInterval = null;
+        let postCount = 0; // Initialize post count
+    const maxPostCount = 1000; // Set the maximum number of posts
         fetch(`speedTest`, {
           method: 'POST',
           headers: {
@@ -70,8 +83,7 @@
             // This code runs only after the first fetch and all its related async operations are complete
             console.log('First fetch success:', data)
 
-            const duration = parseInt(document.getElementById('duration').value, 10)
-            const interval = parseInt(document.getElementById('interval').value, 10)
+            
             parseInt(document.getElementById('duration').value, '')
             parseInt(document.getElementById('interval').value, '')
             const startTime = Date.now()
@@ -84,6 +96,13 @@
 
             // Updated function to send POST requests
             function sendPostRequest() {
+                if (postCount >= maxPostCount) {
+
+            alert('Maximum post count reached. Stopping the test.');
+            stopTest();
+            document.getElementById('exitTest').click();
+            return; // Exit the function
+        }
               const messageData = {
                 username: senderName,
                 content: 'Testmessage111111111',
@@ -147,6 +166,7 @@
         function stopTest() {
           if (postInterval) clearInterval(postInterval)
           if (getInterval) clearInterval(getInterval)
+          abortController.abort();
         }
         document.getElementById('stopTest').addEventListener('click', stopTest)
       })

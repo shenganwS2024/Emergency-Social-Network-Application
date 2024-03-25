@@ -8,12 +8,12 @@
 
   <body>
     <div class="app">
-      <!-- chatroom page -->
+      <!-- announcement page -->
       <div class="screen chatroom">
         <div class="header">
-          <div class="logo">ESN Chat Room</div>
-          <button id="exit-chat">Logout</button>
-          <button id="directory-button">Directory</button>
+          <div class="logo">Publi Announcement</div>
+          <button id="back">Back</button>
+
         </div>
         <div class="messages">
           <div class="message otherMessage"></div>
@@ -25,78 +25,144 @@
         <div class="post">
           <button id="send-msg">Post</button>
         </div>
-        <div>
-          <button id="announcement">Announcement</button>
-        </div>
       </div>
     </div>
 
     <!-- make the socket client library and  avaliable to handle real-time messaging -->
     <script src="socket.io/socket.io.js"></script>
-    <script src="ChatScreen.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const socket = io('http://localhost:3000/', {
-          query: {
-            token: localStorage.getItem('token'),
-          },
-        })
 
-        // Listen to the 'alertUpdated' event from the server
-        socket.on('alertUpdated', (data) => {
-          const currentUserString = localStorage.getItem('currentUser')
-          if (!currentUserString) return
+       console.log('localstorage token', localStorage.getItem('token'))
+const socket = io('https://s24esnb2.onrender.com', {
+  query: {
+    token: localStorage.getItem('token'),
+  },
+})
+const app = document.querySelector('.app')
 
-          let currentUser = JSON.parse(currentUserString)
-          let username = currentUser.username
-          let secondName = data.sender === username ? data.receiver : data.sender
-          const roomName = [username, secondName].sort().join('_')
+socket.on('announcement', function (msg) {
 
-          // Update the chatChecked property based on the data from the socket event
-          if (currentUser.chatChecked[roomName] !== undefined) {
-            currentUser.chatChecked[roomName] = data.checked
-            localStorage.setItem('currentUser', JSON.stringify(currentUser))
-            updateDirectoryAlertIcon()
-          }
-        })
+    renderMSG(msg)
 
-        // Function to update the directory button with an alert icon if needed
-        function updateDirectoryAlertIcon() {
-          const currentUser = JSON.parse(localStorage.getItem('currentUser'))
-          if (!currentUser || !currentUser.chatChecked) return
+})
 
-          const hasUnreadMessages = Object.values(currentUser.chatChecked).includes(false)
-          const directoryButton = document.getElementById('directory-button')
-          if (!directoryButton) return
-
-          // Ensure the button position is set to relative to position the alert icon correctly
-          directoryButton.style.position = 'relative'
-
-          let alertIcon = directoryButton.querySelector('.alert-icon')
-
-          if (hasUnreadMessages) {
-            if (!alertIcon) {
-              alertIcon = document.createElement('span')
-              alertIcon.textContent = '🚨'
-              alertIcon.style.color = 'red'
-              alertIcon.style.position = 'absolute'
-              alertIcon.style.right = '0'
-              alertIcon.style.top = '0'
-              alertIcon.classList.add('alert-icon')
-              directoryButton.appendChild(alertIcon)
-            }
-          } else {
-            if (alertIcon) {
-              directoryButton.removeChild(alertIcon)
-            }
-          }
-        }
-
-        // Initial check to display the alert icon if needed
-        updateDirectoryAlertIcon()
-
-        // Your existing DOMContentLoaded logic...
+fetch(`/announcement/${0}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const messages = data.data.messages
+      messages.forEach((message) => {
+        renderMSG(message)
       })
+    })
+    .catch((error) => console.error('Error fetching messages:', error))
+
+document.getElementById('send-msg').addEventListener('click', async function () {
+    const username = localStorage.getItem('username')
+    const messageInput = document.getElementById('message-input')
+    const messageText = messageInput.value.trim()
+    const currentTime = new Date().toISOString()
+    const currentStatus = await getUserStatus(username)
+
+    if (messageText) {
+      // Create the payload
+      const data = {
+        content: messageText,
+        username: username,
+        timestamp: currentTime,
+        status: currentStatus,
+      }
+      console.log(data)
+
+      // Send the data to the server
+      fetch(`/announcement`, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Success:', data)
+          messageInput.value = '' // Clear the input after sending
+        })
+        .catch((error) => {
+          console.error('Error:', error)
+        })
+    } else {
+      alert('Please enter a message before posting.')
+    }
+
+})
+
+
+
+
+  })
+  document.getElementById('back').addEventListener('click', function () {
+  window.location.href = 'chatroom.html'
+})
+
+function getUserStatus(username) {
+  return new Promise((resolve, reject) => {
+    fetch(`/status/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Status got successfully:', data.data.status)
+        resolve(data.data.status.status)
+      })
+      .catch((error) => {
+        console.error('Error getting status:', error)
+        reject(error)
+      })
+  })
+}
+
+function renderMSG(message) {
+  //("before container");
+  let msgContainer = app.querySelector('.chatroom .messages')
+  let senderName = message.username
+  //console.log("after container");
+
+  let element = document.createElement('div')
+  element.setAttribute('class', 'message')
+  // Adjust the format so the timestamp matches the demo
+  element.innerHTML = `
+        <div>
+        <div class ="messageContainer">
+            <div class ="name">${senderName + '     (' + message.status + ')'}</div>
+            <div id="time">${new Date(message.timestamp)
+              .toLocaleString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+              })
+              .replace(/\//g, '.')
+              .replace(', ', ' ')
+              .replace(' AM', 'AM')
+              .replace(' PM', 'PM')}</div>
+            </div>
+            <div class = "text">${message.content}</div>
+        </div>
+        `
+  //console.log("before appending");
+  msgContainer.appendChild(element)
+  //console.log("after appending");
+  // Ensures that the container scrolls to the bottom to show newest message
+  msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+}
+
+
+
     </script>
 
     <style>
@@ -301,40 +367,10 @@
         margin-bottom: 10px;
       }
 
-      #announcement {
-        width: 98%;
-        height: 6%;
-        font-weight: 900;
-        font-size: 30px;
-        background-color: #89bbf5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
-        margin-top: 10px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      
       #time {
         font-size: 15px;
         font-weight: lighter;
         align-items: flex-end;
-      }
-
-      /* User Directory */
-      .user-directory {
-        display: none; /* Initially hidden */
-        position: fixed;
-        top: 50px;
-        right: 10px;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        width: 200px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1000; /* Ensure the directory is above other elements */
       }
 
       .user {

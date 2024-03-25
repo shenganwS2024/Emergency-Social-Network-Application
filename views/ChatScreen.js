@@ -25,6 +25,10 @@ document.getElementById('exit-chat').addEventListener('click', () => {
   // Assuming the user's ID or some form of identification is needed
 })
 
+document.getElementById('announcement').addEventListener('click', async function () {
+  window.location.href = 'Announcement.html'
+}) 
+
 document.addEventListener('DOMContentLoaded', function () {
   // Assuming you have a way to get the current user's username
   const username = localStorage.getItem('username')
