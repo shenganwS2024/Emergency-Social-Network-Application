@@ -18,11 +18,12 @@ const checkAllUsersOffline = async () => {
 
 async function switchDatabase(req, res) {
     try {
+        let oldSpeedTestMode = getIsSpeedTestMode()
         setIsSpeedTestMode(req.body.isSpeedTestMode);
         const username = req.body.username;
         let isSpeedTestMode = getIsSpeedTestMode();
         let newDbUri = isSpeedTestMode ? TEST_DB_URI : PRODUCTION_DB_URI;
-        console.log ("currentDB: ",newDbUri)
+        console.log ("currentDB: ",newDbUri,isSpeedTestMode)
         if(isSpeedTestMode){
             io.emit('speed test logout', { username: username })
             while (true) {
@@ -43,12 +44,15 @@ async function switchDatabase(req, res) {
 
         }
         else{
-            
-            if(newDbUri === PRODUCTION_DB_URI){
-                await DBAccessDAO.destroyTestDatabase();
+            if(oldSpeedTestMode){
+                if(newDbUri === PRODUCTION_DB_URI){
+                    await DBAccessDAO.destroyTestDatabase();
+                }
+                
+                await DBAccessDAO.switchDatabase(newDbUri);
             }
             
-            await DBAccessDAO.switchDatabase(newDbUri);
+            
         }
     
 
