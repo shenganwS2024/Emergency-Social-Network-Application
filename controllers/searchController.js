@@ -6,7 +6,9 @@ async function getSearchResults(req, res) {
         let criteria = req.params.criteria;
         let context = req.params.context;
         let pageNumber = req.params.pageNumber;
-        let searchResults = getStrategy(context, criteria)
+        let sender = req.params.sender;
+        let receiver = req.params.receiver;
+        let searchResults = await getStrategy(context, criteria, sender, receiver)
         let ret;
         if (pageNumber === '0') {
             ret = searchResults
@@ -14,6 +16,7 @@ async function getSearchResults(req, res) {
         else {
             pageNumber = + pageNumber  //string to int
             if (!isNaN(pageNumber) && pageNumber > 0) {
+                searchResults.reverse();
                 const itemsPerPage = 10;
                 const startIndex = (pageNumber - 1) * itemsPerPage;
                 const endIndex = startIndex + itemsPerPage;

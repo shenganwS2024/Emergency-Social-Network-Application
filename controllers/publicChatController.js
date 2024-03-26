@@ -1,4 +1,4 @@
-import Messages from '../models/Messages.js';
+import {Messages} from '../models/Messages.js';
 import {Users} from '../models/Users.js'
 import {io} from '../config/serverConfig.js'
 import {userRoomMap} from '../config/globalVariables.js'

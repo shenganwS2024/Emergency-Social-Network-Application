@@ -59,6 +59,22 @@ async function findAllUsers() {
   }
 }
 
+async function findStatuses(username) {
+  try {
+    const user = await Users.findOne({ username: username });
+    if (!user) {
+      throw new Error(`User ${username} not found.`);
+    }
 
-export { findAllUsers, Users };
+    const latestStatuses = user.status;
+
+    return latestStatuses
+  } catch (error) {
+    console.error("Error fetching user status:", error);
+    throw error;
+  }
+}
+
+
+export { findAllUsers, Users, findStatuses };
 
