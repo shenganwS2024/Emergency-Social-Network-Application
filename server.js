@@ -1,5 +1,5 @@
 import {express,app,http,io} from './config/serverConfig.js'
-import { userRoutes, messageRoutes, speedTestRoutes, annoucementRoutes } from './config/index.js'
+import { userRoutes, messageRoutes, speedTestRoutes, annoucementRoutes, searchRoutes} from './config/index.js'
 import DBConnection from './config/database.js';
 import { PRODUCTION_DB_URI, TEST_DB_URI } from './config/serverConfig.js';
 // import { checkSpeedTestMode } from './controllers/switchStateController.js';
@@ -19,5 +19,6 @@ app.use(userRoutes);
 app.use(messageRoutes);
 app.use(speedTestRoutes);
 app.use(annoucementRoutes);
+app.use(searchRoutes);
 
 export {http,io, app, PRODUCTION_DB_URI, TEST_DB_URI};

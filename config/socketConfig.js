@@ -1,6 +1,6 @@
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
-import Users from '../models/Users.js'
+import {Users} from '../models/Users.js'
 
 const socketConfig = (server) => {
   const io = new Server(server);

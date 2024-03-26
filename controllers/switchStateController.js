@@ -1,6 +1,6 @@
 import { PRODUCTION_DB_URI, TEST_DB_URI, io } from '../config/serverConfig.js';
 import DBAccessDAO from '../dao/DBAccessDAO.js';
-import Users from '../models/Users.js'
+import {Users} from '../models/Users.js'
 import { getIsSpeedTestMode, setIsSpeedTestMode } from '../config/globalVariables.js';
 
 async function checkSpeedTestMode(req, res) {

@@ -37,4 +37,18 @@ userSchema.pre('save', async function (next) {
   }
 })
 
-export default mongoose.model('Users', userSchema)
+let Users = mongoose.model('Users', userSchema)
+
+async function findAllUsers() {
+  try {
+      const users = await Users.find({});
+      return users;
+  } catch (error) {
+      // Handle or throw the error according to your application's needs
+      console.error("Error fetching users:", error);
+      throw error;
+  }
+}
+
+export { findAllUsers, Users };
+

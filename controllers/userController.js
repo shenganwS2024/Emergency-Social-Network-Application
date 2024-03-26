@@ -1,5 +1,5 @@
 
-import Users from '../models/Users.js';
+import {findAllUsers, Users} from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { io } from '../config/serverConfig.js'
@@ -150,7 +150,7 @@ async function UserAcknowledged(req, res) {
 
 async function getUser(req, res) {
   try {
-    let directory = await Users.find({})
+    let directory = await findAllUsers();
     res.status(200).json({ data: { users: directory } })
   } catch (error) {
     console.error(error)
