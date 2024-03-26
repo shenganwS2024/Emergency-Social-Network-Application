@@ -7,9 +7,24 @@ async function getSearchResults(req, res) {
         let context = req.params.context;
         let pageNumber = req.params.pageNumber;
         let searchResults = getStrategy(context, criteria)
+        let ret;
         if (pageNumber === '0') {
-            res.status(200).json({ data: { results: searchResults } })
+            ret = searchResults
         }
+        else {
+            pageNumber = + pageNumber  //string to int
+            if (!isNaN(pageNumber) && pageNumber > 0) {
+                const itemsPerPage = 10;
+                const startIndex = (pageNumber - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                ret = searchResults.slice(startIndex, endIndex);
+            } else {
+                // Handle invalid page number (e.g., non-numeric or negative)
+                ret = []; // or any other fallback logic you prefer
+            }
+        }
+
+        res.status(200).json({ data: { results: ret } })
     } catch (error) {
         console.error('Error getting search results:', error);
         res.status(500).send('Error search results');

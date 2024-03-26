@@ -1,9 +1,12 @@
 import UserNameSearch from './userNameSearch.js'
+import statusSearch from './userStatusSearch.js'
 
 const getStrategy = (context, criteria) => {
     switch (context) {
         case 'username':
             return new UserNameSearch(criteria);
+        // case 'status':
+        //     return new UserNameSearch(statusSearch);
         // case 'publicMessages':
         //     return new PublicMessageSearch();
         // case 'userProfiles':

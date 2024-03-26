@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
+const statusEntrySchema = new mongoose.Schema({
+  status: { type: String, required: true},
+  date: { type: Date}
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -9,10 +14,10 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   status: {
-    type: String,
-    default: 'undefined',
+    type: [statusEntrySchema],
+    default: [{ status: 'undefined', date: new Date() }],  // Default entry for status
+    validate: [arrayLimit, '{PATH} exceeds the limit of 10']
   },
-  statusTime: Date,
   role: String,
   acknowledged: {
     type: Boolean,
@@ -25,6 +30,10 @@ const userSchema = new mongoose.Schema({
     of: Boolean, 
   },
 })
+
+function arrayLimit(val) {
+  return val.length <= 10;
+}
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next()
@@ -49,6 +58,7 @@ async function findAllUsers() {
       throw error;
   }
 }
+
 
 export { findAllUsers, Users };
 

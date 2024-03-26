@@ -151,6 +151,20 @@ async function UserAcknowledged(req, res) {
 async function getUser(req, res) {
   try {
     let directory = await findAllUsers();
+
+    directory = directory.map(user => {
+      if (user.status && user.status.length > 0) {
+        // Sort the status entries by date in descending order and get the first one
+        const latestStatus = user.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status;
+        // Return the user object with the latest status
+        return { ...user.toObject(), status: latestStatus };
+      } else {
+        // If there are no status entries, return the user with a default or undefined status
+        return { ...user.toObject(), status: 'undefined' };
+      }
+    });
+
+    console.log("current directory", directory)
     res.status(200).json({ data: { users: directory } })
   } catch (error) {
     console.error(error)
@@ -160,8 +174,17 @@ async function getUser(req, res) {
 
 async function getOneStatus(req, res) {
   try {
-    let userStatus = await Users.findOne({ username: req.params.username }, 'status')
-    res.status(200).json({ data: { status: userStatus } })
+    let user = await Users.findOne({ username: req.params.username }, 'status');
+
+    if (!user || !user.status || user.status.length === 0) {
+      return res.status(404).json({ message: 'User or user status not found' });
+    }
+
+    // Sort the status array by date in descending order to get the latest status first
+    let latestStatus = user.status.sort((a, b) => b.date - a.date)[0];
+    console.log("stats ", latestStatus.status)
+    // Send the latest status
+    res.status(200).json({ data: { status: latestStatus.status} });
   } catch (error) {
     console.error(error)
     res.status(500).send('User status get server error')
@@ -170,11 +193,18 @@ async function getOneStatus(req, res) {
 
 async function updateOneStatus(req, res) {
   try {
-    const { status, timestamp } = req.body
-    const userFound = await Users.findOne({ username: req.params.username })
-    userFound.status = status
-    userFound.statusTime = timestamp
-    io.emit('update status', { username: userFound.username, status: userFound.status })
+    const { status } = req.body
+    const username = req.params.username;
+    const userFound = await Users.findOne({ username: username })
+    if (!userFound) {
+      return res.status(404).send('User not found');
+    }
+
+    userFound.status.push({ status: status, date: new Date() });
+    if (userFound.status.length > 10) {
+      userFound.status.shift();
+    }
+    io.emit('update status', { username: username, status: status })
     await userFound.save()
     res.status(200).send('User status update successful')
   } catch (error) {
