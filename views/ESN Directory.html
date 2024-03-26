@@ -381,6 +381,18 @@ document.getElementById('search-btn-private').addEventListener('click', function
         const searchQuery = document.getElementById('search-input').value;
         const searchContext = 'privateChat'
         const pageNumber = '0'
+
+        fetch(`/search/${searchContext}/${searchQuery}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const messages = data.data.messages
+            messages.forEach((message) => {
+              renderMSG(message)
+            })
+          })
+          .catch((error) => console.error('Error fetching messages:', error))
+
+
   
   // Implement search logic here
   // If isStatusSearch is true, filter by status; otherwise, perform a general search
