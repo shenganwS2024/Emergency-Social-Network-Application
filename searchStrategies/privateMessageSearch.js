@@ -13,13 +13,14 @@ class privateMessageSearch extends SearchStrategy {
 
             let messages = await findMessages(sender, receiver);
             let filteredMessages = messages.filter(message => message.content.includes(criteria));
-
-            return filteredMessages.map(message => ({
+            let ret = filteredMessages.map(message => ({
                 username: message.username,
                 content: message.content,
                 timestamp: message.timestamp,
                 status: message.status,
             }));
+
+            return ret
 
             
 

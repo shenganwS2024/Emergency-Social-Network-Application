@@ -97,7 +97,7 @@ function getUserStatus(username) {
       .then((response) => response.json())
       .then((data) => {
         console.log('Status got successfully:', data.data.status)
-        resolve(data.data.status.status)
+        resolve(data.data.status)
       })
       .catch((error) => {
         console.error('Error getting status:', error)

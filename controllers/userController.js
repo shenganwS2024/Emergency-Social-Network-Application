@@ -233,7 +233,7 @@ async function updateChatChecked(req, res) {
         { new: true }
       ).then(updatedDocument => {
         io.emit("alertUpdated", {sender: active_user, receiver:passive_user, checked: newValue});
-        console.log('Updated document:', updatedDocument);
+        
       }).catch(error => {
         console.error('Error updating the document:', error);
       });
