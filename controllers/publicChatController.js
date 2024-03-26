@@ -61,7 +61,7 @@ async function postNewMessage(req,res) {
                 { new: true }
             ).then(updatedDocument => {
                 io.emit("alertUpdated", {sender: sender, receiver: receiver, checked: newValue});
-                console.log('Updated document:', updatedDocument);
+                
             }).catch(error => {
                 console.error('Error updating the document:', error);
             });

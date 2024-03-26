@@ -23,70 +23,70 @@ async function validateUserInfo(username, password) {
   }
 }
 
+async function findUserByUsername(username) {
+  return await Users.findOne({ username });
+}
+
+async function comparePassword(password, hashedPassword) {
+  return await bcrypt.compare(password, hashedPassword);
+}
+
+async function generateToken(userId, username) {
+  return jwt.sign(
+    {
+      userId,
+      username,
+    },
+    'fsesb2secretkey',
+    { expiresIn: '1h' },
+  );
+}
+
+async function getUsers() {
+  return await Users.find({});
+}
 
 async function validateUser(req, res) {
   try {
-    const { username, password, status, role } = req.body
-    // Check for existing user
-    const userFound = await Users.findOne({ username })
+    const { username, password } = req.body;
+
+    const userFound = await findUserByUsername(username);
+
     if (userFound) {
-      const isMatch = await bcrypt.compare(password, userFound.password)
+      const isMatch = await comparePassword(password, userFound.password);
 
       if (isMatch) {
-        console.log('Password is correct!')
-        // Update user status to online
-        // await updateUserStatus(userFound, true);
-        let token
-        try {
-          //Creating jwt token
-          token = jwt.sign(
-            {
-              userId: userFound.id,
-              username: userFound.username,
-            },
-            'fsesb2secretkey',
-            { expiresIn: '1h' },
-          )
-          console.log('login true token', token)
-        } catch (err) {
-          console.log(err)
-          return res.status(500).send('Error creating token')
-        }
+        console.log('Password is correct!');
 
-        let directory
-        try {
-          directory = await Users.find({})
-        } catch (error) {
-          console.error(error)
-          res.status(500).send('Users post server error')
-        }
+        const token = await generateToken(userFound.id, userFound.username);
+        const directory = await getUsers();
 
         return res.status(200).json({
           success: true,
           data: {
             userID: userFound.id,
             username: userFound.username,
-            token: token,
+            token,
             users: directory,
-            acknowledged: userFound.acknowledged, //Used for ESN display.
+            acknowledged: userFound.acknowledged,
           },
-        })
+        });
       } else {
-        console.log('Password is incorrect.')
-        return res.status(401).send('Authentication failed')
+        console.log('Password is incorrect.');
+        return res.status(401).send('Authentication failed');
       }
     } else {
-      return res.status(201).send('New Account')
+      return res.status(201).send('New Account');
     }
   } catch (error) {
-    return res.status(500).send('Error during validation')
+    return res.status(500).send('Error during validation');
   }
 }
 
 async function registerUser(req, res) {
   try {
     const { username, password, status, role } = req.body
-    if(validateUserInfo(username, password) === false) {
+    if(await validateUserInfo(username, password) === false) {
       return res.status(500).send('Invalid username or password')
     }
     const user = new Users({ username, password, status, role })
@@ -233,7 +233,7 @@ async function updateChatChecked(req, res) {
         { new: true }
       ).then(updatedDocument => {
         io.emit("alertUpdated", {sender: active_user, receiver:passive_user, checked: newValue});
-        console.log('Updated document:', updatedDocument);
+        
       }).catch(error => {
         console.error('Error updating the document:', error);
       });

@@ -1,4 +1,4 @@
-import Announcements from '../models/Announcements.js';
+import {Announcements} from '../models/Announcements.js';
 import { io } from '../server.js';
 
 // Function to get the latest messages from the server
