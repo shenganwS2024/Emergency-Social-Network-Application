@@ -11,7 +11,7 @@ class UserNameSearch extends SearchStrategy {
             ).map(user => {
                 const latestStatus = user.status && user.status.length > 0
                     ? user.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status
-                    : 'undefined'; // Or any other default status
+                    : 'undefined'; 
                 return {
                     username: user.username,
                     status: latestStatus,

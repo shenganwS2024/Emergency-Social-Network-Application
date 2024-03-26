@@ -1,20 +1,20 @@
 import UserNameSearch from './userNameSearch.js'
 import statusSearch from './userStatusSearch.js'
+import publicMessageSearch from './publicMessageSearch.js'
 
-const getStrategy = async (context, criteria) => {
+
+const getStrategy = async (context, criteria, sender, receiver) => {
     switch (context) {
         case 'username':
-            let ret =  await new UserNameSearch().search(criteria);
-            console.log("ret",ret)
-            return ret;
+            return await new UserNameSearch().search(criteria);
         case 'status':
-            let ret2 =  await new statusSearch().search(criteria);
-            
-            return ret2;
-        // case 'publicMessages':
-        //     return new PublicMessageSearch();
-        // case 'userProfiles':
-        //     return new UserProfileSearch();
+            return await new statusSearch().search(criteria);
+        // case 'publicMessage':
+        //     return await new publicMessageSearch().search(criteria);
+        case 'privateMessage':
+            return await new privateMessageSearch().search(criteria, sender, receiver);
+        // case 'announcement':
+        //     return await new announcementSearch().search(criteria);
         default:
             throw new Error(`Unknown search context: ${context}`);
     }
