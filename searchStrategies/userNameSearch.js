@@ -9,9 +9,12 @@ class UserNameSearch extends SearchStrategy {
             const filteredUsers = allUsers.filter(user =>
                 user.username.includes(criteria)
             ).map(user => {
+                const latestStatus = user.status && user.status.length > 0
+                    ? user.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status
+                    : 'undefined'; // Or any other default status
                 return {
                     username: user.username,
-                    status: user.status,
+                    status: latestStatus,
                     onlineStatus: user.onlineStatus
                 };
             });

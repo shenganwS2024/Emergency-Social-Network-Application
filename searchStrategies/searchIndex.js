@@ -4,9 +4,9 @@ import statusSearch from './userStatusSearch.js'
 const getStrategy = (context, criteria) => {
     switch (context) {
         case 'username':
-            return new UserNameSearch(criteria);
-        // case 'status':
-        //     return new UserNameSearch(statusSearch);
+            return new UserNameSearch().search(criteria);
+        case 'status':
+            return new statusSearch.search(criteria);
         // case 'publicMessages':
         //     return new PublicMessageSearch();
         // case 'userProfiles':
