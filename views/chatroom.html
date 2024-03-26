@@ -10,10 +10,15 @@
     <div class="app">
       <!-- chatroom page -->
       <div class="screen chatroom">
+        <div id="search-bar-container">
+          <input type="text" id="search-input" placeholder="Search public messages..." />
+          <button id="search-btn">🔍</button>
+        </div>
         <div class="header">
           <div class="logo">ESN Chat Room</div>
           <button id="exit-chat">Logout</button>
           <button id="directory-button">Directory</button>
+          <button id="announcement">Announcement</button>
         </div>
         <div class="messages">
           <div class="message otherMessage"></div>
@@ -25,9 +30,7 @@
         <div class="post">
           <button id="send-msg">Post</button>
         </div>
-        <div>
-          <button id="announcement">Announcement</button>
-        </div>
+        
       </div>
     </div>
 
@@ -205,15 +208,15 @@
       }
 
       .chatroom .header button {
-        padding: 5px 5px;
+        padding: 5px 3px;
         border: 1px solid black;
-        font-size: 18px;
+        font-size: 12px;
         font-weight: bold;
         background: #fab855;
         color: black;
         cursor: pointer;
         outline: none;
-        margin-right: 10px;
+        margin-right: 5px;
       }
 
       .chatroom .messages {
@@ -301,21 +304,7 @@
         margin-bottom: 10px;
       }
 
-      #announcement {
-        width: 98%;
-        height: 6%;
-        font-weight: 900;
-        font-size: 30px;
-        background-color: #89bbf5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
-        margin-top: 10px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      
+
       #time {
         font-size: 15px;
         font-weight: lighter;
@@ -348,6 +337,30 @@
       .offline {
         color: red;
       }
+      #search-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0; /* Add some padding above and below the search bar */
+  background: #f0f0f0; /* Optional: adds a distinct background color to the search bar area */
+}
+
+#search-input {
+  padding: 10px;
+  margin-right: 5px; /* Space between the input field and the search button */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 300px; /* Adjust the width as needed */
+}
+
+#search-btn {
+  cursor: pointer;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50; /* Green background to match other buttons */
+  color: white;
+}
     </style>
   </body>
 </html>

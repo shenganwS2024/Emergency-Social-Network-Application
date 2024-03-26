@@ -1,3 +1,4 @@
+
 // import {io} from '../config/serverConfig.js'
 
 console.log('localstorage token', localStorage.getItem('token'))
@@ -28,6 +29,11 @@ document.getElementById('exit-chat').addEventListener('click', () => {
 document.getElementById('announcement').addEventListener('click', async function () {
   window.location.href = 'Announcement.html'
 }) 
+
+document.getElementById('search-btn').addEventListener('click', function() {
+  const searchQuery = document.getElementById('search-input').value.toLowerCase();
+  const searchContext = 'publicChat';
+});
 
 document.addEventListener('DOMContentLoaded', function () {
   // Assuming you have a way to get the current user's username

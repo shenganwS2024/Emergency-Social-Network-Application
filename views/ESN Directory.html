@@ -5,6 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User List</title>
+    <div id="search-bar-container">
+      <input type="text" id="search-input" placeholder="Search..." />
+      <label for="status-search-toggle">
+        <input type="radio" id="status-search-toggle" name="search-type" />
+        Status Search
+      </label>
+      <button id="search-btn">🔍</button>
+    </div>
     <h1>ESN Directory</h1>
     <button id="speed-test-btn">Speed Test</button>
     <style>
@@ -196,6 +204,37 @@
         border: none;
         border-radius: 5px;
       }
+
+      #search-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Adjust as necessary */
+  margin-bottom: 10px; /* Space before the title */
+}
+
+#search-input {
+  padding: 10px;
+  margin-right: 5px; /* Space between the input field and the search button */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#search-btn {
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50; /* Green background to match other buttons */
+  color: white;
+}
+
+/* Style adjustments for the radio button label */
+#status-search-toggle + label {
+  margin-left: 10px; /* Space between search button and radio button */
+  cursor: pointer;
+}
+
     </style>
   </head>
   <body>
@@ -219,6 +258,10 @@
 
     <div id="chat-modal" class="modal">
       <div class="modal-content">
+        <div id="search-bar-container">
+          <input type="text" id="search-input" placeholder="Search private messages..." />
+          <button id="search-btn-private">🔍</button>
+        </div>
         <h2>Chat with <span id="chat-username">Username</span></h2>
         <div class="chatroom">
           <div class="messages"></div>
@@ -299,6 +342,50 @@
 
           displayUsers(users, currentUser)
         })
+
+        document.getElementById('search-btn').addEventListener('click', async function() {
+    const searchInput = document.getElementById('search-input').value.trim();
+    const isStatusSearch = document.getElementById('status-search-toggle').checked;
+    let pageNumber = '0'; // You may want to change this dynamically if implementing pagination
+    let searchContext = isStatusSearch ? 'status' : 'username';
+
+    // Ensure the input is encoded properly to handle special characters
+    const encodedSearchInput = encodeURIComponent(searchInput);
+    const searchURL = `/search/${searchContext}/${encodedSearchInput}/${pageNumber}`;
+
+    try {
+        const response = await fetch(searchURL, {
+            method: 'GET', // Explicitly stating the method for clarity
+            headers: {
+                'Accept': 'application/json', // Expecting JSON response
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log(searchContext + ''+searchInput)
+        console.log('Search results:', result);
+
+        // Assuming `displayUsers` is a function you've defined to update the UI with the search results
+        displayUsers(result.data.results, currentUser); // Removed `currentUser` assuming it's not used here or is globally accessible
+    } catch (error) {
+        console.error('Failed to fetch:', error.message);
+        // Optionally, update the UI to notify the user that the search failed
+    }
+});
+
+document.getElementById('search-btn-private').addEventListener('click', function() {
+        const searchQuery = document.getElementById('search-input').value;
+        const searchContext = 'privateChat'
+        const pageNumber = '0'
+  
+  // Implement search logic here
+  // If isStatusSearch is true, filter by status; otherwise, perform a general search
+});
+
         document.getElementById('speed-test-btn').addEventListener('click', function () {
           window.location.href = 'SpeedTest.html'
         })
@@ -386,7 +473,6 @@
       })
 
       function displayUsers(users, currentUser) {
-        console.log('inside displayUser', currentUser.chatChecked)
 
         const userList = document.getElementById('userList')
         userList.innerHTML = '' // Clear existing list

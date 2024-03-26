@@ -6,7 +6,7 @@ async function getSearchResults(req, res) {
         let criteria = req.params.criteria;
         let context = req.params.context;
         let pageNumber = req.params.pageNumber;
-        let searchResults = getStrategy(context, criteria)
+        let searchResults = await getStrategy(context, criteria)
         let ret;
         if (pageNumber === '0') {
             ret = searchResults

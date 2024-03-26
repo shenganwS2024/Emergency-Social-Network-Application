@@ -1,12 +1,16 @@
 import UserNameSearch from './userNameSearch.js'
 import statusSearch from './userStatusSearch.js'
 
-const getStrategy = (context, criteria) => {
+const getStrategy = async (context, criteria) => {
     switch (context) {
         case 'username':
-            return new UserNameSearch().search(criteria);
+            let ret =  await new UserNameSearch().search(criteria);
+            console.log("ret",ret)
+            return ret;
         case 'status':
-            return new statusSearch.search(criteria);
+            let ret2 =  await new statusSearch().search(criteria);
+            
+            return ret2;
         // case 'publicMessages':
         //     return new PublicMessageSearch();
         // case 'userProfiles':

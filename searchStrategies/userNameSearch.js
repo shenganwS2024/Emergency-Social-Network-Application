@@ -18,6 +18,7 @@ class UserNameSearch extends SearchStrategy {
                     onlineStatus: user.onlineStatus
                 };
             });
+            console.log("username search",filteredUsers)
 
             return filteredUsers;
             //Example return: [
