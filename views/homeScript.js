@@ -35,22 +35,8 @@ async function registerUser(event) {
 
   if (validateUserInfo(username, password) && !(await isSpeedTestMode())) {
     try {
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
-
-      if (response.status === 200) {
-        handleSuccessfulLogin(await response.json(), username)
-      } else if (response.status === 201) {
-        showPage('confirmation-page')
-      } else if (response.status === 409) {
-        alert('Conflict: Username already exists and password is incorrect. Please re-enter')
-        resetForm()
-      } else {
-        alert(await response.text())
-      }
+      const response = await sendLoginRequest(username, password)
+      await handleLoginResponse(response, username)
     } catch (error) {
       console.error('Error:', error)
     }
@@ -58,6 +44,27 @@ async function registerUser(event) {
 
   currentUser.username = username
   currentUser.password = password
+}
+
+async function sendLoginRequest(username, password) {
+  return fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  })
+}
+
+async function handleLoginResponse(response, username) {
+  if (response.status === 200) {
+    handleSuccessfulLogin(await response.json(), username)
+  } else if (response.status === 201) {
+    showPage('confirmation-page')
+  } else if (response.status === 409) {
+    alert('Conflict: Username already exists and password is incorrect. Please re-enter')
+    resetForm()
+  } else {
+    alert(await response.text())
+  }
 }
 
 function handleSuccessfulLogin(data, username) {
@@ -121,44 +128,65 @@ function acknowledgeUser() {
 }
 
 function confirmUserRegistration() {
-  fetch('/registration', {
+  const registrationData = {
+    username: currentUser.username,
+    password: currentUser.password,
+  }
+
+  sendRegistrationRequest(registrationData).then(handleRegistrationResponse).catch(handleRegistrationError)
+}
+
+function sendRegistrationRequest(data) {
+  return fetch('/registration', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username: currentUser.username, password: currentUser.password }),
+    body: JSON.stringify(data),
   })
-    .then(async (response) => {
-      if (response.status === 201) {
-        const data = await response.json()
-        localStorage.setItem('token', data.data.token)
-        localStorage.setItem('userID', data.data.userID)
-        showPage('welcome-page')
-      } else {
-        const errorText = await response.text()
-        alert(errorText)
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-    })
+}
+
+async function handleRegistrationResponse(response) {
+  if (response.status === 201) {
+    const data = await response.json()
+    setLocalStorageItems(data)
+    showPage('welcome-page')
+  } else {
+    const errorText = await response.text()
+    alert(errorText)
+  }
+}
+
+function handleRegistrationError(error) {
+  console.error('Error:', error)
+}
+
+function setLocalStorageItems(data) {
+  localStorage.setItem('token', data.data.token)
+  localStorage.setItem('userID', data.data.userID)
 }
 
 function updateUserAcknowledgement(userId) {
-  fetch('/acknowledgement', {
+  sendAcknowledgementRequest(userId).then(handleAcknowledgementResponse).catch(handleAcknowledgementError)
+}
+
+function sendAcknowledgementRequest(userId) {
+  return fetch('/acknowledgement', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ id: userId }),
   })
-    .then(async (response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      console.log('Success:', await response.text())
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-    })
+}
+
+async function handleAcknowledgementResponse(response) {
+  if (!response.ok) {
+    throw new Error('Network response was not ok')
+  }
+  console.log('Success:', await response.text())
+}
+
+function handleAcknowledgementError(error) {
+  console.error('Error:', error)
 }
