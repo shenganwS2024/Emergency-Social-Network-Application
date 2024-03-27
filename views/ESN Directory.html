@@ -7,7 +7,7 @@
     <title>User List</title>
     <div id="search-bar-container">
       <input type="text" id="search-input" placeholder="Search..." />
-      <select id="status-dropdown" style="display: none;">
+      <select id="status-dropdown" style="display: none">
         <option value="ok">OK</option>
         <option value="help">Help</option>
         <option value="emergency">Emergency</option>
@@ -143,14 +143,14 @@
 
       .modal-content {
         display: flex;
-  flex-direction: column;
-  height: 100%;
+        flex-direction: column;
+        height: 100%;
       }
 
       #message-container {
         width: 100%;
         height: 300px;
-        
+
         margin-bottom: 10px;
         border: 1px solid #ccc;
       }
@@ -170,7 +170,7 @@
         overflow: auto;
         margin-top: 20px;
         margin-bottom: 10px;
-        position:fixed;
+        position: fixed;
       }
 
       .message {
@@ -185,10 +185,10 @@
       }
 
       button#send-message,
-      button#close-chat{
+      button#close-chat {
         flex-shrink: 0; /* Prevent buttons from shrinking */
         margin-top: 10px; /* Space between textarea and buttons */
-        position:fixed;
+        position: fixed;
       }
 
       .message {
@@ -224,86 +224,84 @@
       }
 
       #search-bar-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px; /* Adjust as necessary */
-  margin-bottom: 10px; /* Space before the title */
-}
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px; /* Adjust as necessary */
+        margin-bottom: 10px; /* Space before the title */
+      }
 
-#search-input {
-  padding: 10px;
-  margin-right: 5px; /* Space between the input field and the search button */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+      #search-input {
+        padding: 10px;
+        margin-right: 5px; /* Space between the input field and the search button */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-#search-btn {
-  cursor: pointer;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50; /* Green background to match other buttons */
-  color: white;
-}
+      #search-btn {
+        cursor: pointer;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50; /* Green background to match other buttons */
+        color: white;
+      }
 
-/* Style adjustments for the radio button label */
-#status-search-toggle + label {
-  margin-left: 10px; /* Space between search button and radio button */
-  cursor: pointer;
-}
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
+      /* Style adjustments for the radio button label */
+      #status-search-toggle + label {
+        margin-left: 10px; /* Space between search button and radio button */
+        cursor: pointer;
+      }
+      .modal-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
 
-.messages {
-  flex-grow: 1; /* This ensures that the messages container takes up all available space */
-  overflow-y: auto; /* Allow scrolling for overflow content */
-  width: 100%; /* Adjust if necessary */
-  position: relative; /* Keeps it within the modal-content area */
-}
+      .messages {
+        flex-grow: 1; /* This ensures that the messages container takes up all available space */
+        overflow-y: auto; /* Allow scrolling for overflow content */
+        width: 100%; /* Adjust if necessary */
+        position: relative; /* Keeps it within the modal-content area */
+      }
 
-#chat-message {
-  order: 2; /* Ensure it's positioned after the messages */
-  width: calc(100% - 40px); /* Adjust width accounting for padding */
-  margin-top: auto; /* Moves it to the bottom */
-  position: fixed;
-  bottom: 80px; /* Adjust based on the total height of buttons below */
-}
+      #chat-message {
+        order: 2; /* Ensure it's positioned after the messages */
+        width: calc(100% - 40px); /* Adjust width accounting for padding */
+        margin-top: auto; /* Moves it to the bottom */
+        position: fixed;
+        bottom: 80px; /* Adjust based on the total height of buttons below */
+      }
 
-button#send-message,
-button#close-chat,
-button#see-more {
-  order: 3; /* Ensure these are at the very bottom */
-  
-  position: fixed;
-  bottom: 40px; /* Adjust if you change the button size or want more/less space */
-}
+      button#send-message,
+      button#close-chat,
+      button#see-more {
+        order: 3; /* Ensure these are at the very bottom */
 
-button#close-chat {
-  right: 0; /* Align to the right */
-}
-button#send-message {
-  left: 0; /* Align to the left */
-}
-button#see-more {
-  left: 50%; /* Center the button */
-  transform: translateX(-50%); /* Center the button */
-}
-.chat-actions {
-  position: fixed;
-  bottom: 10px; /* Adjust as necessary */
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around; /* This will evenly space your buttons */
-  padding: 0 10px; /* Add some padding on the sides */
-}
-/* You might need to adjust the height of the `.modal-content` or `.messages` if there's overflow or alignment issues */
+        position: fixed;
+        bottom: 40px; /* Adjust if you change the button size or want more/less space */
+      }
 
-
+      button#close-chat {
+        right: 0; /* Align to the right */
+      }
+      button#send-message {
+        left: 0; /* Align to the left */
+      }
+      button#see-more {
+        left: 50%; /* Center the button */
+        transform: translateX(-50%); /* Center the button */
+      }
+      .chat-actions {
+        position: fixed;
+        bottom: 10px; /* Adjust as necessary */
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around; /* This will evenly space your buttons */
+        padding: 0 10px; /* Add some padding on the sides */
+      }
+      /* You might need to adjust the height of the `.modal-content` or `.messages` if there's overflow or alignment issues */
     </style>
   </head>
   <body>
@@ -336,53 +334,52 @@ button#see-more {
           <div class="messages"></div>
           <textarea id="chat-message" placeholder="Write a message..."></textarea>
           <div class="chat-actions">
-            
             <button id="send-message">Send</button>
             <button id="close-chat">Back</button>
             <button id="see-more">See More</button>
           </div>
         </div>
-         
       </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-     let pageNumber = 1;
-       async function fetchMessages() {
-        const searchInput = document.getElementById('search-input-private').value.trim();
-   // Assuming the first page. Adjust as needed.
-        ++pageNumber;
-  // Encoding URI components to ensure special characters in the searchInput do not break the URL
-  const encodedSearchInput = encodeURIComponent(searchInput);
-            
-            const sender = localStorage.getItem('username'); // Assuming sender's username is stored in localStorage
-    const receiver = localStorage.getItem('receiver'); // Adjust according to your application's logic
-    const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(sender)}/${encodeURIComponent(receiver)}`;
+      let pageNumber = 1
+      async function fetchMessages() {
+        const searchInput = document.getElementById('search-input-private').value.trim()
+        // Assuming the first page. Adjust as needed.
+        ++pageNumber
+        // Encoding URI components to ensure special characters in the searchInput do not break the URL
+        const encodedSearchInput = encodeURIComponent(searchInput)
 
-try {
-    const response = await fetch(searchURL, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json', // Expecting a JSON response
+        const sender = localStorage.getItem('username') // Assuming sender's username is stored in localStorage
+        const receiver = localStorage.getItem('receiver') // Adjust according to your application's logic
+        const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(
+          sender,
+        )}/${encodeURIComponent(receiver)}`
+
+        try {
+          const response = await fetch(searchURL, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json', // Expecting a JSON response
+            },
+          })
+
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`)
+          }
+
+          const result = await response.json()
+          const messages = result.data.results
+          messages.forEach((message) => {
+            renderMSG(message)
+          })
+        } catch (error) {
+          console.error('Failed to fetch:', error.message)
+          // Optionally, update the UI to notify the user that the search failed
         }
-    });
-
-    if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    const messages =result.data.results;
-    messages.forEach((message) => {
-          renderMSG(message)
-        })
-    
-} catch (error) {
-    console.error('Failed to fetch:', error.message);
-    // Optionally, update the UI to notify the user that the search failed
-}
-}
+      }
       const socket = io('http://localhost:3000/', {
         query: {
           token: localStorage.getItem('token'),
@@ -390,30 +387,27 @@ try {
       })
       const app = document.querySelector('.modal-content')
       document.addEventListener('DOMContentLoaded', async () => {
+        const statusSearchToggle = document.getElementById('status-search-toggle')
+        let isChecked = false // Boolean flag to track the toggle state
 
+        statusSearchToggle.addEventListener('click', function () {
+          const searchInput = document.getElementById('search-input')
+          const statusDropdown = document.getElementById('status-dropdown')
 
-        const statusSearchToggle = document.getElementById('status-search-toggle');
-    let isChecked = false; // Boolean flag to track the toggle state
+          if (isChecked) {
+            // If it was already checked, uncheck it and show the input field
+            statusSearchToggle.checked = false
+            searchInput.style.display = 'block' // Show input field
+            statusDropdown.style.display = 'none' // Hide dropdown
+          } else {
+            // If it was unchecked, check it and show the dropdown
+            searchInput.style.display = 'none' // Hide input field
+            statusDropdown.style.display = 'block' // Show dropdown
+          }
+          // Toggle the isChecked flag
+          isChecked = !isChecked
+        })
 
-    statusSearchToggle.addEventListener('click', function() {
-    const searchInput = document.getElementById('search-input');
-    const statusDropdown = document.getElementById('status-dropdown');
-
-    if (isChecked) {
-        // If it was already checked, uncheck it and show the input field
-        statusSearchToggle.checked = false;
-        searchInput.style.display = 'block'; // Show input field
-        statusDropdown.style.display = 'none'; // Hide dropdown
-    } else {
-        // If it was unchecked, check it and show the dropdown
-        searchInput.style.display = 'none'; // Hide input field
-        statusDropdown.style.display = 'block'; // Show dropdown
-    }
-    // Toggle the isChecked flag
-    isChecked = !isChecked;
-});
-
-        
         let users
         let currentUser
         try {
@@ -423,7 +417,6 @@ try {
           users = data.data.users
           currentUser = users.find((user) => user.username === localStorage.getItem('username'))
           localStorage.setItem('currentUser', JSON.stringify(currentUser))
-
 
           displayUsers(users, currentUser)
         } catch (error) {
@@ -465,96 +458,97 @@ try {
           displayUsers(users, currentUser)
         })
 
-        document.getElementById('search-btn').addEventListener('click', async function() {
-    const searchInput = document.getElementById('search-input').value.trim();
-    const statusDropdown = document.getElementById('status-dropdown');
-const isStatusSearch = document.getElementById('status-search-toggle').checked;
-    let pageNumber = '0'; // You may want to change this dynamically if implementing pagination
-    let searchContext = isStatusSearch ? 'status' : 'username';
-    let searchValue;
-if (isStatusSearch) {
-    searchValue = statusDropdown.value;
-} else {
-    searchValue = searchInput;
-}
+        document.getElementById('search-btn').addEventListener('click', async function () {
+          const searchInput = document.getElementById('search-input').value.trim()
+          const statusDropdown = document.getElementById('status-dropdown')
+          const isStatusSearch = document.getElementById('status-search-toggle').checked
+          let pageNumber = '0' // You may want to change this dynamically if implementing pagination
+          let searchContext = isStatusSearch ? 'status' : 'username'
+          let searchValue
+          if (isStatusSearch) {
+            searchValue = statusDropdown.value
+          } else {
+            searchValue = searchInput
+          }
 
-    // Ensure the input is encoded properly to handle special characters
-    const encodedSearchInput = encodeURIComponent(searchValue);
-    const searchURL = `/search/${searchContext}/${encodedSearchInput}/${pageNumber}`;
+          // Ensure the input is encoded properly to handle special characters
+          const encodedSearchInput = encodeURIComponent(searchValue)
+          const searchURL = `/search/${searchContext}/${encodedSearchInput}/${pageNumber}`
 
-    try {
-        const response = await fetch(searchURL, {
-            method: 'GET', // Explicitly stating the method for clarity
-            headers: {
-                'Accept': 'application/json', // Expecting JSON response
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        // Assuming `displayUsers` is a function you've defined to update the UI with the search results
-        displayUsers(result.data.results, currentUser); // Removed `currentUser` assuming it's not used here or is globally accessible
-    } catch (error) {
-        console.error('Failed to fetch:', error.message);
-        // Optionally, update the UI to notify the user that the search failed
-    }
-});
-document.getElementById('search-btn-private').addEventListener('click', async function() {
-    const searchInput = document.getElementById('search-input-private').value.trim();
-    const pageNumber = 1; // Assuming the first page. Adjust as needed.
-    const sender = localStorage.getItem('username'); // Assuming sender's username is stored in localStorage
-    const receiver = localStorage.getItem('receiver'); // Adjust according to your application's logic
-
-    // Ensure there's a receiver set before proceeding
-    if (!receiver) {
-        console.error('Receiver not defined.');
-        return;
-    }
-
-    // Encoding URI components to ensure special characters in the searchInput do not break the URL
-    const encodedSearchInput = encodeURIComponent(searchInput);
-    const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(sender)}/${encodeURIComponent(receiver)}`;
-
-    try {
-        const response = await fetch(searchURL, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json', // Expecting a JSON response
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        const messages =result.data.results;
-        console.log("any thing"+messages)
-        const messagesContainer = document.querySelector('.messages'); // Select the messages container
-
-    // Clear existing messages before displaying new ones
-    messagesContainer.innerHTML = '';
-    console.log("statu "+messages)
-        messages.forEach((message) => {
-          if(searchInput==='status'){
-            console.log("going to status history" + message)
-            renderStatusHistory(message)}
-          else{renderMSG(message)}
-              
+          try {
+            const response = await fetch(searchURL, {
+              method: 'GET', // Explicitly stating the method for clarity
+              headers: {
+                Accept: 'application/json', // Expecting JSON response
+              },
             })
-       
 
-        // Assuming `displayMessages` is a function you've defined to update the UI with the fetched messages
-        
-    } catch (error) {
-        console.error('Failed to fetch:', error.message);
-        // Optionally, update the UI to notify the user that the search failed
-    }
-});
+            if (!response.ok) {
+              throw new Error(`Network response was not ok: ${response.statusText}`)
+            }
+
+            const result = await response.json()
+
+            // Assuming `displayUsers` is a function you've defined to update the UI with the search results
+            displayUsers(result.data.results, currentUser) // Removed `currentUser` assuming it's not used here or is globally accessible
+          } catch (error) {
+            console.error('Failed to fetch:', error.message)
+            // Optionally, update the UI to notify the user that the search failed
+          }
+        })
+        document.getElementById('search-btn-private').addEventListener('click', async function () {
+          const searchInput = document.getElementById('search-input-private').value.trim()
+          const pageNumber = 1 // Assuming the first page. Adjust as needed.
+          const sender = localStorage.getItem('username') // Assuming sender's username is stored in localStorage
+          const receiver = localStorage.getItem('receiver') // Adjust according to your application's logic
+
+          // Ensure there's a receiver set before proceeding
+          if (!receiver) {
+            console.error('Receiver not defined.')
+            return
+          }
+
+          // Encoding URI components to ensure special characters in the searchInput do not break the URL
+          const encodedSearchInput = encodeURIComponent(searchInput)
+          const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(
+            sender,
+          )}/${encodeURIComponent(receiver)}`
+
+          try {
+            const response = await fetch(searchURL, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json', // Expecting a JSON response
+              },
+            })
+
+            if (!response.ok) {
+              throw new Error(`Network response was not ok: ${response.statusText}`)
+            }
+
+            const result = await response.json()
+            const messages = result.data.results
+            console.log('any thing' + messages)
+            const messagesContainer = document.querySelector('.messages') // Select the messages container
+
+            // Clear existing messages before displaying new ones
+            messagesContainer.innerHTML = ''
+            console.log('statu ' + messages)
+            messages.forEach((message) => {
+              if (searchInput === 'status') {
+                console.log('going to status history' + message)
+                renderStatusHistory(message)
+              } else {
+                renderMSG(message)
+              }
+            })
+
+            // Assuming `displayMessages` is a function you've defined to update the UI with the fetched messages
+          } catch (error) {
+            console.error('Failed to fetch:', error.message)
+            // Optionally, update the UI to notify the user that the search failed
+          }
+        })
 
         document.getElementById('speed-test-btn').addEventListener('click', function () {
           window.location.href = 'SpeedTest.html'
@@ -600,7 +594,6 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
             })
               .then((response) => response.json())
               .then((data) => {
-
                 messageInput.value = '' // Clear the input after sending
               })
               .catch((error) => {
@@ -611,9 +604,9 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
           }
         })
 
-        document.getElementById('see-more').addEventListener('click', function() {
-  fetchMessages(); // Call the function to fetch the next page of messages
-});
+        document.getElementById('see-more').addEventListener('click', function () {
+          fetchMessages() // Call the function to fetch the next page of messages
+        })
 
         socket.on('alertUpdated', (data) => {
           const roomName = [data.sender, data.receiver].sort().join('_')
@@ -633,7 +626,6 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
               if (data.receiver === currentUser.username) {
                 currentUser.chatChecked = {}
                 currentUser.chatChecked[roomName] = false
-
               }
             } else if (currentUser.chatChecked && data.checked === false) {
               if (data.receiver === currentUser.username) {
@@ -647,7 +639,6 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
       })
 
       function displayUsers(users, currentUser) {
-
         const userList = document.getElementById('userList')
         userList.innerHTML = '' // Clear existing list
 
@@ -665,13 +656,12 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
           userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
           const roomName = [currentUser.username, user.username].sort().join('_')
           const alertIcon = document.createElement('span') // Use an appropriate icon or emoji
-          
+
           if (
             currentUser.chatChecked &&
             currentUser.chatChecked[roomName] !== undefined &&
             !currentUser.chatChecked[roomName]
           ) {
-
             alertIcon.textContent = '🚨' // Example using an emoji
             alertIcon.style.color = 'red' // Style as needed
             alertIcon.style.marginLeft = '5px' // Add some space between the username and the alert icon
@@ -707,9 +697,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
         const roomName = [username, receiver].sort().join('_')
         let currentUser = JSON.parse(localStorage.getItem('currentUser'))
         if (currentUser.chatChecked === undefined) {
-
           currentUser.chatChecked = {}
-
         }
         currentUser.chatChecked[roomName] = true
         localStorage.setItem('currentUser', JSON.stringify(currentUser))
@@ -823,24 +811,16 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
         // Append sender and status to the header
         messageHeader.appendChild(senderElement)
 
-
-
-
         // Append the header and body to the message element
         messageElement.appendChild(messageHeader)
-
 
         // Append the message element to the container
         msgContainer.appendChild(messageElement)
 
         // Ensure the container scrolls to show the newest message
         msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
-}
-``
-
-
-
-
+      }
+      ;``
 
       function getUserStatus(username) {
         return new Promise((resolve, reject) => {
@@ -917,7 +897,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
             // Optionally, redirect the user to the login page or home page
             window.location.href = '/'
           })
-        window.location.href = '/'
+        //window.location.href = '/'
       }
 
       function updateUserStatus(status) {
