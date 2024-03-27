@@ -167,12 +167,6 @@ CICD: Sigrid
 
 ##### Parameters: e.g./messages/{userA}/{userB}/{1}
 
-> | name      | type      | data type | description                 |
-> |-----------|-----------|-----------|-----------------------------|
-> | senderName  | required  | string    | sender's unique username      |
-> | receiverName   | required  | string    | receiver 's unique username       |
-> | criteria| optional|string| criteria to search for|
-
 
 ##### Responses
 
@@ -189,9 +183,6 @@ CICD: Sigrid
  <summary><code>GET</code> <code><b>/users/:pageNumber</b></code> <code>(Allows the information fetch for all users)</code></summary>
 
 ##### Parameters: e.g.users/{1}
-> | name      | type      | data type | description                 |
-> |-----------|-----------|-----------|-----------------------------|
-> | criteria| optional|string| criteria to search for|
 
 
 
@@ -213,10 +204,6 @@ CICD: Sigrid
 
 ##### Parameters: e.g./status/{userA}
 
-> | name      | type      | data type | description                 |
-> |-----------|-----------|-----------|-----------------------------|
-> | username  | required  | string    | the user that we want status from     |
-
 
 ##### Responses
 
@@ -235,15 +222,32 @@ CICD: Sigrid
 
 
 ##### Parameters: e.g.announcement/{1}
-> | name      | type      | data type | description                 |
-> |-----------|-----------|-----------|-----------------------------|
-> | criteria| optional|string| criteria to search for|
+
 
 ##### Responses
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `get announcement successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### search
+
+<details>
+ <summary><code>GET</code> <code><b>//search/:context/:criteria/:pageNumber/:sender?/:receiver?</b></code> <code>(allows users to search for information based on different context)</code></summary>
+
+
+##### Parameters: e.g./search/privateMessage/111/1/1111/simon
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `search successfully`                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
 </details>
 
