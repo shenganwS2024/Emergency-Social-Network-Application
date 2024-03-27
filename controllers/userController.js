@@ -46,72 +46,95 @@ async function getUsers() {
   return await Users.find({});
 }
 
+async function checkUserCredentials(username, password, userFound) {
+  if (!userFound) {
+    return { isValid: false, reason: 'New Account', statusCode: 201 };
+  }
+
+  const isMatch = await comparePassword(password, userFound.password);
+  if (!isMatch) {
+    return { isValid: false, reason: 'Authentication failed', statusCode: 401 };
+  }
+
+  return { isValid: true };
+}
+
+async function prepareUserData(userFound) {
+  const token = await generateToken(userFound.id, userFound.username);
+  const directory = await getUsers();
+
+  return {
+    token: token,
+    userID: userFound.id,
+    username: userFound.username,
+    users: directory,
+    acknowledged: userFound.acknowledged,
+  };
+}
+
 async function validateUser(req, res) {
   try {
     const { username, password } = req.body;
-
     const userFound = await findUserByUsername(username);
+    const credentialCheck = await checkUserCredentials(username, password, userFound);
 
-    if (userFound) {
-      const isMatch = await comparePassword(password, userFound.password);
-
-      if (isMatch) {
-        console.log('Password is correct!');
-
-        const token = await generateToken(userFound.id, userFound.username);
-        const directory = await getUsers();
-
-        return res.status(200).json({
-          success: true,
-          data: {
-            userID: userFound.id,
-            username: userFound.username,
-            token,
-            users: directory,
-            acknowledged: userFound.acknowledged,
-          },
-        });
-      } else {
-        console.log('Password is incorrect.');
-        return res.status(401).send('Authentication failed');
-      }
-    } else {
-      return res.status(201).send('New Account');
+    if (!credentialCheck.isValid) {
+      console.log(credentialCheck.reason);
+      return res.status(credentialCheck.statusCode).send(credentialCheck.reason);
     }
+
+    console.log('Password is correct!');
+    const userData = await prepareUserData(userFound);
+    
+    return res.status(200).json({
+      success: true,
+      data: userData,
+    });
   } catch (error) {
+    console.error('Error during validation: ', error);
     return res.status(500).send('Error during validation');
+  }
+}
+
+async function validateAndCreateUser(username, password, status, role) {
+  if (!(await validateUserInfo(username, password))) {
+    throw new Error('Invalid username or password');
+  }
+  const user = new Users({ username, password, status, role });
+  await user.save();
+  return user;
+}
+
+async function createJwtToken(user) {
+  try {
+    return jwt.sign(
+      {
+        userId: user.id,
+        username: user.username,
+      },
+      'fsesb2secretkey',
+      { expiresIn: '1h' },
+    );
+  } catch (err) {
+    console.log(err);
+    throw new Error('Error creating token');
   }
 }
 
 async function registerUser(req, res) {
   try {
-    const { username, password, status, role } = req.body
-    if(await validateUserInfo(username, password) === false) {
-      return res.status(500).send('Invalid username or password')
-    }
-    const user = new Users({ username, password, status, role })
-    await user.save()
-    let token
-    try {
-      //Creating jwt token
-      token = jwt.sign(
-        {
-          userId: user.id,
-          username: user.username,
-        },
-        'fsesb2secretkey',
-        { expiresIn: '1h' },
-      )
-      console.log('register true token', token)
-    } catch (err) {
-      console.log(err)
-      return res.status(500).send('Error creating token')
-    }
-    res.status(201).json({ data: { token: token, userID: user.id } })
+    const { username, password, status, role } = req.body;
+    const user = await validateAndCreateUser(username, password, status, role);
+    const token = await createJwtToken(user);
+    console.log('register true token', token);
+
+    res.status(201).json({ data: { token: token, userID: user.id } });
   } catch (error) {
-    res.status(500).send('Error registering new user')
+    console.error(error);
+    res.status(500).send(error.message);
   }
 }
+
 
 async function logoutUser(req, res) {
   try {
@@ -128,24 +151,63 @@ async function logoutUser(req, res) {
   }
 }
 
+async function acknowledgeUser(userFound) {
+  if (!userFound) {
+    return { success: false, message: 'User not found during acknowledgement', statusCode: 404 };
+  }
+
+  userFound.acknowledged = true;
+  await userFound.save();
+  return { success: true, message: 'User acknowledged successfully', statusCode: 200 };
+}
+
 async function UserAcknowledged(req, res) {
   try {
-    const { id } = req.body //online_status
-    const userFound = await Users.findById(id)
-    if (userFound) {
-      try {
-        userFound.acknowledged = true
-        await userFound.save()
-      } catch (error) {
-        throw error
-      }
-      res.status(200).send('User acknowledged successfully')
-    } else {
-      res.status(404).send('User not found during acknowledgement')
+    const { id } = req.body;
+    const userFound = await Users.findById(id);
+
+    const result = await acknowledgeUser(userFound);
+
+    if (!result.success) {
+      return res.status(result.statusCode).send(result.message);
     }
+
+    res.status(result.statusCode).send(result.message);
   } catch (error) {
-    res.status(500).send('Error acknowledgement')
+    console.error('Error in UserAcknowledged:', error);
+    res.status(500).send('Error acknowledgement');
   }
+}
+
+
+function extractLatestStatusforUsers(userObj) {
+  if (userObj.status && userObj.status.length > 0) {
+    const latestStatus = userObj.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status;
+    userObj.status = latestStatus;
+  } else {
+    userObj.status = 'undefined';
+  }
+  return userObj;
+}
+
+function serializeChatChecked(userObj) {
+  if (userObj.chatChecked && userObj.chatChecked instanceof Map) {
+    userObj.chatChecked = Array.from(userObj.chatChecked).reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {});
+  }
+  return userObj;
+}
+
+function convertToUserObject(user) {
+  let userObj;
+  if (user instanceof mongoose.Document) {
+    userObj = user.toObject({ getters: true, virtuals: false });
+  } else {
+    userObj = user;
+  }
+  return userObj;
 }
 
 async function getUser(req, res) {
@@ -153,48 +215,24 @@ async function getUser(req, res) {
     let directory = await findAllUsers();
 
     directory = directory.map(user => {
-      const userObj = user.toObject({ getters: true, virtuals: false });
-    
-      // Directly modify the userObj's status
-      if (userObj.status && userObj.status.length > 0) {
-        const latestStatus = userObj.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status;
-        userObj.status = latestStatus;
-      } else {
-        userObj.status = 'undefined';
-      }
-    
+      let userObj = convertToUserObject(user);
+      userObj = extractLatestStatusforUsers(userObj);
       return userObj;
     });
+
+    directory = directory.map(serializeChatChecked);
     
-    directory = directory.map(user => {
-      let userObj;
-    
-      // Check if the user is a Mongoose document and convert it accordingly
-      if (user instanceof mongoose.Document) {
-        userObj = user.toObject({ getters: true, virtuals: false });
-      } else {
-        // If it's not a Mongoose document, handle it directly
-        userObj = user;
-      }
-    
-      // Ensure the chatChecked field is serialized properly
-      if (userObj.chatChecked && userObj.chatChecked instanceof Map) {
-        userObj.chatChecked = Array.from(userObj.chatChecked).reduce((obj, [key, value]) => {
-          obj[key] = value;
-          return obj;
-        }, {});
-      }
-    
-      return userObj;
-    });
-    
-    
-    console.log("current directory", directory)
-    res.status(200).json({ data: { users: directory } })
+    console.log("current directory", directory);
+    res.status(200).json({ data: { users: directory } });
   } catch (error) {
-    console.error(error)
-    res.status(500).send('Users get server error')
+    console.error(error);
+    res.status(500).send('Users get server error');
   }
+}
+
+
+function extractLatestStatus(statuses) {
+  return statuses.sort((a, b) => b.date - a.date)[0];
 }
 
 async function getOneStatus(req, res) {
@@ -205,38 +243,45 @@ async function getOneStatus(req, res) {
       return res.status(404).json({ message: 'User or user status not found' });
     }
 
-    // Sort the status array by date in descending order to get the latest status first
-    let latestStatus = user.status.sort((a, b) => b.date - a.date)[0];
-    console.log("stats ", latestStatus.status)
-    // Send the latest status
-    res.status(200).json({ data: { status: latestStatus.status} });
+    let latestStatus = extractLatestStatus(user.status);
+    console.log("stats ", latestStatus.status);
+
+    res.status(200).json({ data: { status: latestStatus.status } });
   } catch (error) {
-    console.error(error)
-    res.status(500).send('User status get server error')
+    console.error(error);
+    res.status(500).send('User status get server error');
+  }
+}
+
+
+function updateStatusList(statuses, newStatus) {
+  statuses.push({ status: newStatus, date: new Date() });
+  if (statuses.length > 10) {
+    statuses.shift();
   }
 }
 
 async function updateOneStatus(req, res) {
   try {
-    const { status } = req.body
+    const { status } = req.body;
     const username = req.params.username;
-    const userFound = await Users.findOne({ username: username })
+    const userFound = await Users.findOne({ username: username });
+
     if (!userFound) {
       return res.status(404).send('User not found');
     }
 
-    userFound.status.push({ status: status, date: new Date() });
-    if (userFound.status.length > 10) {
-      userFound.status.shift();
-    }
-    io.emit('update status', { username: username, status: status })
-    await userFound.save()
-    res.status(200).send('User status update successful')
+    updateStatusList(userFound.status, status);
+    io.emit('update status', { username: username, status: status });
+
+    await userFound.save();
+    res.status(200).send('User status update successful');
   } catch (error) {
-    console.error(error)
-    res.status(500).send('User status update server error')
+    console.error(error);
+    res.status(500).send('User status update server error');
   }
 }
+
 
 async function updateChatChecked(req, res) {
   try {
