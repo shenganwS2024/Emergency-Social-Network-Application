@@ -55,6 +55,7 @@ async function postNewMessage(req,res) {
             if (users && users.includes(receiver)) {
                 newValue = true;
             }
+            console.log("chatchecked changed ",roomName,newValue)
             Users.findOneAndUpdate(
                 { username: receiver },
                 { $set: { [`chatChecked.${roomName}`]: newValue }}, 

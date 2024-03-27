@@ -1,4 +1,4 @@
-
+import mongoose from 'mongoose'
 import {findAllUsers, Users} from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -153,17 +153,42 @@ async function getUser(req, res) {
     let directory = await findAllUsers();
 
     directory = directory.map(user => {
-      if (user.status && user.status.length > 0) {
-        // Sort the status entries by date in descending order and get the first one
-        const latestStatus = user.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status;
-        // Return the user object with the latest status
-        return { ...user.toObject(), status: latestStatus };
+      const userObj = user.toObject({ getters: true, virtuals: false });
+    
+      // Directly modify the userObj's status
+      if (userObj.status && userObj.status.length > 0) {
+        const latestStatus = userObj.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status;
+        userObj.status = latestStatus;
       } else {
-        // If there are no status entries, return the user with a default or undefined status
-        return { ...user.toObject(), status: 'undefined' };
+        userObj.status = 'undefined';
       }
+    
+      return userObj;
     });
-
+    
+    directory = directory.map(user => {
+      let userObj;
+    
+      // Check if the user is a Mongoose document and convert it accordingly
+      if (user instanceof mongoose.Document) {
+        userObj = user.toObject({ getters: true, virtuals: false });
+      } else {
+        // If it's not a Mongoose document, handle it directly
+        userObj = user;
+      }
+    
+      // Ensure the chatChecked field is serialized properly
+      if (userObj.chatChecked && userObj.chatChecked instanceof Map) {
+        userObj.chatChecked = Array.from(userObj.chatChecked).reduce((obj, [key, value]) => {
+          obj[key] = value;
+          return obj;
+        }, {});
+      }
+    
+      return userObj;
+    });
+    
+    
     console.log("current directory", directory)
     res.status(200).json({ data: { users: directory } })
   } catch (error) {

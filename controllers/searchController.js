@@ -19,8 +19,18 @@ async function getSearchResults(req, res) {
                 searchResults.reverse();
                 const itemsPerPage = 10;
                 const startIndex = (pageNumber - 1) * itemsPerPage;
-                const endIndex = startIndex + itemsPerPage;
-                ret = searchResults.slice(startIndex, endIndex);
+
+                if (startIndex >= searchResults.length) {
+                    ret = []
+                }
+                else {
+                    const endIndex = startIndex + itemsPerPage;
+                    if (endIndex >= searchResults.length) {
+                        endIndex = searchResults.length
+                    }
+                    ret = searchResults.slice(startIndex, endIndex);
+                }
+                
             } else {
                 // Handle invalid page number (e.g., non-numeric or negative)
                 ret = []; // or any other fallback logic you prefer
