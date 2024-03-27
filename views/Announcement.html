@@ -69,7 +69,7 @@
       const app = document.querySelector('.app')
       document.addEventListener('DOMContentLoaded', function () {
         console.log('localstorage token', localStorage.getItem('token'))
-        const socket = io('http://localhost:3000', {
+        const socket = io('https://s24esnb2.onrender.com/', {
           query: {
             token: localStorage.getItem('token'),
           },
