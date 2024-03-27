@@ -20,7 +20,7 @@ class privateMessageSearch extends SearchStrategy {
                 timestamp: message.timestamp,
                 status: message.status,
             }));
-            console.log("messages2222", ret)
+            
 
             return ret
 

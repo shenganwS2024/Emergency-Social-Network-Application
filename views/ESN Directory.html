@@ -424,7 +424,6 @@ try {
           currentUser = users.find((user) => user.username === localStorage.getItem('username'))
           localStorage.setItem('currentUser', JSON.stringify(currentUser))
 
-          console.log('users: ' + users)
 
           displayUsers(users, currentUser)
         } catch (error) {
@@ -541,7 +540,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
     messagesContainer.innerHTML = '';
     console.log("statu "+messages)
         messages.forEach((message) => {
-          if(searchInput){
+          if(searchInput==='status'){
             console.log("going to status history" + message)
             renderStatusHistory(message)}
           else{renderMSG(message)}
@@ -590,7 +589,6 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
               username: username,
               reciever: reciever,
             }
-            // console.log(data)
 
             // Send the data to the server
             fetch(`/messages/${username}/${reciever}`, {
@@ -602,7 +600,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
             })
               .then((response) => response.json())
               .then((data) => {
-                console.log('Success:', data)
+
                 messageInput.value = '' // Clear the input after sending
               })
               .catch((error) => {
@@ -635,7 +633,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
               if (data.receiver === currentUser.username) {
                 currentUser.chatChecked = {}
                 currentUser.chatChecked[roomName] = false
-                console.log('new user', currentUser.chatChecked)
+
               }
             } else if (currentUser.chatChecked && data.checked === false) {
               if (data.receiver === currentUser.username) {
@@ -667,13 +665,13 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
           userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
           const roomName = [currentUser.username, user.username].sort().join('_')
           const alertIcon = document.createElement('span') // Use an appropriate icon or emoji
-
+          
           if (
             currentUser.chatChecked &&
             currentUser.chatChecked[roomName] !== undefined &&
             !currentUser.chatChecked[roomName]
           ) {
-            console.log('user.chatChecked', user.chatChecked)
+
             alertIcon.textContent = '🚨' // Example using an emoji
             alertIcon.style.color = 'red' // Style as needed
             alertIcon.style.marginLeft = '5px' // Add some space between the username and the alert icon
@@ -709,9 +707,9 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
         const roomName = [username, receiver].sort().join('_')
         let currentUser = JSON.parse(localStorage.getItem('currentUser'))
         if (currentUser.chatChecked === undefined) {
-          console.log('current user ', currentUser)
+
           currentUser.chatChecked = {}
-          console.log('current user2 ', currentUser.chatChecked)
+
         }
         currentUser.chatChecked[roomName] = true
         localStorage.setItem('currentUser', JSON.stringify(currentUser))
