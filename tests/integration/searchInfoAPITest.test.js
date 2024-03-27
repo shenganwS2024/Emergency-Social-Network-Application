@@ -27,14 +27,13 @@ describe('Search Results API Integration Tests', () => {
     expect(response.statusCode).toBe(200);
   });
 
-    // 2. state updating test
+    // 2. non state updating test
   test('Search with Pagination', async () => {
-    // Assuming the second page of results from the 'publicMessage' context is requested
     const response = await request(app).get('/search/publicMessage/exampleCriteria/1');
     expect(response.statusCode).toBe(200);
   });
 
-    
+    // 3. non state updating test
   test('Search with Optional Parameters', async () => {
     // Testing 'privateMessage' context with sender and receiver
     const sender = 'Alice';
