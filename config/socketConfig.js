@@ -14,21 +14,34 @@ const authenticateSocket = (socket, next) => {
   }
 };
 
+const handleUserConnection = async (socket, username, io) => {
+  try {
+    const user = await Users.findOneAndUpdate({ username }, { onlineStatus: true }, { new: true });
+    io.emit('userStatusChanged', { username: user.username, onlineStatus: true });
+    socket.emit('updateInfo', `${username} login`);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const handleUserDisconnection = async (socket, username, io) => {
+  try {
+    const user = await Users.findOneAndUpdate({ username }, { onlineStatus: false }, { new: true });
+    if (user) {
+      io.emit('userStatusChanged', { username: user.username, onlineStatus: false });
+      socket.emit('updateInfo', `${username} logout`);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const handleConnection = async (socket, io, userRoomMap) => {
-  const socket_username = socket.decoded.username;
+  const socket_username = socket.decoded?.username;
   console.log(`User ${socket_username} connected`);
 
-  if (socket.decoded && socket_username) {
-    try {
-      const user = await Users.findOneAndUpdate({ username: socket_username }, { onlineStatus: true }, { new: true });
-      io.emit('userStatusChanged', {
-        username: user.username,
-        onlineStatus: true,
-      });
-      socket.emit('updateInfo', `${socket_username} login`);
-    } catch (err) {
-      console.error(err);
-    }
+  if (socket_username) {
+    await handleUserConnection(socket, socket_username, io);
   }
 
   socket.on('disconnect', () => handleDisconnection(socket, io, userRoomMap, socket_username));
@@ -36,30 +49,19 @@ const handleConnection = async (socket, io, userRoomMap) => {
 
 const handleDisconnection = async (socket, io, userRoomMap, socket_username) => {
   console.log(`User ${socket_username} disconnected`);
+  handleRoomDisconnections(socket_username, userRoomMap);
+  if (socket_username) {
+    await handleUserDisconnection(socket, socket_username, io);
+  }
+};
 
-  // Handle room disconnections
+const handleRoomDisconnections = (socket_username, userRoomMap) => {
   Object.entries(userRoomMap).forEach(([room, users]) => {
     if (users.includes(socket_username)) {
       users.splice(users.indexOf(socket_username), 1);
       console.log(`User ${socket_username} disconnected from private room ${room}`);
     }
   });
-
-  // Update user status
-  if (socket.decoded && socket_username) {
-    try {
-      const user = await Users.findOneAndUpdate({ username: socket_username }, { onlineStatus: false }, { new: true });
-      if (user) {
-        io.emit('userStatusChanged', {
-          username: user.username,
-          onlineStatus: false,
-        });
-      }
-      socket.emit('updateInfo', `${socket_username} logout`);
-    } catch (err) {
-      console.error(err);
-    }
-  }
 };
 
 const socketConfig = (server) => {
