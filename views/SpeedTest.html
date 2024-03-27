@@ -38,8 +38,8 @@
 
     <div class="results" id="testResults" style="display: none">
       <h2>Test Results</h2>
-      <p id="postResult">POST Performance:</p>
-      <p id="getResult">GET Performance:</p>
+      <p id="postResult">Speed Test Ongoing, Please Wait...</p>
+      <p id="getResult"></p>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -51,15 +51,37 @@
         },
       })
 
+        const resultsDiv = document.getElementById('testResults');
+        const postResultP = document.getElementById('postResult');
+        const getResultP = document.getElementById('getResult');
+        const durationInput = document.getElementById('duration');
+        const intervalInput = document.getElementById('interval');
+
       document.getElementById('startTest').addEventListener('click', function () {
+
+        resultsDiv.style.display = 'block';
+    postResultP.innerText = 'Speed Test Ongoing, Please Wait...';
+    getResultP.innerText = ''; // Clear this so it doesn't display an outdated status.
         const duration = parseInt(document.getElementById('duration').value, 10)
         const interval = parseInt(document.getElementById('interval').value, 10)
+
+        if (isNaN(duration) || isNaN(interval) || duration <= 0 || interval < 0) {
+                alert('Please enter valid duration and interval values.');
+                return;
+            }
 
         if (duration > 5) {
           alert('Duration must be 5 seconds or less.')
           return // Stop the execution if the condition is not met
         }
 
+        resultsDiv.style.display = 'block';
+            postResultP.innerText = 'Speed Test Ongoing, Please Wait...';
+            getResultP.innerText = '';
+
+            let postCount = 0;
+            let getCount = 0;
+            
         let isSpeedTestMode = true
 
         const body = {
@@ -68,7 +90,7 @@
         }
         let postInterval = null
         let getInterval = null
-        let postCount = 0 // Initialize post count
+      
         const maxPostCount = 1000 // Set the maximum number of posts
         fetch(`speedTest`, {
           method: 'POST',
@@ -91,6 +113,11 @@
             let endTime = startTime + duration * 1000
             // let postCount = 0
             let getCount = 0
+
+            function updateResults() {
+              postResultP.innerText = `POST Performance: ${postCount / duration} requests/second`;
+                getResultP.innerText = `GET Performance: ${getCount / duration} requests/second`;
+      }
 
             // Updated function to send POST requests
             function sendPostRequest() {
@@ -144,8 +171,9 @@
                   if (Date.now() >= endTime + duration * 1000) {
                     clearInterval(getInterval)
                     document.getElementById('testResults').style.display = 'block'
-                    document.getElementById('postResult').innerText += `${postCount / duration} requests/second`
-                    document.getElementById('getResult').innerText += `${getCount / duration} requests/second`
+                    updateResults();
+                    // document.getElementById('postResult').innerText += `${postCount / duration} requests/second`
+                    // document.getElementById('getResult').innerText += `${getCount / duration} requests/second`
                   } else {
                     sendGetRequest()
                   }
@@ -163,6 +191,9 @@
           if (postInterval) clearInterval(postInterval)
           if (getInterval) clearInterval(getInterval)
           abortController.abort()
+          resultsDiv.style.display = 'block'; // Ensure the results div is visible
+      postResultP.innerText = 'Test Stopped';
+      getResultP.innerText = ''; // Clear the GET result text
         }
         document.getElementById('stopTest').addEventListener('click', stopTest)
       })
