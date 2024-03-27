@@ -7,24 +7,19 @@
   </head>
 
   <body>
-    
     <div class="app">
       <!-- announcement page -->
       <div class="screen chatroom">
         <div id="search-bar-container">
-            <input type="text" id="search-input" placeholder="Search announcements..." />
-            <button id="search-btn">🔍</button>
-          
-          </div>
+          <input type="text" id="search-input" placeholder="Search announcements..." />
+          <button id="search-btn">🔍</button>
+        </div>
         <div class="header">
           <div class="logo">Public Announcement</div>
           <button id="back">Back</button>
-
         </div>
         <div class="messages">
           <div class="message otherMessage"></div>
-          
-
         </div>
         <div class="typebox">
           <textarea type="text" id="message-input"></textarea>
@@ -33,7 +28,6 @@
         <div class="post">
           <button id="send-msg">Post</button>
           <button id="see-more-btn">See More</button>
-          
         </div>
       </div>
     </div>
@@ -41,163 +35,154 @@
     <!-- make the socket client library and  avaliable to handle real-time messaging -->
     <script src="socket.io/socket.io.js"></script>
     <script>
-        let pageNumber = 1;
-       async function fetchMessages() {
-        const searchInput = document.getElementById('search-input').value.trim();
-   // Assuming the first page. Adjust as needed.
-        ++pageNumber;
-  // Encoding URI components to ensure special characters in the searchInput do not break the URL
-  const encodedSearchInput = encodeURIComponent(searchInput);
-            const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`;
+      let pageNumber = 1
+      async function fetchMessages() {
+        const searchInput = document.getElementById('search-input').value.trim()
+        // Assuming the first page. Adjust as needed.
+        ++pageNumber
+        // Encoding URI components to ensure special characters in the searchInput do not break the URL
+        const encodedSearchInput = encodeURIComponent(searchInput)
+        const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`
 
-try {
-    const response = await fetch(searchURL, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json', // Expecting a JSON response
-        }
-    });
+        try {
+          const response = await fetch(searchURL, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json', // Expecting a JSON response
+            },
+          })
 
-    if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    const messages =result.data.results;
-    messages.forEach((message) => {
-          renderMSG(message)
-        })
-    
-} catch (error) {
-    console.error('Failed to fetch:', error.message);
-    // Optionally, update the UI to notify the user that the search failed
-}
-}
-        const app = document.querySelector('.app')
-      document.addEventListener('DOMContentLoaded', function () {
-
-       console.log('localstorage token', localStorage.getItem('token'))
-const socket = io('http://localhost:3000/', {
-  query: {
-    token: localStorage.getItem('token'),
-  },
-})
-
-
-socket.on('new announcement', function (msg) {
-
-    renderMSG(msg)
-
-})
-
-  fetch(`/announcement/${0}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      const messages = data.data.announcements
-      console.log(messages)
-      messages.forEach((message) => {
-        renderMSG(message)
-      })
-    })
-    .catch((error) => console.error('Error fetching announcements:', error))
-
-    document.getElementById('search-btn').addEventListener('click', async function() {
-  const searchInput = document.getElementById('search-input').value.trim();
-   // Assuming the first page. Adjust as needed.
-
-  // Encoding URI components to ensure special characters in the searchInput do not break the URL
-  const encodedSearchInput = encodeURIComponent(searchInput);
-  const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`;
-
-  try {
-      const response = await fetch(searchURL, {
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json', // Expecting a JSON response
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`)
           }
-      });
 
-      if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      const messages =result.data.results;
-      const messagesContainer = document.querySelector('.messages'); // Select the messages container
-
-  // Clear existing messages before displaying new ones
-  messagesContainer.innerHTML = '';
-      messages.forEach((message) => {
+          const result = await response.json()
+          const messages = result.data.results
+          messages.forEach((message) => {
             renderMSG(message)
           })
-      
-  } catch (error) {
-      console.error('Failed to fetch:', error.message);
-      // Optionally, update the UI to notify the user that the search failed
-  }
-});
-document.getElementById('see-more-btn').addEventListener('click', function() {
-  fetchMessages(); // Call the function to fetch the next page of messages
-});
-
-
-document.getElementById('send-msg').addEventListener('click', async function () {
-    const username = localStorage.getItem('username')
-    const messageInput = document.getElementById('message-input')
-    const messageText = messageInput.value.trim()
-    const currentTime = new Date().toISOString()
-
-    if (messageText) {
-      // Create the payload
-      const data = {
-        content: messageText,
-        username: username,
-        timestamp: currentTime,
+        } catch (error) {
+          console.error('Failed to fetch:', error.message)
+          // Optionally, update the UI to notify the user that the search failed
+        }
       }
-      console.log(data)
+      const app = document.querySelector('.app')
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('localstorage token', localStorage.getItem('token'))
+        const socket = io('https://s24esnb2.onrender.com', {
+          query: {
+            token: localStorage.getItem('token'),
+          },
+        })
 
-      // Send the data to the server
-      fetch(`/announcement`, {
-        method: 'POST', 
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        socket.on('new announcement', function (msg) {
+          renderMSG(msg)
+        })
+
+        fetch(`/announcement/${0}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messages = data.data.announcements
+            console.log(messages)
+            messages.forEach((message) => {
+              renderMSG(message)
+            })
+          })
+          .catch((error) => console.error('Error fetching announcements:', error))
+
+        document.getElementById('search-btn').addEventListener('click', async function () {
+          const searchInput = document.getElementById('search-input').value.trim()
+          // Assuming the first page. Adjust as needed.
+
+          // Encoding URI components to ensure special characters in the searchInput do not break the URL
+          const encodedSearchInput = encodeURIComponent(searchInput)
+          const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`
+
+          try {
+            const response = await fetch(searchURL, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json', // Expecting a JSON response
+              },
+            })
+
+            if (!response.ok) {
+              throw new Error(`Network response was not ok: ${response.statusText}`)
+            }
+
+            const result = await response.json()
+            const messages = result.data.results
+            const messagesContainer = document.querySelector('.messages') // Select the messages container
+
+            // Clear existing messages before displaying new ones
+            messagesContainer.innerHTML = ''
+            messages.forEach((message) => {
+              renderMSG(message)
+            })
+          } catch (error) {
+            console.error('Failed to fetch:', error.message)
+            // Optionally, update the UI to notify the user that the search failed
+          }
+        })
+        document.getElementById('see-more-btn').addEventListener('click', function () {
+          fetchMessages() // Call the function to fetch the next page of messages
+        })
+
+        document.getElementById('send-msg').addEventListener('click', async function () {
+          const username = localStorage.getItem('username')
+          const messageInput = document.getElementById('message-input')
+          const messageText = messageInput.value.trim()
+          const currentTime = new Date().toISOString()
+
+          if (messageText) {
+            // Create the payload
+            const data = {
+              content: messageText,
+              username: username,
+              timestamp: currentTime,
+            }
+            console.log(data)
+
+            // Send the data to the server
+            fetch(`/announcement`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Success:', data)
+                messageInput.value = '' // Clear the input after sending
+              })
+              .catch((error) => {
+                console.error('Error:', error)
+              })
+          } else {
+            alert('Please enter a announcement before posting.')
+          }
+        })
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Success:', data)
-          messageInput.value = '' // Clear the input after sending
-        })
-        .catch((error) => {
-          console.error('Error:', error)
-        })
-    } else {
-      alert('Please enter a announcement before posting.')
-    }
+      document.getElementById('back').addEventListener('click', function () {
+        window.location.href = 'chatroom.html'
+      })
 
-})
-  })
-  document.getElementById('back').addEventListener('click', function () {
-  window.location.href = 'chatroom.html'
-})
+      function renderMSG(message) {
+        //("before container");
+        let msgContainer = app.querySelector('.chatroom .messages')
+        let senderName = message.username
+        //console.log("after container");
 
-
-function renderMSG(message) {
-  //("before container");
-  let msgContainer = app.querySelector('.chatroom .messages')
-  let senderName = message.username
-  //console.log("after container");
-
-  let element = document.createElement('div')
-  element.setAttribute('class', 'message')
-  // Adjust the format so the timestamp matches the demo
-  element.innerHTML = `
+        let element = document.createElement('div')
+        element.setAttribute('class', 'message')
+        // Adjust the format so the timestamp matches the demo
+        element.innerHTML = `
         <div>
         <div class ="messageContainer">
             <div class ="name">${senderName}</div>
@@ -218,15 +203,12 @@ function renderMSG(message) {
             <div class = "text">${message.content}</div>
         </div>
         `
-  //console.log("before appending");
-  msgContainer.appendChild(element)
-  //console.log("after appending");
-  // Ensures that the container scrolls to the bottom to show newest message
-  msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
-}
-
-
-
+        //console.log("before appending");
+        msgContainer.appendChild(element)
+        //console.log("after appending");
+        // Ensures that the container scrolls to the bottom to show newest message
+        msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+      }
     </script>
 
     <style>
@@ -463,30 +445,29 @@ function renderMSG(message) {
       }
 
       #search-bar-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0; /* Add some padding above and below the search bar */
-  background: #f0f0f0; /* Optional: adds a distinct background color to the search bar area */
-}
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0; /* Add some padding above and below the search bar */
+        background: #f0f0f0; /* Optional: adds a distinct background color to the search bar area */
+      }
 
-#search-input {
-  padding: 10px;
-  margin-right: 5px; /* Space between the input field and the search button */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 300px; /* Adjust the width as needed */
-}
+      #search-input {
+        padding: 10px;
+        margin-right: 5px; /* Space between the input field and the search button */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 300px; /* Adjust the width as needed */
+      }
 
-#search-btn {
-  cursor: pointer;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50; /* Green background to match other buttons */
-  color: white;
-}
-
+      #search-btn {
+        cursor: pointer;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50; /* Green background to match other buttons */
+        color: white;
+      }
     </style>
   </body>
 </html>
