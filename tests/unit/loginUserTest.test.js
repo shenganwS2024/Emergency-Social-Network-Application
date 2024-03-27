@@ -95,7 +95,7 @@ describe('Validate User API', () => {
         });
         await user.save();
 
-        // Force jwt.sign to throw an error.
+
         jwt.sign.mockImplementation(() => {
           throw new Error('Token creation failed');
         });

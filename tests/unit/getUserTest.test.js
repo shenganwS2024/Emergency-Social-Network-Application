@@ -66,26 +66,26 @@ describe('Get User API', () => {
   });
 
   test('It should handle users without statuses by defaulting to "undefined"', async () => {
-    // Create a user without any status entries
+
     const userWithoutStatus = new User({
       username: 'noStatusUser',
       password: 'password',
-      // Explicitly setting an empty status array to simulate absence of statuses
+
       status: []
     });
     await userWithoutStatus.save();
 
-    // Fetch users to hit the condition where a user has no statuses
+
     const res = await request(app)
-      .get('/users') // Adjust this endpoint to match your route
+      .get('/users') 
       .send();
 
-    // Verifying response
+
     expect(res.statusCode).toBe(200);
     expect(res.body.data.users).toHaveLength(1);
     expect(res.body.data.users[0].status).toBe('undefined');
 
-    // Optional: Verifying that the user returned is indeed the one without statuses
+
     expect(res.body.data.users[0].username).toBe('noStatusUser');
 });
 });
