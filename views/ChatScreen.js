@@ -1,6 +1,6 @@
 // Global variables
 let pageNumber = 1
-const socket = io('https://s24esnb2.onrender.com', {
+const socket = io('http://localhost:3000', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -53,22 +53,38 @@ async function fetchUserStatus(username) {
 
 // Search messages
 async function searchMessages() {
-  const searchInput = document.getElementById('search-input').value.trim()
-  const encodedSearchInput = encodeURIComponent(searchInput)
-  const searchURL = `/search/publicMessage/${encodedSearchInput}/${pageNumber}`
+  const searchInput = getSearchInput()
+  const searchURL = createSearchURL(searchInput)
 
   try {
-    const response = await fetch(searchURL, {
-      method: 'GET',
-      headers: { Accept: 'application/json' },
-    })
-    const result = await response.json()
-    const messagesContainer = document.querySelector('.messages')
-    messagesContainer.innerHTML = ''
-    result.data.results.forEach(renderMSG)
+    const result = await fetchSearchResults(searchURL)
+    displayMessages(result.data.results)
   } catch (error) {
     console.error('Failed to fetch:', error.message)
   }
+}
+
+function getSearchInput() {
+  return document.getElementById('search-input').value.trim()
+}
+
+function createSearchURL(searchInput) {
+  const encodedSearchInput = encodeURIComponent(searchInput)
+  return `/search/publicMessage/${encodedSearchInput}/${pageNumber}`
+}
+
+async function fetchSearchResults(searchURL) {
+  const response = await fetch(searchURL, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+  })
+  return await response.json()
+}
+
+function displayMessages(messages) {
+  const messagesContainer = document.querySelector('.messages')
+  messagesContainer.innerHTML = ''
+  messages.forEach(renderMSG)
 }
 
 // Fetch messages
@@ -91,34 +107,52 @@ async function fetchMessages() {
 
 // Send message
 async function sendMessage() {
-  const messageInput = document.getElementById('message-input')
-  const messageText = messageInput.value.trim()
-  const currentTime = new Date().toISOString()
+  const messageText = getMessageText()
+  if (!messageText) {
+    alert('Please enter a message before posting.')
+    return
+  }
+
   const username = localStorage.getItem('username')
+  const currentTime = new Date().toISOString()
   const currentStatus = await getUserStatus(username)
 
-  if (messageText) {
-    const data = {
-      content: messageText,
-      username: username,
-      timestamp: currentTime,
-      status: currentStatus,
-    }
-    try {
-      const response = await fetch(`/messages/${username}/public`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      const result = await response.json()
-      console.log('Success:', result)
-      messageInput.value = ''
-    } catch (error) {
-      console.error('Error:', error)
-    }
-  } else {
-    alert('Please enter a message before posting.')
+  const messageData = {
+    content: messageText,
+    username: username,
+    timestamp: currentTime,
+    status: currentStatus,
   }
+
+  try {
+    const result = await postMessage(username, messageData)
+    console.log('Success:', result)
+    clearMessageInput()
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
+
+function getMessageText() {
+  const messageInput = document.getElementById('message-input')
+  return messageInput.value.trim()
+}
+
+function clearMessageInput() {
+  const messageInput = document.getElementById('message-input')
+  messageInput.value = ''
+}
+
+async function postMessage(username, messageData) {
+  const response = await fetch(`/messages/${username}/public`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(messageData),
+  })
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`)
+  }
+  return response.json()
 }
 
 // Get user status
@@ -137,21 +171,33 @@ function getUserStatus(username) {
 
 // Render message
 function renderMSG(message) {
-  let msgContainer = app.querySelector('.chatroom .messages')
-  let senderName = message.username
-  let element = document.createElement('div')
+  const msgContainer = app.querySelector('.chatroom .messages')
+  const messageElement = createMessageElement(message)
+  appendMessageToContainer(msgContainer, messageElement)
+  scrollToBottom(msgContainer)
+}
+
+function createMessageElement(message) {
+  const element = document.createElement('div')
   element.setAttribute('class', 'message')
   element.innerHTML = `
-        <div>
-          <div class="messageContainer">
-            <div class="name">${senderName + ' (' + message.status + ')'}</div>
-            <div id="time">${formatTimestamp(message.timestamp)}</div>
-          </div>
-          <div class="text">${message.content}</div>
-        </div>
-        `
-  msgContainer.appendChild(element)
-  msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+    <div>
+      <div class="messageContainer">
+        <div class="name">${message.username + ' (' + message.status + ')'}</div>
+        <div id="time">${formatTimestamp(message.timestamp)}</div>
+      </div>
+      <div class="text">${message.content}</div>
+    </div>
+  `
+  return element
+}
+
+function appendMessageToContainer(container, messageElement) {
+  container.appendChild(messageElement)
+}
+
+function scrollToBottom(container) {
+  container.scrollTop = container.scrollHeight - container.clientHeight
 }
 
 // Format timestamp
@@ -179,27 +225,33 @@ function redirectTo(url) {
 // Handle user logout
 function logout() {
   const userId = localStorage.getItem('userID')
-  const data = {
+  const logoutData = {
     id: userId,
     status: false,
   }
 
-  fetch('/logout', {
+  sendLogoutRequest(logoutData).then(handleLogoutSuccess).catch(handleLogoutError).finally(cleanupAfterLogout)
+}
+
+function sendLogoutRequest(data) {
+  return fetch('/logout', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Success:', data)
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-    })
-    .finally(() => {
-      localStorage.removeItem('token')
-      window.location.href = '/'
-    })
+  }).then((response) => response.json())
+}
+
+function handleLogoutSuccess(data) {
+  console.log('Success:', data)
+}
+
+function handleLogoutError(error) {
+  console.error('Error:', error)
+}
+
+function cleanupAfterLogout() {
+  localStorage.removeItem('token')
+  window.location.href = '/'
 }
