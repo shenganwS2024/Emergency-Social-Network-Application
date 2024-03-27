@@ -55,7 +55,7 @@ async function getSearchResults(req, res) {
                 }
             }
         }
-console.log("ret", ret)
+console.log("ret", ret, pageNumber)
         res.status(200).json({ data: { results: ret } })
     } catch (error) {
         console.error('Error getting search results:', error);
