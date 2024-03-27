@@ -8,17 +8,15 @@
 
   <body>
     <div class="app">
-      <!-- chatroom page -->
+      <!-- announcement page -->
       <div class="screen chatroom">
         <div id="search-bar-container">
-          <input type="text" id="search-input" placeholder="Search public messages..." />
+          <input type="text" id="search-input" placeholder="Search announcements..." />
           <button id="search-btn">🔍</button>
         </div>
         <div class="header">
-          <div class="logo">ESN Chat Room</div>
-          <button id="exit-chat">Logout</button>
-          <button id="directory-button">Directory</button>
-          <button id="announcement">Announcement</button>
+          <div class="logo">Public Announcement</div>
+          <button id="back">Back</button>
         </div>
         <div class="messages">
           <div class="message otherMessage"></div>
@@ -36,70 +34,181 @@
 
     <!-- make the socket client library and  avaliable to handle real-time messaging -->
     <script src="socket.io/socket.io.js"></script>
-    <script src="ChatScreen.js"></script>
     <script>
+      let pageNumber = 1
+      async function fetchMessages() {
+        const searchInput = document.getElementById('search-input').value.trim()
+        // Assuming the first page. Adjust as needed.
+        ++pageNumber
+        // Encoding URI components to ensure special characters in the searchInput do not break the URL
+        const encodedSearchInput = encodeURIComponent(searchInput)
+        const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`
+
+        try {
+          const response = await fetch(searchURL, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json', // Expecting a JSON response
+            },
+          })
+
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`)
+          }
+
+          const result = await response.json()
+          const messages = result.data.results
+          messages.forEach((message) => {
+            renderMSG(message)
+          })
+        } catch (error) {
+          console.error('Failed to fetch:', error.message)
+          // Optionally, update the UI to notify the user that the search failed
+        }
+      }
+      const app = document.querySelector('.app')
       document.addEventListener('DOMContentLoaded', function () {
+        console.log('localstorage token', localStorage.getItem('token'))
         const socket = io('https://s24esnb2.onrender.com/', {
           query: {
             token: localStorage.getItem('token'),
           },
         })
 
-        // Listen to the 'alertUpdated' event from the server
-        socket.on('alertUpdated', (data) => {
-          const currentUserString = localStorage.getItem('currentUser')
-          if (!currentUserString) return
-
-          let currentUser = JSON.parse(currentUserString)
-          let username = currentUser.username
-          let secondName = data.sender === username ? data.receiver : data.sender
-          const roomName = [username, secondName].sort().join('_')
-
-          // Update the chatChecked property based on the data from the socket event
-          if (currentUser.chatChecked[roomName] !== undefined) {
-            currentUser.chatChecked[roomName] = data.checked
-            localStorage.setItem('currentUser', JSON.stringify(currentUser))
-            updateDirectoryAlertIcon()
-          }
+        socket.on('new announcement', function (msg) {
+          renderMSG(msg)
         })
 
-        // Function to update the directory button with an alert icon if needed
-        function updateDirectoryAlertIcon() {
-          const currentUser = JSON.parse(localStorage.getItem('currentUser'))
-          if (!currentUser || !currentUser.chatChecked) return
+        fetch(`/announcement/${0}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messages = data.data.announcements
+            console.log(messages)
+            messages.forEach((message) => {
+              renderMSG(message)
+            })
+          })
+          .catch((error) => console.error('Error fetching announcements:', error))
 
-          const hasUnreadMessages = Object.values(currentUser.chatChecked).includes(false)
-          const directoryButton = document.getElementById('directory-button')
-          if (!directoryButton) return
+        document.getElementById('search-btn').addEventListener('click', async function () {
+          const searchInput = document.getElementById('search-input').value.trim()
+          // Assuming the first page. Adjust as needed.
 
-          // Ensure the button position is set to relative to position the alert icon correctly
-          directoryButton.style.position = 'relative'
+          // Encoding URI components to ensure special characters in the searchInput do not break the URL
+          const encodedSearchInput = encodeURIComponent(searchInput)
+          const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`
 
-          let alertIcon = directoryButton.querySelector('.alert-icon')
+          try {
+            const response = await fetch(searchURL, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json', // Expecting a JSON response
+              },
+            })
 
-          if (hasUnreadMessages) {
-            if (!alertIcon) {
-              alertIcon = document.createElement('span')
-              alertIcon.textContent = '🚨'
-              alertIcon.style.color = 'red'
-              alertIcon.style.position = 'absolute'
-              alertIcon.style.right = '0'
-              alertIcon.style.top = '0'
-              alertIcon.classList.add('alert-icon')
-              directoryButton.appendChild(alertIcon)
+            if (!response.ok) {
+              throw new Error(`Network response was not ok: ${response.statusText}`)
             }
-          } else {
-            if (alertIcon) {
-              directoryButton.removeChild(alertIcon)
-            }
+
+            const result = await response.json()
+            const messages = result.data.results
+            const messagesContainer = document.querySelector('.messages') // Select the messages container
+
+            // Clear existing messages before displaying new ones
+            messagesContainer.innerHTML = ''
+            messages.forEach((message) => {
+              renderMSG(message)
+            })
+          } catch (error) {
+            console.error('Failed to fetch:', error.message)
+            // Optionally, update the UI to notify the user that the search failed
           }
-        }
+        })
+        document.getElementById('see-more-btn').addEventListener('click', function () {
+          fetchMessages() // Call the function to fetch the next page of messages
+        })
 
-        // Initial check to display the alert icon if needed
-        updateDirectoryAlertIcon()
+        document.getElementById('send-msg').addEventListener('click', async function () {
+          const username = localStorage.getItem('username')
+          const messageInput = document.getElementById('message-input')
+          const messageText = messageInput.value.trim()
+          const currentTime = new Date().toISOString()
 
-        // Your existing DOMContentLoaded logic...
+          if (messageText) {
+            // Create the payload
+            const data = {
+              content: messageText,
+              username: username,
+              timestamp: currentTime,
+            }
+            console.log(data)
+
+            // Send the data to the server
+            fetch(`/announcement`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Success:', data)
+                messageInput.value = '' // Clear the input after sending
+              })
+              .catch((error) => {
+                console.error('Error:', error)
+              })
+          } else {
+            alert('Please enter a announcement before posting.')
+          }
+        })
       })
+      document.getElementById('back').addEventListener('click', function () {
+        window.location.href = 'chatroom.html'
+      })
+
+      function renderMSG(message) {
+        //("before container");
+        let msgContainer = app.querySelector('.chatroom .messages')
+        let senderName = message.username
+        //console.log("after container");
+
+        let element = document.createElement('div')
+        element.setAttribute('class', 'message')
+        // Adjust the format so the timestamp matches the demo
+        element.innerHTML = `
+        <div>
+        <div class ="messageContainer">
+            <div class ="name">${senderName}</div>
+            <div id="time">${new Date(message.timestamp)
+              .toLocaleString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+              })
+              .replace(/\//g, '.')
+              .replace(', ', ' ')
+              .replace(' AM', 'AM')
+              .replace(' PM', 'PM')}</div>
+            </div>
+            <div class = "text">${message.content}</div>
+        </div>
+        `
+        //console.log("before appending");
+        msgContainer.appendChild(element)
+        //console.log("after appending");
+        // Ensures that the container scrolls to the bottom to show newest message
+        msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+      }
     </script>
 
     <style>
@@ -199,7 +308,7 @@
 
       .logo {
         background: #89bbf5;
-        font-size: 23px;
+        font-size: 25px;
         font-weight: bold;
         display: flex;
         justify-content: left;
@@ -208,15 +317,15 @@
       }
 
       .chatroom .header button {
-        padding: 5px 3px;
+        padding: 5px 5px;
         border: 1px solid black;
-        font-size: 12px;
+        font-size: 18px;
         font-weight: bold;
         background: #fab855;
         color: black;
         cursor: pointer;
         outline: none;
-        margin-right: 5px;
+        margin-right: 10px;
       }
 
       .chatroom .messages {
@@ -323,21 +432,6 @@
         align-items: flex-end;
       }
 
-      /* User Directory */
-      .user-directory {
-        display: none; /* Initially hidden */
-        position: fixed;
-        top: 50px;
-        right: 10px;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        width: 200px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1000; /* Ensure the directory is above other elements */
-      }
-
       .user {
         margin-bottom: 5px;
       }
@@ -349,6 +443,7 @@
       .offline {
         color: red;
       }
+
       #search-bar-container {
         display: flex;
         justify-content: center;

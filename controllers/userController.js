@@ -1,9 +1,9 @@
-
-import Users from '../models/Users.js';
+import mongoose from 'mongoose'
+import {findAllUsers, Users} from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { io } from '../config/serverConfig.js'
-import userRoomMap from '../config/globalMap.js'
+import {userRoomMap} from '../config/globalVariables.js'
 // import reservedUsernames from '../views/bannedUsernames.json' ;
 import reservedUsernames from '../views/bannedUsernames.json' assert { type: 'json' };
 
@@ -23,95 +23,118 @@ async function validateUserInfo(username, password) {
   }
 }
 
+async function findUserByUsername(username) {
+  return await Users.findOne({ username });
+}
+
+async function comparePassword(password, hashedPassword) {
+  return await bcrypt.compare(password, hashedPassword);
+}
+
+async function generateToken(userId, username) {
+  return jwt.sign(
+    {
+      userId,
+      username,
+    },
+    'fsesb2secretkey',
+    { expiresIn: '1h' },
+  );
+}
+
+async function getUsers() {
+  return await Users.find({});
+}
+
+async function checkUserCredentials(username, password, userFound) {
+  if (!userFound) {
+    return { isValid: false, reason: 'New Account', statusCode: 201 };
+  }
+
+  const isMatch = await comparePassword(password, userFound.password);
+  if (!isMatch) {
+    return { isValid: false, reason: 'Authentication failed', statusCode: 401 };
+  }
+
+  return { isValid: true };
+}
+
+async function prepareUserData(userFound) {
+  const token = await generateToken(userFound.id, userFound.username);
+  const directory = await getUsers();
+
+  return {
+    token: token,
+    userID: userFound.id,
+    username: userFound.username,
+    users: directory,
+    acknowledged: userFound.acknowledged,
+  };
+}
 
 async function validateUser(req, res) {
   try {
-    const { username, password, status, role } = req.body
-    // Check for existing user
-    const userFound = await Users.findOne({ username })
-    if (userFound) {
-      const isMatch = await bcrypt.compare(password, userFound.password)
+    const { username, password } = req.body;
+    const userFound = await findUserByUsername(username);
+    const credentialCheck = await checkUserCredentials(username, password, userFound);
 
-      if (isMatch) {
-        console.log('Password is correct!')
-        // Update user status to online
-        // await updateUserStatus(userFound, true);
-        let token
-        try {
-          //Creating jwt token
-          token = jwt.sign(
-            {
-              userId: userFound.id,
-              username: userFound.username,
-            },
-            'fsesb2secretkey',
-            { expiresIn: '1h' },
-          )
-          console.log('login true token', token)
-        } catch (err) {
-          console.log(err)
-          return res.status(500).send('Error creating token')
-        }
-
-        let directory
-        try {
-          directory = await Users.find({})
-        } catch (error) {
-          console.error(error)
-          res.status(500).send('Users post server error')
-        }
-
-        return res.status(200).json({
-          success: true,
-          data: {
-            userID: userFound.id,
-            username: userFound.username,
-            token: token,
-            users: directory,
-            acknowledged: userFound.acknowledged, //Used for ESN display.
-          },
-        })
-      } else {
-        console.log('Password is incorrect.')
-        return res.status(401).send('Authentication failed')
-      }
-    } else {
-      return res.status(201).send('New Account')
+    if (!credentialCheck.isValid) {
+      console.log(credentialCheck.reason);
+      return res.status(credentialCheck.statusCode).send(credentialCheck.reason);
     }
+
+    console.log('Password is correct!');
+    const userData = await prepareUserData(userFound);
+    
+    return res.status(200).json({
+      success: true,
+      data: userData,
+    });
   } catch (error) {
-    return res.status(500).send('Error during validation')
+    console.error('Error during validation: ', error);
+    return res.status(500).send('Error during validation');
+  }
+}
+
+async function validateAndCreateUser(username, password, status, role) {
+  if (!(await validateUserInfo(username, password))) {
+    throw new Error('Invalid username or password');
+  }
+  const user = new Users({ username, password, status, role });
+  await user.save();
+  return user;
+}
+
+async function createJwtToken(user) {
+  try {
+    return jwt.sign(
+      {
+        userId: user.id,
+        username: user.username,
+      },
+      'fsesb2secretkey',
+      { expiresIn: '1h' },
+    );
+  } catch (err) {
+    console.log(err);
+    throw new Error('Error creating token');
   }
 }
 
 async function registerUser(req, res) {
   try {
-    const { username, password, status, role } = req.body
-    if(validateUserInfo(username, password) === false) {
-      return res.status(500).send('Invalid username or password')
-    }
-    const user = new Users({ username, password, status, role })
-    await user.save()
-    let token
-    try {
-      //Creating jwt token
-      token = jwt.sign(
-        {
-          userId: user.id,
-          username: user.username,
-        },
-        'fsesb2secretkey',
-        { expiresIn: '1h' },
-      )
-      console.log('register true token', token)
-    } catch (err) {
-      console.log(err)
-      return res.status(500).send('Error creating token')
-    }
-    res.status(201).json({ data: { token: token, userID: user.id } })
+    const { username, password, status, role } = req.body;
+    const user = await validateAndCreateUser(username, password, status, role);
+    const token = await createJwtToken(user);
+    console.log('register true token', token);
+
+    res.status(201).json({ data: { token: token, userID: user.id } });
   } catch (error) {
-    res.status(500).send('Error registering new user')
+    console.error(error);
+    res.status(500).send(error.message);
   }
 }
+
 
 async function logoutUser(req, res) {
   try {
@@ -128,103 +151,193 @@ async function logoutUser(req, res) {
   }
 }
 
+async function acknowledgeUser(userFound) {
+  if (!userFound) {
+    return { success: false, message: 'User not found during acknowledgement', statusCode: 404 };
+  }
+
+  userFound.acknowledged = true;
+  await userFound.save();
+  return { success: true, message: 'User acknowledged successfully', statusCode: 200 };
+}
+
 async function UserAcknowledged(req, res) {
   try {
-    const { id } = req.body //online_status
-    const userFound = await Users.findById(id)
-    if (userFound) {
-      try {
-        userFound.acknowledged = true
-        await userFound.save()
-      } catch (error) {
-        throw error
-      }
-      res.status(200).send('User acknowledged successfully')
-    } else {
-      res.status(404).send('User not found during acknowledgement')
+    const { id } = req.body;
+    const userFound = await Users.findById(id);
+
+    const result = await acknowledgeUser(userFound);
+
+    if (!result.success) {
+      return res.status(result.statusCode).send(result.message);
     }
+
+    res.status(result.statusCode).send(result.message);
   } catch (error) {
-    res.status(500).send('Error acknowledgement')
+    console.error('Error in UserAcknowledged:', error);
+    res.status(500).send('Error acknowledgement');
   }
+}
+
+
+function extractLatestStatusforUsers(userObj) {
+  if (userObj.status && userObj.status.length > 0) {
+    const latestStatus = userObj.status.sort((a, b) => new Date(b.date) - new Date(a.date))[0].status;
+    userObj.status = latestStatus;
+  } else {
+    userObj.status = 'undefined';
+  }
+  return userObj;
+}
+
+function serializeChatChecked(userObj) {
+  if (userObj.chatChecked && userObj.chatChecked instanceof Map) {
+    userObj.chatChecked = Array.from(userObj.chatChecked).reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {});
+  }
+  return userObj;
+}
+
+function convertToUserObject(user) {
+  let userObj;
+  if (user instanceof mongoose.Document) {
+    userObj = user.toObject({ getters: true, virtuals: false });
+  } else {
+    userObj = user;
+  }
+  return userObj;
 }
 
 async function getUser(req, res) {
   try {
-    let directory = await Users.find({})
-    res.status(200).json({ data: { users: directory } })
+    let directory = await findAllUsers();
+
+    directory = directory.map(user => {
+      let userObj = convertToUserObject(user);
+      userObj = extractLatestStatusforUsers(userObj);
+      return userObj;
+    });
+
+    directory = directory.map(serializeChatChecked);
+    
+    console.log("current directory", directory);
+    res.status(200).json({ data: { users: directory } });
   } catch (error) {
-    console.error(error)
-    res.status(500).send('Users get server error')
+    console.error(error);
+    res.status(500).send('Users get server error');
   }
+}
+
+
+function extractLatestStatus(statuses) {
+  return statuses.sort((a, b) => b.date - a.date)[0];
 }
 
 async function getOneStatus(req, res) {
   try {
-    let userStatus = await Users.findOne({ username: req.params.username }, 'status')
-    res.status(200).json({ data: { status: userStatus } })
+    let user = await Users.findOne({ username: req.params.username }, 'status');
+
+    if (!user || !user.status || user.status.length === 0) {
+      return res.status(404).json({ message: 'User or user status not found' });
+    }
+
+    let latestStatus = extractLatestStatus(user.status);
+    console.log("stats ", latestStatus.status);
+
+    res.status(200).json({ data: { status: latestStatus.status } });
   } catch (error) {
-    console.error(error)
-    res.status(500).send('User status get server error')
+    console.error(error);
+    res.status(500).send('User status get server error');
+  }
+}
+
+
+function updateStatusList(statuses, newStatus) {
+  statuses.push({ status: newStatus, date: new Date() });
+  if (statuses.length > 10) {
+    statuses.shift();
   }
 }
 
 async function updateOneStatus(req, res) {
   try {
-    const { status, timestamp } = req.body
-    const userFound = await Users.findOne({ username: req.params.username })
-    userFound.status = status
-    userFound.statusTime = timestamp
-    io.emit('update status', { username: userFound.username, status: userFound.status })
-    await userFound.save()
-    res.status(200).send('User status update successful')
+    const { status } = req.body;
+    const username = req.params.username;
+    const userFound = await Users.findOne({ username: username });
+
+    if (!userFound) {
+      return res.status(404).send('User not found');
+    }
+
+    updateStatusList(userFound.status, status);
+    io.emit('update status', { username: username, status: status });
+
+    await userFound.save();
+    res.status(200).send('User status update successful');
   } catch (error) {
-    console.error(error)
-    res.status(500).send('User status update server error')
+    console.error(error);
+    res.status(500).send('User status update server error');
   }
 }
 
+
 async function updateChatChecked(req, res) {
   try {
-    let active_user = req.params.active_username;
-    let passive_user = req.params.passive_username;
-    let join_or_leave = req.params.join_or_leave;
-    const roomName = [active_user, passive_user].sort().join('_');
+    const { active_username, passive_username, join_or_leave } = req.params;
+    const roomName = getRoomName(active_username, passive_username);
+
     if (join_or_leave === 'join') {
-      console.log(`${active_user} joined room ${roomName}`);
-      if (!userRoomMap[roomName]) {
-        //userRoomMap example: userRoomMap: {userA_userB: [userA,userB], userA_userC: [userC]}
-        userRoomMap[roomName] = [];
-      }
-      userRoomMap[roomName].push(active_user);
-      const newValue = true;
-      Users.findOneAndUpdate(
-        { username: active_user },
-        { $set: { [`chatChecked.${roomName}`]: newValue }}, 
-        { new: true }
-      ).then(updatedDocument => {
-        io.emit("alertUpdated", {sender: active_user, receiver:passive_user, checked: newValue});
-        console.log('Updated document:', updatedDocument);
-      }).catch(error => {
-        console.error('Error updating the document:', error);
-      });
+      await handleUserJoin(roomName, active_username, passive_username);
+    } else {
+      handleUserLeave(roomName, active_username);
     }
-    else{
-      console.log(`${active_user} left room ${roomName}`);
-      let users = userRoomMap[roomName];
-      if (users && users.includes(active_user)) {
-        users.splice(users.indexOf(active_user), 1);
-        console.log(`User ${active_user} left private room ${roomName}`)
-        if (users.length === 0) {
-          delete userRoomMap[roomName];
-        }
-      }
-    }
-    console.log("current userRoomMap: ",userRoomMap)
-    res.status(200).send('User chatChecked update successful')
+
+    console.log("current userRoomMap: ", userRoomMap);
+    res.status(200).send('User chatChecked update successful');
   } catch (error) {
-    console.log("update check error")
-    console.error(error)
-    res.status(500).send('User status update server error')
+    console.error("update check error: ", error);
+    res.status(500).send('User status update server error');
+  }
+}
+
+function getRoomName(activeUser, passiveUser) {
+  return [activeUser, passiveUser].sort().join('_');
+}
+
+async function handleUserJoin(roomName, activeUser, passiveUser) {
+  console.log(`${activeUser} joined room ${roomName}`);
+  if (!userRoomMap[roomName]) {
+    userRoomMap[roomName] = [];
+  }
+  userRoomMap[roomName].push(activeUser);
+  const newValue = true;
+  await updateUserChatChecked(activeUser, roomName, newValue, passiveUser);
+}
+
+function handleUserLeave(roomName, activeUser) {
+  console.log(`${activeUser} left room ${roomName}`);
+  let users = userRoomMap[roomName];
+  if (users && users.includes(activeUser)) {
+    users.splice(users.indexOf(activeUser), 1);
+    console.log(`User ${activeUser} left private room ${roomName}`);
+    if (users.length === 0) {
+      delete userRoomMap[roomName];
+    }
+  }
+}
+
+async function updateUserChatChecked(username, roomName, newValue, passiveUser) {
+  try {
+    await Users.findOneAndUpdate(
+      { username },
+      { $set: { [`chatChecked.${roomName}`]: newValue }},
+      { new: true }
+    );
+    io.emit("alertUpdated", { sender: username, receiver: passiveUser, checked: newValue });
+  } catch (error) {
+    console.error('Error updating the document:', error);
   }
 }
 

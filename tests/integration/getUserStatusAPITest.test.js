@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import bcrypt from 'bcryptjs';
 import { app } from '../../server.js'; 
-import User from '../../models/Users.js'; 
+import { Users as User } from '../../models/Users.js'; 
 
 let mongod;
 
@@ -25,7 +25,7 @@ beforeEach(async () => {
   await User.create({
     username: 'testUser',
     password: hashedPassword,
-    status: 'help' 
+    status: [{ status: 'help', date: new Date() }] 
   });
 });
 
@@ -33,7 +33,7 @@ describe('User Status API', () => {
   test('It should respond with the status of the existing user', async () => {
     const res = await request(app).get(`/status/testUser`);
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.status.status).toBe('help'); 
+    expect(res.body.data.status).toBe('help'); 
   });
 
   test('It should respond with the updated status of the existing user', async () => {
