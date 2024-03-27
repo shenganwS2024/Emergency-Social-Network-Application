@@ -12,6 +12,7 @@ class privateMessageSearch extends SearchStrategy {
 
 
             let messages = await findMessages(sender, receiver);
+            
             let filteredMessages = messages.filter(message => message.content.includes(criteria));
             let ret = filteredMessages.map(message => ({
                 username: message.username,
@@ -19,6 +20,7 @@ class privateMessageSearch extends SearchStrategy {
                 timestamp: message.timestamp,
                 status: message.status,
             }));
+            console.log("messages2222", ret)
 
             return ret
 

@@ -4,7 +4,7 @@ import {findMessages} from '../models/Messages.js';
 class publicMessageSearch extends SearchStrategy {
     async search(criteria) {
         try {
-            let messages = await findMessages(receiver = "public");
+            let messages = await findMessages("public");
             let filteredMessages = messages.filter(message => message.content.includes(criteria));
             let ret = filteredMessages.map(message => ({
                 username: message.username,

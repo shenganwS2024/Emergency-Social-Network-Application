@@ -30,10 +30,45 @@ document.getElementById('announcement').addEventListener('click', async function
   window.location.href = 'Announcement.html'
 }) 
 
-document.getElementById('search-btn').addEventListener('click', function() {
-  const searchQuery = document.getElementById('search-input').value.toLowerCase();
-  const searchContext = 'publicChat';
+document.getElementById('search-btn').addEventListener('click', async function() {
+  const searchInput = document.getElementById('search-input').value.trim();
+  const pageNumber = '0'; // Assuming the first page. Adjust as needed.
+
+  // Encoding URI components to ensure special characters in the searchInput do not break the URL
+  const encodedSearchInput = encodeURIComponent(searchInput);
+  const searchURL = `/search/publicMessage/${encodedSearchInput}/${pageNumber}`;
+
+  try {
+      const response = await fetch(searchURL, {
+          method: 'GET',
+          headers: {
+              'Accept': 'application/json', // Expecting a JSON response
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const messages =result.data.results;
+      const messagesContainer = document.querySelector('.messages'); // Select the messages container
+
+  // Clear existing messages before displaying new ones
+  messagesContainer.innerHTML = '';
+      messages.forEach((message) => {
+            renderMSG(message)
+          })
+      
+  } catch (error) {
+      console.error('Failed to fetch:', error.message);
+      // Optionally, update the UI to notify the user that the search failed
+  }
 });
+// document.getElementById('search-btn').addEventListener('click', function() {
+//   const searchQuery = document.getElementById('search-input').value.toLowerCase();
+//   const searchContext = 'publicChat';
+// });
 
 document.addEventListener('DOMContentLoaded', function () {
   // Assuming you have a way to get the current user's username
@@ -84,6 +119,8 @@ document.addEventListener('DOMContentLoaded', function () {
       alert('Please enter a message before posting.')
     }
   })
+
+  
 })
 
 function getUserStatus(username) {

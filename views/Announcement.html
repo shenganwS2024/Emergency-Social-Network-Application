@@ -69,6 +69,42 @@ socket.on('new announcement', function (msg) {
     })
     .catch((error) => console.error('Error fetching announcements:', error))
 
+    document.getElementById('search-btn').addEventListener('click', async function() {
+  const searchInput = document.getElementById('search-input').value.trim();
+  const pageNumber = '0'; // Assuming the first page. Adjust as needed.
+
+  // Encoding URI components to ensure special characters in the searchInput do not break the URL
+  const encodedSearchInput = encodeURIComponent(searchInput);
+  const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber}`;
+
+  try {
+      const response = await fetch(searchURL, {
+          method: 'GET',
+          headers: {
+              'Accept': 'application/json', // Expecting a JSON response
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const messages =result.data.results;
+      const messagesContainer = document.querySelector('.messages'); // Select the messages container
+
+  // Clear existing messages before displaying new ones
+  messagesContainer.innerHTML = '';
+      messages.forEach((message) => {
+            renderMSG(message)
+          })
+      
+  } catch (error) {
+      console.error('Failed to fetch:', error.message);
+      // Optionally, update the UI to notify the user that the search failed
+  }
+});
+
 document.getElementById('send-msg').addEventListener('click', async function () {
     const username = localStorage.getItem('username')
     const messageInput = document.getElementById('message-input')
@@ -105,15 +141,6 @@ document.getElementById('send-msg').addEventListener('click', async function () 
     }
 
 })
-
-document.getElementById('search-btn').addEventListener('click', function() {
-  const searchQuery = document.getElementById('search-input').value.toLowerCase();
-  const searchContext = 'announcement';
-  
-});
-
-
-
   })
   document.getElementById('back').addEventListener('click', function () {
   window.location.href = 'chatroom.html'

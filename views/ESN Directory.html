@@ -7,6 +7,11 @@
     <title>User List</title>
     <div id="search-bar-container">
       <input type="text" id="search-input" placeholder="Search..." />
+      <select id="status-dropdown" style="display: none;">
+        <option value="ok">OK</option>
+        <option value="help">Help</option>
+        <option value="emergency">Emergency</option>
+      </select>
       <label for="status-search-toggle">
         <input type="radio" id="status-search-toggle" name="search-type" />
         Status Search
@@ -137,7 +142,9 @@
       }
 
       .modal-content {
-        position: relative;
+        display: flex;
+  flex-direction: column;
+  height: 100%;
       }
 
       #message-container {
@@ -259,7 +266,7 @@
     <div id="chat-modal" class="modal">
       <div class="modal-content">
         <div id="search-bar-container">
-          <input type="text" id="search-input" placeholder="Search private messages..." />
+          <input type="text" id="search-input-private" placeholder="Search private messages..." />
           <button id="search-btn-private">🔍</button>
         </div>
         <h2>Chat with <span id="chat-username">Username</span></h2>
@@ -290,7 +297,30 @@
       })
       const app = document.querySelector('.modal-content')
       document.addEventListener('DOMContentLoaded', async () => {
-        //const users = JSON.parse(localStorage.getItem('users')) || [];
+
+
+        const statusSearchToggle = document.getElementById('status-search-toggle');
+    let isChecked = false; // Boolean flag to track the toggle state
+
+    statusSearchToggle.addEventListener('click', function() {
+    const searchInput = document.getElementById('search-input');
+    const statusDropdown = document.getElementById('status-dropdown');
+
+    if (isChecked) {
+        // If it was already checked, uncheck it and show the input field
+        statusSearchToggle.checked = false;
+        searchInput.style.display = 'block'; // Show input field
+        statusDropdown.style.display = 'none'; // Hide dropdown
+    } else {
+        // If it was unchecked, check it and show the dropdown
+        searchInput.style.display = 'none'; // Hide input field
+        statusDropdown.style.display = 'block'; // Show dropdown
+    }
+    // Toggle the isChecked flag
+    isChecked = !isChecked;
+});
+
+        
         let users
         let currentUser
         try {
@@ -345,12 +375,19 @@
 
         document.getElementById('search-btn').addEventListener('click', async function() {
     const searchInput = document.getElementById('search-input').value.trim();
-    const isStatusSearch = document.getElementById('status-search-toggle').checked;
+    const statusDropdown = document.getElementById('status-dropdown');
+const isStatusSearch = document.getElementById('status-search-toggle').checked;
     let pageNumber = '0'; // You may want to change this dynamically if implementing pagination
     let searchContext = isStatusSearch ? 'status' : 'username';
+    let searchValue;
+if (isStatusSearch) {
+    searchValue = statusDropdown.value;
+} else {
+    searchValue = searchInput;
+}
 
     // Ensure the input is encoded properly to handle special characters
-    const encodedSearchInput = encodeURIComponent(searchInput);
+    const encodedSearchInput = encodeURIComponent(searchValue);
     const searchURL = `/search/${searchContext}/${encodedSearchInput}/${pageNumber}`;
 
     try {
@@ -366,8 +403,6 @@
         }
 
         const result = await response.json();
-        console.log(searchContext + ''+searchInput)
-        console.log('Search results:', result);
 
         // Assuming `displayUsers` is a function you've defined to update the UI with the search results
         displayUsers(result.data.results, currentUser); // Removed `currentUser` assuming it's not used here or is globally accessible
@@ -376,26 +411,51 @@
         // Optionally, update the UI to notify the user that the search failed
     }
 });
+document.getElementById('search-btn-private').addEventListener('click', async function() {
+    const searchInput = document.getElementById('search-input-private').value.trim();
+    const pageNumber = '0'; // Assuming the first page. Adjust as needed.
+    const sender = localStorage.getItem('username'); // Assuming sender's username is stored in localStorage
+    const receiver = localStorage.getItem('receiver'); // Adjust according to your application's logic
 
-document.getElementById('search-btn-private').addEventListener('click', function() {
-        const searchQuery = document.getElementById('search-input').value;
-        const searchContext = 'privateChat'
-        const pageNumber = '0'
+    // Ensure there's a receiver set before proceeding
+    if (!receiver) {
+        console.error('Receiver not defined.');
+        return;
+    }
 
-        fetch(`/search/${searchContext}/${searchQuery}`)
-          .then((response) => response.json())
-          .then((data) => {
-            const messages = data.data.messages
-            messages.forEach((message) => {
+    // Encoding URI components to ensure special characters in the searchInput do not break the URL
+    const encodedSearchInput = encodeURIComponent(searchInput);
+    const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber}/${encodeURIComponent(sender)}/${encodeURIComponent(receiver)}`;
+
+    try {
+        const response = await fetch(searchURL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json', // Expecting a JSON response
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const messages =result.data.results;
+        const messagesContainer = document.querySelector('.messages'); // Select the messages container
+
+    // Clear existing messages before displaying new ones
+    messagesContainer.innerHTML = '';
+        messages.forEach((message) => {
               renderMSG(message)
             })
-          })
-          .catch((error) => console.error('Error fetching messages:', error))
+       
 
-
-  
-  // Implement search logic here
-  // If isStatusSearch is true, filter by status; otherwise, perform a general search
+        // Assuming `displayMessages` is a function you've defined to update the UI with the fetched messages
+        
+    } catch (error) {
+        console.error('Failed to fetch:', error.message);
+        // Optionally, update the UI to notify the user that the search failed
+    }
 });
 
         document.getElementById('speed-test-btn').addEventListener('click', function () {
@@ -418,6 +478,7 @@ document.getElementById('search-btn-private').addEventListener('click', function
 
           const username = localStorage.getItem('username')
           const reciever = document.getElementById('chat-username').textContent
+          localStorage.setItem('reciever', reciever)
           const currentStatus = await getUserStatus(username)
 
           if (messageText) {
@@ -540,6 +601,7 @@ document.getElementById('search-btn-private').addEventListener('click', function
         document.getElementById('chat-username').textContent = username
 
         const receiver = username
+        localStorage.setItem('receiver', receiver)
         username = localStorage.getItem('username')
         const roomName = [username, receiver].sort().join('_')
         let currentUser = JSON.parse(localStorage.getItem('currentUser'))
