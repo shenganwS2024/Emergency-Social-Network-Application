@@ -1,4 +1,16 @@
 import getStrategy from '../searchStrategies/searchIndex.js'
+import stop_words from '../config/stopWords.json' assert { type: 'json' };
+
+
+function validateCriteria(criteria) {
+    let bannedWords = stop_words.stop_words;
+  
+    if (bannedWords.includes(criteria)) {
+      return false;
+    }else {
+      return true;
+    }
+  }
 
 async function getSearchResults(req, res) {
     try {
@@ -10,30 +22,37 @@ async function getSearchResults(req, res) {
         let receiver = req.params.receiver;
         let searchResults = await getStrategy(context, criteria, sender, receiver)
         let ret;
-        if (pageNumber === '0') {
-            ret = searchResults
-        }
-        else {
-            pageNumber = + pageNumber  //string to int
-            if (!isNaN(pageNumber) && pageNumber > 0) {
-                searchResults.reverse();
-                const itemsPerPage = 10;
-                const startIndex = (pageNumber - 1) * itemsPerPage;
+        let check = validateCriteria(criteria)
 
-                if (startIndex >= searchResults.length) {
-                    ret = []
-                }
-                else {
-                    const endIndex = startIndex + itemsPerPage;
-                    if (endIndex >= searchResults.length) {
-                        endIndex = searchResults.length
+        if (!check) {
+            ret = []
+        }
+        else{
+            if (pageNumber === '0') {
+                ret = searchResults
+            }
+            else {
+                pageNumber = + pageNumber  //string to int
+                if (!isNaN(pageNumber) && pageNumber > 0) {
+                    searchResults.reverse();
+                    const itemsPerPage = 10;
+                    const startIndex = (pageNumber - 1) * itemsPerPage;
+    
+                    if (startIndex >= searchResults.length) {
+                        ret = []
                     }
-                    ret = searchResults.slice(startIndex, endIndex);
+                    else {
+                        const endIndex = startIndex + itemsPerPage;
+                        if (endIndex >= searchResults.length) {
+                            endIndex = searchResults.length
+                        }
+                        ret = searchResults.slice(startIndex, endIndex);
+                    }
+                    
+                } else {
+                    // Handle invalid page number (e.g., non-numeric or negative)
+                    ret = []; // or any other fallback logic you prefer
                 }
-                
-            } else {
-                // Handle invalid page number (e.g., non-numeric or negative)
-                ret = []; // or any other fallback logic you prefer
             }
         }
 
@@ -45,4 +64,4 @@ async function getSearchResults(req, res) {
 }
 
 
-export { getSearchResults };
+export { getSearchResults, validateCriteria };

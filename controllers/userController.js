@@ -240,46 +240,59 @@ async function updateOneStatus(req, res) {
 
 async function updateChatChecked(req, res) {
   try {
-    let active_user = req.params.active_username;
-    let passive_user = req.params.passive_username;
-    let join_or_leave = req.params.join_or_leave;
-    const roomName = [active_user, passive_user].sort().join('_');
+    const { active_username, passive_username, join_or_leave } = req.params;
+    const roomName = getRoomName(active_username, passive_username);
+
     if (join_or_leave === 'join') {
-      console.log(`${active_user} joined room ${roomName}`);
-      if (!userRoomMap[roomName]) {
-        //userRoomMap example: userRoomMap: {userA_userB: [userA,userB], userA_userC: [userC]}
-        userRoomMap[roomName] = [];
-      }
-      userRoomMap[roomName].push(active_user);
-      const newValue = true;
-      Users.findOneAndUpdate(
-        { username: active_user },
-        { $set: { [`chatChecked.${roomName}`]: newValue }}, 
-        { new: true }
-      ).then(updatedDocument => {
-        io.emit("alertUpdated", {sender: active_user, receiver:passive_user, checked: newValue});
-        
-      }).catch(error => {
-        console.error('Error updating the document:', error);
-      });
+      await handleUserJoin(roomName, active_username, passive_username);
+    } else {
+      handleUserLeave(roomName, active_username);
     }
-    else{
-      console.log(`${active_user} left room ${roomName}`);
-      let users = userRoomMap[roomName];
-      if (users && users.includes(active_user)) {
-        users.splice(users.indexOf(active_user), 1);
-        console.log(`User ${active_user} left private room ${roomName}`)
-        if (users.length === 0) {
-          delete userRoomMap[roomName];
-        }
-      }
-    }
-    console.log("current userRoomMap: ",userRoomMap)
-    res.status(200).send('User chatChecked update successful')
+
+    console.log("current userRoomMap: ", userRoomMap);
+    res.status(200).send('User chatChecked update successful');
   } catch (error) {
-    console.log("update check error")
-    console.error(error)
-    res.status(500).send('User status update server error')
+    console.error("update check error: ", error);
+    res.status(500).send('User status update server error');
+  }
+}
+
+function getRoomName(activeUser, passiveUser) {
+  return [activeUser, passiveUser].sort().join('_');
+}
+
+async function handleUserJoin(roomName, activeUser, passiveUser) {
+  console.log(`${activeUser} joined room ${roomName}`);
+  if (!userRoomMap[roomName]) {
+    userRoomMap[roomName] = [];
+  }
+  userRoomMap[roomName].push(activeUser);
+  const newValue = true;
+  await updateUserChatChecked(activeUser, roomName, newValue, passiveUser);
+}
+
+function handleUserLeave(roomName, activeUser) {
+  console.log(`${activeUser} left room ${roomName}`);
+  let users = userRoomMap[roomName];
+  if (users && users.includes(activeUser)) {
+    users.splice(users.indexOf(activeUser), 1);
+    console.log(`User ${activeUser} left private room ${roomName}`);
+    if (users.length === 0) {
+      delete userRoomMap[roomName];
+    }
+  }
+}
+
+async function updateUserChatChecked(username, roomName, newValue, passiveUser) {
+  try {
+    await Users.findOneAndUpdate(
+      { username },
+      { $set: { [`chatChecked.${roomName}`]: newValue }},
+      { new: true }
+    );
+    io.emit("alertUpdated", { sender: username, receiver: passiveUser, checked: newValue });
+  } catch (error) {
+    console.error('Error updating the document:', error);
   }
 }
 

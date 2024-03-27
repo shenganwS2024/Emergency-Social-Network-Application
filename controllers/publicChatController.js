@@ -28,51 +28,56 @@ async function getLatestMessages(req, res) {
 }
 
 // function to post a new message to the server
-async function postNewMessage(req,res) {
-    let sender = req.params.senderName;
-    let receiver = req.params.receiverName;
-    const { username, content, timestamp,status } = req.body;
-    console.log(req.body);
-    try {
-        const newMessage = new Messages({
-            username:username,
-            content:content,
-            timestamp:timestamp,
-            status:status,
-            receiver: receiver
-        });
-        await newMessage.save();
-        //console.log('Message saved:', newMessage);
-        if (receiver === "public") {
-            io.emit('chat message', newMessage)
-        }
-        else {
-            const roomName = [sender, receiver].sort().join('_');
-            io.emit(roomName, newMessage);
-            console.log("message sent to room ",roomName)
-            let users = userRoomMap[roomName]
-            let newValue = false;
-            if (users && users.includes(receiver)) {
-                newValue = true;
-            }
-            console.log("chatchecked changed ",roomName,newValue)
-            Users.findOneAndUpdate(
-                { username: receiver },
-                { $set: { [`chatChecked.${roomName}`]: newValue }}, 
-                { new: true }
-            ).then(updatedDocument => {
-                io.emit("alertUpdated", {sender: sender, receiver: receiver, checked: newValue});
-                
-            }).catch(error => {
-                console.error('Error updating the document:', error);
-            });
+async function postNewMessage(req, res) {
+    const { senderName: sender, receiverName: receiver } = req.params;
+    const { username, content, timestamp, status } = req.body;
 
-        }
-        res.status(201).send({data:{message: newMessage}});
+    try {
+        const newMessage = await saveMessage(username, content, timestamp, status, receiver);
+        emitMessageBasedOnReceiver(newMessage, sender, receiver);
+        await updateChatCheckedForPrivateMessage(newMessage, sender, receiver);
+        res.status(201).send({ data: { message: newMessage } });
     } catch (error) {
-        console.error('Error saving message:', error);
+        console.error('Error in postNewMessage:', error);
         res.status(500).send('Error saving message');
     }
 }
+
+async function saveMessage(username, content, timestamp, status, receiver) {
+    const newMessage = new Messages({ username, content, timestamp, status, receiver });
+    await newMessage.save();
+    return newMessage;
+}
+
+function emitMessageBasedOnReceiver(newMessage, sender, receiver) {
+    if (receiver === "public") {
+        io.emit('chat message', newMessage);
+    } else {
+        const roomName = [sender, receiver].sort().join('_');
+        io.emit(roomName, newMessage);
+        console.log("message sent to room ", roomName);
+    }
+}
+
+async function updateChatCheckedForPrivateMessage(newMessage, sender, receiver) {
+    if (receiver !== "public") {
+        const roomName = [sender, receiver].sort().join('_');
+        let users = userRoomMap[roomName];
+        let newValue = users && users.includes(receiver);
+        console.log("chatchecked changed ", roomName, newValue);
+
+        try {
+            const updatedDocument = await Users.findOneAndUpdate(
+                { username: receiver },
+                { $set: { [`chatChecked.${roomName}`]: newValue }}, 
+                { new: true }
+            );
+            io.emit("alertUpdated", { sender: sender, receiver: receiver, checked: newValue });
+        } catch (error) {
+            console.error('Error updating chatChecked:', error);
+        }
+    }
+}
+
 
 export { getLatestMessages, postNewMessage };
