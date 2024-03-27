@@ -2,7 +2,7 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { app } from '../../server.js'; 
-import Messages from '../../models/Messages.js';
+import { Messages } from '../../models/Messages.js';
 
 let mongod;
 

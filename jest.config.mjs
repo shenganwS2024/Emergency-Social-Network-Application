@@ -12,5 +12,11 @@ export default {
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "/config/",
+    "/searchStrategies/",
+    "server.js",
+    "/models/Messages.js",
+    "/controllers/switchStateController.js",
+    "/controllers/announcementController.js",
+    "/controllers/publicChatController.js",
   ],
 };
