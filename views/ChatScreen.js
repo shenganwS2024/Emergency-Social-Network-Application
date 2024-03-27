@@ -1,6 +1,37 @@
 
 // import {io} from '../config/serverConfig.js'
+let pageNumber = 1;
+       async function fetchMessages() {
+        const searchInput = document.getElementById('search-input').value.trim();
+   // Assuming the first page. Adjust as needed.
+        ++pageNumber;
+  // Encoding URI components to ensure special characters in the searchInput do not break the URL
+  const encodedSearchInput = encodeURIComponent(searchInput);
+            const searchURL = `/search/publicMessage/${encodedSearchInput}/${pageNumber.toString()}`;
 
+try {
+    const response = await fetch(searchURL, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json', // Expecting a JSON response
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    const messages =result.data.results;
+    messages.forEach((message) => {
+          renderMSG(message)
+        })
+    
+} catch (error) {
+    console.error('Failed to fetch:', error.message);
+    // Optionally, update the UI to notify the user that the search failed
+}
+}
 console.log('localstorage token', localStorage.getItem('token'))
 const socket = io('http://localhost:3000/', {
   query: {
@@ -14,6 +45,7 @@ socket.on('chat message', function (msg) {
     renderMSG(msg)
   }
 })
+
 
 document.getElementById('directory-button').addEventListener('click', function () {
   window.location.href = 'ESN%20Directory.html'
@@ -32,11 +64,11 @@ document.getElementById('announcement').addEventListener('click', async function
 
 document.getElementById('search-btn').addEventListener('click', async function() {
   const searchInput = document.getElementById('search-input').value.trim();
-  const pageNumber = '0'; // Assuming the first page. Adjust as needed.
+  const pageNumber = 1; // Assuming the first page. Adjust as needed.
 
   // Encoding URI components to ensure special characters in the searchInput do not break the URL
   const encodedSearchInput = encodeURIComponent(searchInput);
-  const searchURL = `/search/publicMessage/${encodedSearchInput}/${pageNumber}`;
+  const searchURL = `/search/publicMessage/${encodedSearchInput}/${pageNumber.toString()}`;
 
   try {
       const response = await fetch(searchURL, {
@@ -65,12 +97,17 @@ document.getElementById('search-btn').addEventListener('click', async function()
       // Optionally, update the UI to notify the user that the search failed
   }
 });
-// document.getElementById('search-btn').addEventListener('click', function() {
-//   const searchQuery = document.getElementById('search-input').value.toLowerCase();
-//   const searchContext = 'publicChat';
-// });
+
+document.getElementById('see-more-btn').addEventListener('click', function() {
+fetchMessages(); // Call the function to fetch the next page of messages
+});
+
 
 document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('see-more-btn').addEventListener('click', function() {
+    console.log('See more button clicked'+pageNumber);
+  fetchMessages(); // Call the function to fetch the next page of messages
+  });
   // Assuming you have a way to get the current user's username
   const username = localStorage.getItem('username')
   fetch(`/messages/${username}/public`)

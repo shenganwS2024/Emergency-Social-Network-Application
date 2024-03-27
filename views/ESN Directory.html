@@ -150,17 +150,27 @@
       #message-container {
         width: 100%;
         height: 300px;
-        overflow-y: auto;
+        
         margin-bottom: 10px;
         border: 1px solid #ccc;
       }
 
       #chat-message {
-        height: 150px; /* Increase height for a bigger textarea */
+        height: 90px; /* Increase height for a bigger textarea */
         width: calc(100% - 5px); /* Adjust width if needed, already set for wider appearance */
         padding: 10px; /* Add padding for text inside */
         box-sizing: border-box; /* Include padding and border in the element's total width and height */
         resize: none; /* Optional: Prevent resizing */
+        position: fixed;
+      }
+      .chatroom .messages {
+        width: 100%;
+        height: 50%;
+        background: #ffff;
+        overflow: auto;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        position:fixed;
       }
 
       .message {
@@ -175,9 +185,10 @@
       }
 
       button#send-message,
-      button#close-chat {
+      button#close-chat{
         flex-shrink: 0; /* Prevent buttons from shrinking */
         margin-top: 10px; /* Space between textarea and buttons */
+        position:fixed;
       }
 
       .message {
@@ -241,6 +252,57 @@
   margin-left: 10px; /* Space between search button and radio button */
   cursor: pointer;
 }
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messages {
+  flex-grow: 1; /* This ensures that the messages container takes up all available space */
+  overflow-y: auto; /* Allow scrolling for overflow content */
+  width: 100%; /* Adjust if necessary */
+  position: relative; /* Keeps it within the modal-content area */
+}
+
+#chat-message {
+  order: 2; /* Ensure it's positioned after the messages */
+  width: calc(100% - 40px); /* Adjust width accounting for padding */
+  margin-top: auto; /* Moves it to the bottom */
+  position: fixed;
+  bottom: 80px; /* Adjust based on the total height of buttons below */
+}
+
+button#send-message,
+button#close-chat,
+button#see-more {
+  order: 3; /* Ensure these are at the very bottom */
+  
+  position: fixed;
+  bottom: 40px; /* Adjust if you change the button size or want more/less space */
+}
+
+button#close-chat {
+  right: 0; /* Align to the right */
+}
+button#send-message {
+  left: 0; /* Align to the left */
+}
+button#see-more {
+  left: 50%; /* Center the button */
+  transform: translateX(-50%); /* Center the button */
+}
+.chat-actions {
+  position: fixed;
+  bottom: 10px; /* Adjust as necessary */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around; /* This will evenly space your buttons */
+  padding: 0 10px; /* Add some padding on the sides */
+}
+/* You might need to adjust the height of the `.modal-content` or `.messages` if there's overflow or alignment issues */
+
 
     </style>
   </head>
@@ -272,24 +334,55 @@
         <h2>Chat with <span id="chat-username">Username</span></h2>
         <div class="chatroom">
           <div class="messages"></div>
+          <textarea id="chat-message" placeholder="Write a message..."></textarea>
+          <div class="chat-actions">
+            
+            <button id="send-message">Send</button>
+            <button id="close-chat">Back</button>
+            <button id="see-more">See More</button>
+          </div>
         </div>
-        <textarea id="chat-message" placeholder="Write a message..."></textarea>
-        <button id="send-message">Send</button>
-        <button id="close-chat">Back</button>
+         
       </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      // window.addEventListener('beforeunload', function (e) {
-      //   e.preventDefault();
-      //   socket.disconnect();
-      // });
+     let pageNumber = 1;
+       async function fetchMessages() {
+        const searchInput = document.getElementById('search-input-private').value.trim();
+   // Assuming the first page. Adjust as needed.
+        ++pageNumber;
+  // Encoding URI components to ensure special characters in the searchInput do not break the URL
+  const encodedSearchInput = encodeURIComponent(searchInput);
+            
+            const sender = localStorage.getItem('username'); // Assuming sender's username is stored in localStorage
+    const receiver = localStorage.getItem('receiver'); // Adjust according to your application's logic
+    const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(sender)}/${encodeURIComponent(receiver)}`;
 
-      // window.addEventListener('load', function (e) {
-      //   e.preventDefault();
-      //   socket.connect();
-      // });
+try {
+    const response = await fetch(searchURL, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json', // Expecting a JSON response
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    const messages =result.data.results;
+    messages.forEach((message) => {
+          renderMSG(message)
+        })
+    
+} catch (error) {
+    console.error('Failed to fetch:', error.message);
+    // Optionally, update the UI to notify the user that the search failed
+}
+}
       const socket = io('http://localhost:3000/', {
         query: {
           token: localStorage.getItem('token'),
@@ -413,7 +506,7 @@ if (isStatusSearch) {
 });
 document.getElementById('search-btn-private').addEventListener('click', async function() {
     const searchInput = document.getElementById('search-input-private').value.trim();
-    const pageNumber = '0'; // Assuming the first page. Adjust as needed.
+    const pageNumber = 1; // Assuming the first page. Adjust as needed.
     const sender = localStorage.getItem('username'); // Assuming sender's username is stored in localStorage
     const receiver = localStorage.getItem('receiver'); // Adjust according to your application's logic
 
@@ -425,7 +518,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
 
     // Encoding URI components to ensure special characters in the searchInput do not break the URL
     const encodedSearchInput = encodeURIComponent(searchInput);
-    const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber}/${encodeURIComponent(sender)}/${encodeURIComponent(receiver)}`;
+    const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(sender)}/${encodeURIComponent(receiver)}`;
 
     try {
         const response = await fetch(searchURL, {
@@ -441,12 +534,18 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
 
         const result = await response.json();
         const messages =result.data.results;
+        console.log("any thing"+messages)
         const messagesContainer = document.querySelector('.messages'); // Select the messages container
 
     // Clear existing messages before displaying new ones
     messagesContainer.innerHTML = '';
+    console.log("statu "+messages)
         messages.forEach((message) => {
-              renderMSG(message)
+          if(searchInput){
+            console.log("going to status history" + message)
+            renderStatusHistory(message)}
+          else{renderMSG(message)}
+              
             })
        
 
@@ -513,6 +612,10 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
             alert('Please enter a message before posting.')
           }
         })
+
+        document.getElementById('see-more').addEventListener('click', function() {
+  fetchMessages(); // Call the function to fetch the next page of messages
+});
 
         socket.on('alertUpdated', (data) => {
           const roomName = [data.sender, data.receiver].sort().join('_')
@@ -694,6 +797,53 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
         msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
       }
 
+      function renderStatusHistory(message) {
+        let chatModal = document.getElementById('chat-modal') // Ensure this ID matches your chat modal
+        let msgContainer = chatModal.querySelector('.messages') // Select the messages container within the chat modal
+
+        let messageElement = document.createElement('div')
+        messageElement.classList.add('message')
+
+        // Format the timestamp
+        let formattedTimestamp = new Date(message.date).toLocaleString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
+
+        // Construct the message header
+        let messageHeader = document.createElement('div')
+        messageHeader.classList.add('message-header')
+
+        let senderElement = document.createElement('span')
+        senderElement.classList.add('sender')
+        senderElement.textContent = message.status + ' (' + formattedTimestamp + ')'
+
+        // Append sender and status to the header
+        messageHeader.appendChild(senderElement)
+
+
+
+
+        // Append the header and body to the message element
+        messageElement.appendChild(messageHeader)
+
+
+        // Append the message element to the container
+        msgContainer.appendChild(messageElement)
+
+        // Ensure the container scrolls to show the newest message
+        msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+}
+``
+
+
+
+
+
       function getUserStatus(username) {
         return new Promise((resolve, reject) => {
           fetch(`/status/${username}`, {
@@ -705,7 +855,7 @@ document.getElementById('search-btn-private').addEventListener('click', async fu
             .then((response) => response.json())
             .then((data) => {
               console.log('Status got successfully:', data.data.status)
-              resolve(data.data.status.status)
+              resolve(data.data.status)
             })
             .catch((error) => {
               console.error('Error getting status:', error)

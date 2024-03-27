@@ -10,6 +10,7 @@ async function getSearchResults(req, res) {
         let receiver = req.params.receiver;
         let searchResults = await getStrategy(context, criteria, sender, receiver)
         let ret;
+        console.log(pageNumber);
         if (pageNumber === '0') {
             ret = searchResults
         }
@@ -19,14 +20,24 @@ async function getSearchResults(req, res) {
                 searchResults.reverse();
                 const itemsPerPage = 10;
                 const startIndex = (pageNumber - 1) * itemsPerPage;
-                const endIndex = startIndex + itemsPerPage;
-                ret = searchResults.slice(startIndex, endIndex);
-            } else {
+
+                if (startIndex >= searchResults.length) {
+                    ret = []
+                }
+                else {
+                    let endIndex = startIndex + itemsPerPage;
+                    if (endIndex >= searchResults.length) {
+                        endIndex = searchResults.length
+                    }
+                    ret = searchResults.slice(startIndex, endIndex);
+                }
+                
+            }else {
                 // Handle invalid page number (e.g., non-numeric or negative)
                 ret = []; // or any other fallback logic you prefer
             }
         }
-
+console.log("ret", ret)
         res.status(200).json({ data: { results: ret } })
     } catch (error) {
         console.error('Error getting search results:', error);

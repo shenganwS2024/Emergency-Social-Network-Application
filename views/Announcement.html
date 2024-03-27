@@ -14,6 +14,7 @@
         <div id="search-bar-container">
             <input type="text" id="search-input" placeholder="Search announcements..." />
             <button id="search-btn">🔍</button>
+          
           </div>
         <div class="header">
           <div class="logo">Publi Announcement</div>
@@ -22,6 +23,8 @@
         </div>
         <div class="messages">
           <div class="message otherMessage"></div>
+          
+
         </div>
         <div class="typebox">
           <textarea type="text" id="message-input"></textarea>
@@ -29,6 +32,8 @@
 
         <div class="post">
           <button id="send-msg">Post</button>
+          <button id="see-more-btn">See More</button>
+          
         </div>
       </div>
     </div>
@@ -36,6 +41,38 @@
     <!-- make the socket client library and  avaliable to handle real-time messaging -->
     <script src="socket.io/socket.io.js"></script>
     <script>
+        let pageNumber = 1;
+       async function fetchMessages() {
+        const searchInput = document.getElementById('search-input').value.trim();
+   // Assuming the first page. Adjust as needed.
+        ++pageNumber;
+  // Encoding URI components to ensure special characters in the searchInput do not break the URL
+  const encodedSearchInput = encodeURIComponent(searchInput);
+            const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`;
+
+try {
+    const response = await fetch(searchURL, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json', // Expecting a JSON response
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    const messages =result.data.results;
+    messages.forEach((message) => {
+          renderMSG(message)
+        })
+    
+} catch (error) {
+    console.error('Failed to fetch:', error.message);
+    // Optionally, update the UI to notify the user that the search failed
+}
+}
         const app = document.querySelector('.app')
       document.addEventListener('DOMContentLoaded', function () {
 
@@ -71,11 +108,11 @@ socket.on('new announcement', function (msg) {
 
     document.getElementById('search-btn').addEventListener('click', async function() {
   const searchInput = document.getElementById('search-input').value.trim();
-  const pageNumber = '0'; // Assuming the first page. Adjust as needed.
+   // Assuming the first page. Adjust as needed.
 
   // Encoding URI components to ensure special characters in the searchInput do not break the URL
   const encodedSearchInput = encodeURIComponent(searchInput);
-  const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber}`;
+  const searchURL = `/search/announcement/${encodedSearchInput}/${pageNumber.toString()}`;
 
   try {
       const response = await fetch(searchURL, {
@@ -104,6 +141,10 @@ socket.on('new announcement', function (msg) {
       // Optionally, update the UI to notify the user that the search failed
   }
 });
+document.getElementById('see-more-btn').addEventListener('click', function() {
+  fetchMessages(); // Call the function to fetch the next page of messages
+});
+
 
 document.getElementById('send-msg').addEventListener('click', async function () {
     const username = localStorage.getItem('username')
@@ -382,6 +423,19 @@ function renderMSG(message) {
         font-size: 22px;
         margin-top: 5px;
         margin-bottom: 5px;
+      }
+
+      .post #see-more-btn {
+        border-radius: 10px;
+        height: 35px;
+        border: 1px solid black;
+        background-color: #fab855;
+        color: black;
+        font-weight: 900;
+        font-size: 22px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
       }
 
       .messageContainer {
