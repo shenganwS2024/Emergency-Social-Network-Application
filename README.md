@@ -237,7 +237,7 @@ CICD: Sigrid
 #### search
 
 <details>
- <summary><code>GET</code> <code><b>//search/:context/:criteria/:pageNumber/:sender?/:receiver?</b></code> <code>(allows users to search for information based on different context)</code></summary>
+ <summary><code>GET</code> <code><b>/search/:context/:criteria/:pageNumber/:sender?/:receiver?</b></code> <code>(allows users to search for information based on different context)</code></summary>
 
 
 ##### Parameters: e.g./search/privateMessage/111/1/1111/simon
