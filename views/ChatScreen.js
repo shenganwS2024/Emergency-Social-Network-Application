@@ -13,6 +13,7 @@ document.getElementById('directory-button').addEventListener('click', () => redi
 document.getElementById('announcement').addEventListener('click', () => redirectTo('Announcement.html'))
 document.getElementById('exit-chat').addEventListener('click', logout)
 document.getElementById('search-btn').addEventListener('click', searchMessages)
+document.getElementById('stop-search').addEventListener('click', stopSearch)
 document.getElementById('see-more-btn').addEventListener('click', () => fetchMessages(pageNumber++))
 document.getElementById('send-msg').addEventListener('click', sendMessage)
 
@@ -58,10 +59,18 @@ async function searchMessages() {
 
   try {
     const result = await fetchSearchResults(searchURL)
+    if(result.data.results.length === 0) {
+      alert('No search result to display.')
+    }
     displayMessages(result.data.results)
+    
   } catch (error) {
     console.error('Failed to fetch:', error.message)
   }
+}
+
+async function stopSearch() {
+  window.location.reload()
 }
 
 function getSearchInput() {
@@ -99,6 +108,10 @@ async function fetchMessages() {
       headers: { Accept: 'application/json' },
     })
     const result = await response.json()
+    if(result.data.results.length === 0) {
+      alert('No search result to display.')
+      return
+    }
     result.data.results.forEach(renderMSG)
   } catch (error) {
     console.error('Failed to fetch:', error.message)

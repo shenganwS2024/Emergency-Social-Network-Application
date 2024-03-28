@@ -13,6 +13,7 @@
         <div id="search-bar-container">
           <input type="text" id="search-input" placeholder="Search announcements..." />
           <button id="search-btn">🔍</button>
+          <button id="stop-search">Stop Search</button>
         </div>
         <div class="header">
           <div class="logo">Public Announcement</div>
@@ -58,6 +59,10 @@
 
           const result = await response.json()
           const messages = result.data.results
+          if (messages.length === 0) {
+            alert('No search results found.')
+            return
+          }
           messages.forEach((message) => {
             renderMSG(message)
           })
@@ -117,6 +122,9 @@
 
             const result = await response.json()
             const messages = result.data.results
+            if (messages.length === 0) {
+              alert('No search results found.')
+            }
             const messagesContainer = document.querySelector('.messages') // Select the messages container
 
             // Clear existing messages before displaying new ones
@@ -131,6 +139,10 @@
         })
         document.getElementById('see-more-btn').addEventListener('click', function () {
           fetchMessages() // Call the function to fetch the next page of messages
+        })
+
+        document.getElementById('stop-search').addEventListener('click', function () {
+          window.location.reload()
         })
 
         document.getElementById('send-msg').addEventListener('click', async function () {

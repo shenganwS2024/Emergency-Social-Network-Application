@@ -17,6 +17,7 @@
         Status Search
       </label>
       <button id="search-btn">🔍</button>
+      <button id="stop-search">Stop Search</button>
     </div>
     <h1>ESN Directory</h1>
     <button id="speed-test-btn">Speed Test</button>
@@ -328,6 +329,7 @@
         <div id="search-bar-container">
           <input type="text" id="search-input-private" placeholder="Search private messages..." />
           <button id="search-btn-private">🔍</button>
+          <button id="stop-search-private">Stop Search</button>
         </div>
         <h2>Chat with <span id="chat-username">Username</span></h2>
         <div class="chatroom">
@@ -488,6 +490,9 @@
             }
 
             const result = await response.json()
+            if(result.data.results.length === 0) {
+              alert('No results found')
+            }
 
             // Assuming `displayUsers` is a function you've defined to update the UI with the search results
             displayUsers(result.data.results, currentUser) // Removed `currentUser` assuming it's not used here or is globally accessible
@@ -495,6 +500,16 @@
             console.error('Failed to fetch:', error.message)
             // Optionally, update the UI to notify the user that the search failed
           }
+        })
+
+        document.getElementById('stop-search').addEventListener('click', function () {
+          // Clear the search input
+          window.location.reload()
+        })
+
+        document.getElementById('stop-search-private').addEventListener('click', function () {
+          // Clear the search input
+          window.location.reload()
         })
         document.getElementById('search-btn-private').addEventListener('click', async function () {
           const searchInput = document.getElementById('search-input-private').value.trim()
@@ -528,6 +543,9 @@
 
             const result = await response.json()
             const messages = result.data.results
+            if(messages.length === 0) {
+              alert('No results found')
+            }
             console.log('any thing' + messages)
             const messagesContainer = document.querySelector('.messages') // Select the messages container
 
