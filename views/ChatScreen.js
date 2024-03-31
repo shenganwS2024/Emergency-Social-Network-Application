@@ -1,6 +1,6 @@
 // Global variables
 let pageNumber = 1
-const socket = io('https://s24esnb2.onrender.com/', {
+const socket = io('http://localhost:3000/', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -9,8 +9,8 @@ const app = document.querySelector('.app')
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', initializeChat)
-document.getElementById('directory-button').addEventListener('click', () => redirectTo('ESN%20Directory.html'))
-document.getElementById('announcement').addEventListener('click', () => redirectTo('Announcement.html'))
+// document.getElementById('directory-button').addEventListener('click', () => redirectTo('ESN%20Directory.html'))
+// document.getElementById('announcement').addEventListener('click', () => redirectTo('Announcement.html'))
 document.getElementById('exit-chat').addEventListener('click', logout)
 document.getElementById('search-btn').addEventListener('click', searchMessages)
 document.getElementById('stop-search').addEventListener('click', stopSearch)
