@@ -10,6 +10,7 @@ attachEventListeners()
 let currentUser = { username: '', password: '' }
 
 async function fetchBannedUsernames() {
+  
   try {
     const response = await fetch('./bannedUsernames.json')
     const data = await response.json()
