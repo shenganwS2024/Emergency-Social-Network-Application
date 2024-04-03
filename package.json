@@ -20,6 +20,10 @@
   },
   "homepage": "https://github.com/cmusv-fse/fse-s24-sb2#readme",
   "dependencies": {
+    "@sentry/cli": "^2.31.0",
+    "@sentry/node": "^7.109.0",
+    "@sentry/profiling-node": "^7.109.0",
+    "@sentry/tracing": "^7.109.0",
     "bcryptjs": "^2.4.3",
     "express": "^4.18.2",
     "express-session": "^1.18.0",

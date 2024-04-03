@@ -17,7 +17,6 @@
         </div>
         <div class="header">
           <div class="logo">Public Announcement</div>
-          <button id="back">Back</button>
         </div>
         <div class="messages">
           <div class="message otherMessage"></div>
@@ -29,6 +28,25 @@
         <div class="post">
           <button id="send-msg">Post</button>
           <button id="see-more-btn">See More</button>
+        </div>
+
+        <div id="navigation-bar-container">
+          <a href="ESN Directory.html" class="nav-item">
+            <div class="nav-icon" id="directory-button">📁</div>
+            <div class="nav-label">Directory</div>
+          </a>
+          <a href="chatroom.html" class="nav-item">
+            <div class="nav-icon">💬</div>
+            <div class="nav-label">Chatroom</div>
+          </a>
+          <a href="Announcement.html" class="nav-item">
+            <div class="nav-icon">📢</div>
+            <div class="nav-label">Announcement</div>
+          </a>
+          <a href="Settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-label">Settings</div>
+          </a>
         </div>
       </div>
     </div>
@@ -181,9 +199,6 @@
           }
         })
       })
-      document.getElementById('back').addEventListener('click', function () {
-        window.location.href = 'chatroom.html'
-      })
 
       function renderMSG(message) {
         //("before container");
@@ -221,6 +236,68 @@
         // Ensures that the container scrolls to the bottom to show newest message
         msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
       }
+      document.addEventListener('DOMContentLoaded', function () {
+        const socket = io('https://s24esnb2.onrender.com/', {
+          query: {
+            token: localStorage.getItem('token'),
+          },
+        })
+
+        // Listen to the 'alertUpdated' event from the server
+        socket.on('alertUpdated', (data) => {
+          const currentUserString = localStorage.getItem('currentUser')
+          if (!currentUserString) return
+
+          let currentUser = JSON.parse(currentUserString)
+          let username = currentUser.username
+          let secondName = data.sender === username ? data.receiver : data.sender
+          const roomName = [username, secondName].sort().join('_')
+
+          // Update the chatChecked property based on the data from the socket event
+          if (currentUser.chatChecked[roomName] !== undefined) {
+            currentUser.chatChecked[roomName] = data.checked
+            localStorage.setItem('currentUser', JSON.stringify(currentUser))
+            updateDirectoryAlertIcon()
+          }
+        })
+
+        // Function to update the directory button with an alert icon if needed
+        function updateDirectoryAlertIcon() {
+          const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+          if (!currentUser || !currentUser.chatChecked) return
+
+          const hasUnreadMessages = Object.values(currentUser.chatChecked).includes(false)
+          const directoryButton = document.getElementById('directory-button')
+          if (!directoryButton) return
+
+          // Ensure the button position is set to relative to position the alert icon correctly
+          directoryButton.style.position = 'relative'
+
+          let alertIcon = directoryButton.querySelector('.alert-icon')
+
+          if (hasUnreadMessages) {
+            if (!alertIcon) {
+              alertIcon = document.createElement('span')
+              alertIcon.textContent = '🚨'
+              alertIcon.style.color = 'red'
+              alertIcon.style.position = 'relative'
+              alertIcon.style.right = '0'
+              alertIcon.style.top = '0'
+              alertIcon.classList.add('alert-icon')
+              directoryButton.appendChild(alertIcon)
+            }
+          } else {
+            if (alertIcon) {
+              directoryButton.removeChild(alertIcon)
+            }
+          }
+        }
+
+        // Initial check to display the alert icon if needed
+        updateDirectoryAlertIcon()
+
+        // Your existing DOMContentLoaded logic...
+      })
     </script>
 
     <style>
@@ -323,8 +400,7 @@
         font-size: 25px;
         font-weight: bold;
         display: flex;
-        justify-content: left;
-        /* align-items: center; */
+        justify-content: center;
         width: 100%;
       }
 
@@ -381,7 +457,6 @@
 
       .chatroom .typebox #message-input {
         width: 98%;
-        height: 200px;
         border: 1px solid black;
         border-radius: 2px;
         outline-color: #111;
@@ -390,7 +465,7 @@
         margin-right: auto;
         display: block;
         margin-bottom: 20px;
-        height: 25vh;
+        height: 19vh;
       }
 
       .post {
@@ -480,6 +555,53 @@
         background-color: #4caf50; /* Green background to match other buttons */
         color: white;
       }
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon {
+  font-size: 24px; /* Adjust icon size as needed */
+}
+
+.nav-label {
+  font-size: 12px; /* Adjust label text size as needed */
+  margin-top: 5px; /* Space between icon and label */
+}
+#navigation-bar-container a {
+  text-decoration: none; /* Removes underline from links */
+  color: inherit; /* Inherits the text color from the parent */
+}
+
+#navigation-bar-container a:active, 
+#navigation-bar-container a:focus, 
+#navigation-bar-container a:hover {
+  text-decoration: none; /* Keeps underline removed on hover/focus */
+}
+
+#navigation-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+    z-index: 1000; /* Ensures it stays on top of other content */
+}
+
+/* Add this to ensure the body's content does not get hidden under the navigation bar */
+body {
+    margin-bottom: 70px; /* Adjust this so the bottom of the content is above the navigation bar */
+}
+
     </style>
   </body>
 </html>

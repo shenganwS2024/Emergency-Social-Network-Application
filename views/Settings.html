@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Page</title>
+    <style>
+        /* Basic reset for body */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Style for the navigation bar */
+        #navigation-bar-container {
+            display: flex;
+            justify-content: space-around;
+            background-color: #f0f0f0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: black;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+        }
+
+        /* Style for the content area */
+        .content {
+            padding: 20px;
+            margin-bottom: 60px; /* To ensure content doesn't hide behind the nav bar */
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <h1>Settings</h1>
+    <!-- Place your settings content here -->
+    <p>Here you can customize your preferences and account settings.</p>
+</div>
+
+<!-- Navigation bar -->
+<div id="navigation-bar-container">
+    <a href="ESN Directory.html" class="nav-item">
+        <div class="nav-icon" id="directory-button">📁</div>
+        <div class="nav-label">Directory</div>
+    </a>
+    <a href="chatroom.html" class="nav-item">
+        <div class="nav-icon">💬</div>
+        <div class="nav-label">Chatroom</div>
+    </a>
+    <a href="Announcement.html" class="nav-item">
+        <div class="nav-icon">📢</div>
+        <div class="nav-label">Announcement</div>
+    </a>
+    <a href="Settings.html" class="nav-item">
+        <div class="nav-icon">⚙️</div>
+        <div class="nav-label">Settings</div>
+    </a>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const socket = io('https://s24esnb2.onrender.com/', {
+          query: {
+            token: localStorage.getItem('token'),
+          },
+        })
+
+        // Listen to the 'alertUpdated' event from the server
+        socket.on('alertUpdated', (data) => {
+          const currentUserString = localStorage.getItem('currentUser')
+          if (!currentUserString) return
+
+          let currentUser = JSON.parse(currentUserString)
+          let username = currentUser.username
+          let secondName = data.sender === username ? data.receiver : data.sender
+          const roomName = [username, secondName].sort().join('_')
+
+          // Update the chatChecked property based on the data from the socket event
+          if (currentUser.chatChecked[roomName] !== undefined) {
+            currentUser.chatChecked[roomName] = data.checked
+            localStorage.setItem('currentUser', JSON.stringify(currentUser))
+            updateDirectoryAlertIcon()
+          }
+        })
+
+        // Function to update the directory button with an alert icon if needed
+        function updateDirectoryAlertIcon() {
+          const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+          if (!currentUser || !currentUser.chatChecked) return
+
+          const hasUnreadMessages = Object.values(currentUser.chatChecked).includes(false)
+          const directoryButton = document.getElementById('directory-button')
+          if (!directoryButton) return
+
+          // Ensure the button position is set to relative to position the alert icon correctly
+          directoryButton.style.position = 'relative'
+
+          let alertIcon = directoryButton.querySelector('.alert-icon')
+
+          if (hasUnreadMessages) {
+            if (!alertIcon) {
+              alertIcon = document.createElement('span')
+              alertIcon.textContent = '🚨'
+              alertIcon.style.color = 'red'
+              alertIcon.style.position = 'relative'
+              alertIcon.style.right = '0'
+              alertIcon.style.top = '0'
+              alertIcon.classList.add('alert-icon')
+              directoryButton.appendChild(alertIcon)
+            }
+          } else {
+            if (alertIcon) {
+              directoryButton.removeChild(alertIcon)
+            }
+          }
+        }
+
+        // Initial check to display the alert icon if needed
+        updateDirectoryAlertIcon()
+
+        // Your existing DOMContentLoaded logic...
+      })
+</script>
+
+</body>
+</html>

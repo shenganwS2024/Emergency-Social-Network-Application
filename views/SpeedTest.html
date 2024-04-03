@@ -70,11 +70,6 @@
                 return;
             }
 
-        if (duration > 5) {
-          alert('Duration must be 5 seconds or less.')
-          return // Stop the execution if the condition is not met
-        }
-
         resultsDiv.style.display = 'block';
             postResultP.innerText = 'Speed Test Ongoing, Please Wait...';
             getResultP.innerText = '';
@@ -111,6 +106,7 @@
             const receiverName = 'public' // Use 'public' to denote public messages
 
             let endTime = startTime + duration * 1000
+            
             // let postCount = 0
             let getCount = 0
 
@@ -121,6 +117,16 @@
 
             // Updated function to send POST requests
             function sendPostRequest() {
+
+              const currentTime = Date.now();
+
+// Check if current time has exceeded endTime by more than 5 seconds
+if (currentTime > endTime + 5000) {
+    alert('The test duration has exceeded the specified limit by 5 seconds. The test will now stop.');
+    stopTest(); // Assumes stopTest is a function that stops intervals and handles cleanup
+    return; // Exit the function to prevent further execution
+}
+
               if (postCount >= maxPostCount) {
                 alert('Maximum post count reached. Stopping the test.')
                 stopTest()
@@ -152,6 +158,15 @@
 
             // Updated function to send GET requests
             function sendGetRequest() {
+              const currentTime = Date.now();
+
+// Check if current time has exceeded endTime by more than 5 seconds
+if (currentTime > endTime + 5000) {
+    alert('The test duration has exceeded the specified limit by 5 seconds. The test will now stop.');
+    stopTest(); // Assumes stopTest is a function that stops intervals and handles cleanup
+    return; // Exit the function to prevent further execution
+}
+
               const getUrl = `/messages/${senderName}/${receiverName}`
 
               fetch(getUrl)
@@ -172,8 +187,6 @@
                     clearInterval(getInterval)
                     document.getElementById('testResults').style.display = 'block'
                     updateResults();
-                    // document.getElementById('postResult').innerText += `${postCount / duration} requests/second`
-                    // document.getElementById('getResult').innerText += `${getCount / duration} requests/second`
                   } else {
                     sendGetRequest()
                   }
@@ -187,13 +200,32 @@
             console.error('Error:', error)
           })
 
-        function stopTest() {
+        async function stopTest() {
           if (postInterval) clearInterval(postInterval)
           if (getInterval) clearInterval(getInterval)
           abortController.abort()
           resultsDiv.style.display = 'block'; // Ensure the results div is visible
       postResultP.innerText = 'Test Stopped';
       getResultP.innerText = ''; // Clear the GET result text
+
+      let isSpeedTestMode = false
+
+const body = {
+  isSpeedTestMode: isSpeedTestMode,
+}
+
+try {
+  await fetch(`speedTest`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+} catch (error) {
+  console.error('Error:', error)
+}
+
         }
         document.getElementById('stopTest').addEventListener('click', stopTest)
       })

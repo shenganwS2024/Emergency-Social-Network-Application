@@ -5,6 +5,7 @@ import {userRoomMap} from '../config/globalVariables.js'
 
 // Function to get the latest messages from the server
 async function getLatestMessages(req, res) {
+    
     try {
         let sender = req.params.senderName;
         let receiver = req.params.receiverName;
