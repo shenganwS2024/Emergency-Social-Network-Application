@@ -140,6 +140,57 @@ CICD: Sigrid
 
 ---
 
+#### New TrainExercise
+
+<details>
+ <summary><code>POST</code> <code><b>/trainexercises</b></code> <code>(post new trainexercise)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `title`| required   | string    | Title of the new trainexercise         |
+> | `author`| required   | string    | Author of the new trainexercise|
+> | `link`| required   | string    | Video string of the new trainexercise|
+> | `timestamp`  | required   | Date    | times when posting          |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post trainexercise successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new trainexercise`                        |
+
+</details>
+
+---
+
+#### New comment for TrainExercise
+
+<details>
+ <summary><code>POST</code> <code><b>/trainexercises/:id/comments</b></code> <code>(post new comment for trainexercise)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `content`| required   | string    | content of the comment         |
+> | `commentator`| required   | string    | Commentator of the new trainexercise|
+> | `timestamp`  | required   | Date    | times when posting          |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post comment successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new comment`                        |
+
+</details>
+
+---
+
 
 #### Speed Test
 
@@ -192,6 +243,40 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `get users successfully`                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### All Trainexercises
+
+<details>
+ <summary><code>GET</code> <code><b>/exercises</b></code> <code>(fetch all trainexercises)</code></summary>
+
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get exercises successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `get exercises error`                       |
+</details>
+
+---
+
+#### One Trainexercise
+
+<details>
+ <summary><code>GET</code> <code><b>/exercises/:id</b></code> <code>(fetch all trainexercises)</code></summary>
+
+##### Parameters: e.g.exercise/{123456}
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get one exercise successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `get one exercise error`                       |
 </details>
 
 ---
@@ -343,6 +428,36 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `User check updated successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+</details>
+
+---
+
+#### Update exercise likerate 
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/likerate</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated like rate successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating like rate`                       |
+</details>
+
+---
+
+#### Update exercise dislikerate 
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/dislikerate</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated dislike rate successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating dislike rate`                       |
 </details>
 
 ---
