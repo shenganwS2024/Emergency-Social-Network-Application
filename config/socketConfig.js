@@ -2,6 +2,7 @@ import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { Users } from '../models/Users.js';
 
+
 const authenticateSocket = (socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token !== 'null') {
     jwt.verify(socket.handshake.query.token, 'fsesb2secretkey', (err, decoded) => {
@@ -19,6 +20,9 @@ const handleUserConnection = async (socket, username, io) => {
     const user = await Users.findOneAndUpdate({ username }, { onlineStatus: true }, { new: true });
     io.emit('userStatusChanged', { username: user.username, onlineStatus: true });
     socket.emit('updateInfo', `${username} login`);
+
+
+
   } catch (err) {
     console.error(err);
   }
@@ -31,6 +35,8 @@ const handleUserDisconnection = async (socket, username, io) => {
       io.emit('userStatusChanged', { username: user.username, onlineStatus: false });
       socket.emit('updateInfo', `${username} logout`);
     }
+    
+
   } catch (err) {
     console.error(err);
   }

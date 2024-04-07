@@ -35,7 +35,7 @@
           // Optionally, update the UI to notify the user that the search failed
         }
       }
-      const socket = io('https://s24esnb2.onrender.com/', {
+      const socket = io('http://localhost:3000', {
         query: {
           token: localStorage.getItem('token'),
         },
@@ -273,6 +273,11 @@
 
         document.getElementById('see-more').addEventListener('click', function () {
           fetchMessages() // Call the function to fetch the next page of messages
+        })
+
+        document.getElementById('enterDuel').addEventListener('click', function () {
+          const username = localStorage.getItem('username')
+          registerNewPlayer(username)
         })
 
         socket.on('alertUpdated', (data) => {
@@ -616,3 +621,21 @@
         }
       }
   
+
+      function registerNewPlayer(username) {
+        fetch(`/players/${encodeURIComponent(username)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // No need to send a body if the username is in the URL
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    

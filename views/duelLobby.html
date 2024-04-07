@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duel Lobby</title>
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f7f7f7;
+        font-family: Arial, sans-serif;
+    }
+    .header, .message, .exit-section {
+        text-align: center;
+        flex-shrink: 0;
+    }
+    .header {
+        /* Replace 'url_of_your_image' with the actual image URL */
+        background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5JNQIbsA7Y7T8uGtUcAXZd1Obf7JoXp-G4g&s') no-repeat center center;
+        background-size: cover;
+        color: rgb(29, 28, 28);
+        font-size: 2.3rem;
+        padding: 20px 0;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        width: 125%;
+        max-width: 600px;
+        flex-grow: 1;
+        background: #fff;
+    }
+    .lobby {
+        display: flex;
+        flex-grow: 1;
+        overflow: hidden;
+        max-height: 60vh;
+    }
+    .section {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        width: 50%;
+    }
+    .title {
+        margin: 10px 0;
+        font-size: 0.9rem; 
+        text-align: center;
+    }
+    .online-players, .ongoing-duels {
+       
+        height: 60vh; /* Example max height - adjust based on needs */
+        overflow-y: auto; /* Enables scrolling */
+        border-right: 1px solid #000;
+        border-top: 1px solid #000;
+    }
+    .ongoing-duels {
+        border-right: none;
+    }
+    .player, .duel {
+        padding: 10px;
+        font-size: 0.6rem;
+    }
+    .challenge-button {
+        background: rgb(182, 5, 5);
+        color: white;
+        border: none;
+        padding: 2px 6px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.6rem;
+    }
+    .message {
+        flex-basis: 15vh;
+        padding: 10px;
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+        font-size: 0.6rem;
+        text-align: left;
+        color: white;
+        background-image: url('data:image/jpeg;base64,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');
+        background-size: cover; 
+        background-repeat: no-repeat; 
+    }
+    .exit-section {
+        padding: 20px;
+        background: #f1f1f1;
+        flex-basis: 10vh; /* Fixed height for the exit button section */
+    }
+    .exit-button {
+        background: red;
+        color: white;
+        border: none;
+        padding: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">DUEL LOBBY</div>
+    <div class="lobby">
+        <div class="section">
+            <div class="title">Online Players</div>
+            <!-- Players will be listed here -->
+            <div class="online-players" id="onlinePlayers">
+                <!-- Example: <div class="player">Alex <button class="challenge-button">Challenge</button></div> -->
+                
+                
+            </div>
+            
+        </div>
+        <div class="section">
+            <div class="title">Ongoing Duels</div>
+            <div class="ongoing-duels" id="ongoingDuels">
+                <!-- <div class="player">Alex ⚔️ Zeke</div> -->
+                
+            </div>
+        </div>
+    </div>
+    <div class="message" id="challengeMessage">
+        <!-- Message will be displayed here -->
+    </div>
+    <div class="exit-section">
+        <button class="exit-button" id="exitButton">Exit</button>
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="duelLobby.js"></script>
+</body>
+</html>

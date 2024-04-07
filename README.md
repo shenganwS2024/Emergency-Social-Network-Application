@@ -363,7 +363,7 @@ CICD: Sigrid
 
 ---
 
-#### Get the result of the player
+#### Get the corresponding question
 
 <details>
  <summary><code>GET</code> <code><b>/questions/:number</b></code> <code></code></summary>
@@ -481,25 +481,27 @@ CICD: Sigrid
 #### Update player's challenge status
 
 <details>
- <summary><code>PUT</code> <code><b>/players/:playerName</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/challengeStatuses/:challenger/:challenged</b></code> <code></code></summary>
 
 ##### Parameters: e.g. /players/{Player A}
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
-> | playerName  | required  | string    | the player whose challenge status gets updated     |
+> | challenger  | required  | string    | the player who started the duel     |
+> | challenged  | required  | string    | the player who gets challenged     |
 
 ##### Req.body Field:
 
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
 > | inChallenge  | required  | boolean      | the desired challenge status         |
+> | accept  | optional  | boolean      | whether challenged accepted or rejected the challenge         |
 
 ##### Responses
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Player challenge status updated successfully`                   |                          
-> | `500`     | `text/plain;charset=UTF-8`   | `Error updating challenge status`                       |
+> | `200`     | `text/plain;charset=UTF-8`   | `Player challenge statuses updated successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating challenge statuses`                       |
 </details>
 
 ---
@@ -549,6 +551,27 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `Duel deleted successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the duel`                       |
+</details>
+
+---
+
+#### Delete a player
+
+<details>
+ <summary><code>DELETE</code> <code><b>/players/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | name of the deleting player     |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player deleted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the player`                       |
 </details>
 
 ---
