@@ -481,13 +481,13 @@ CICD: Sigrid
 #### Update player's challenge status
 
 <details>
- <summary><code>PUT</code> <code><b>/challengeStatuses/:challenger/:challenged</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/challengeStatuses/:challenger/:challenged?</b></code> <code></code></summary>
 
 ##### Parameters: e.g. /players/{Player A}
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
 > | challenger  | required  | string    | the player who started the duel     |
-> | challenged  | required  | string    | the player who gets challenged     |
+> | challenged  | optional  | string    | the player who gets challenged     |
 
 ##### Req.body Field:
 
@@ -531,6 +531,34 @@ CICD: Sigrid
 </details>
 
 ---
+#### Update player's readiness
+
+<details>
+ <summary><code>PUT</code> <code><b>/readyStatuses/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /readyStatuses/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player whose ready status gets changed     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | ready  | required  | boolean      | if player is ready        |
+> | opponent  | required  | string      | name of the opponent        |
+> | number  | optional  | int      | number of the current question        |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player's readiness updated successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating player's readiness`                       |
+</details>
+
+---
+
 
 #### DELETE Requests
 

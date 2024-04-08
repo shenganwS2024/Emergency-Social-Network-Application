@@ -311,7 +311,7 @@ function renderChallengeLetter(challenger, challenged) {
     messageDiv.innerHTML = challengeHTML;
     let autoDeclineTimer = setTimeout(() => {
        declineChallenge(challenger, challenged, messageDiv)
-    }, 5000);
+    }, 15000);
 
     document.getElementById('acceptButton').addEventListener('click', async function() {
         // Handle the accept action

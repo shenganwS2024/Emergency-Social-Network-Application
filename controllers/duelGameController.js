@@ -1,4 +1,5 @@
 import {Duels} from '../models/Duels.js';
+import {Players} from '../models/Players.js';
 import { io } from '../server.js';
 import getStrategy from '../questionFetchStrategies/questionFetchIndex.js'
 
@@ -16,6 +17,7 @@ async function getQuestion(req, res) {
 }
 
 async function getResult(req, res) {
+
     try {
         let playerName = req.params.playerName;
         let duel = await Duels.findOne({
@@ -53,10 +55,17 @@ async function getResult(req, res) {
         // Determine if the player won and retrieve their mistakes
         let playerIndex = duel.challengerName === playerName ? 0 : 1;
         let opponentIndex = 1 - playerIndex;
-        let isWin = accuracies[playerIndex] > accuracies[opponentIndex];
+        let isWin = "win"
+        if (accuracies[playerIndex] === accuracies[opponentIndex]) {
+            isWin = "tie"
+        }
+        else if (accuracies[playerIndex] < accuracies[opponentIndex]) {
+            isWin = "lose"
+        }
+        
         let playerMistakes = mistakesList[playerIndex];
 
-        res.status(200).json({ isWin: isWin, accuracy: accuracies[playerIndex], mistakes: playerMistakes });
+        res.status(200).json({ isWin: isWin, accuracy: accuracies[playerIndex].toFixed(2), mistakes: playerMistakes });
 
     } catch (error) {
         console.error('Error getting result:', error);
@@ -70,28 +79,49 @@ async function uploadSubmission(req, res) {
         const questionInfo = req.body.questionInfo;
         const playerName = req.params.playerName;
 
-        // Find the duel involving the player.
-        let duel = await Duels.findOne({
+        const filter = {
             $or: [
                 { challengerName: playerName },
                 { challengedName: playerName }
             ]
-        });
+        };
 
+        // Fetch the duel and ensure the submission array structure
+        let duel = await Duels.findOne(filter);
         if (!duel) {
             return res.status(404).send('Duel not found.');
         }
 
-        // Determine the index for updating the correct submission.
         let playerIndex = duel.challengerName === playerName ? 0 : 1;
+        
+        
+        // Ensure the submission slot exists and is structured correctly
+        if (!duel.submissions[playerIndex]) {
+            duel.submissions[playerIndex] = { questionDescriptions: [], questionAnswers: [], studentAnswers: [] };
+            await duel.save(); // Save if we had to initialize the structure
+        }
 
-        // Update the duel in memory
-        duel.submissions[playerIndex].questionDescriptions.push(questionInfo.questionDescription);
-        duel.submissions[playerIndex].questionAnswers.push(questionInfo.correctAnswer);
-        duel.submissions[playerIndex].studentAnswers.push(answer);
+        const existingDescription = duel.submissions[playerIndex].questionDescriptions.includes(questionInfo.questionDescription);
+        if (existingDescription) {
+            return res.status(400).send('Question description already exists.');
+        }
 
-        // Save the updated duel
-        await duel.save();
+        // Now prepare the atomic update
+        const update = { $push: {} };
+        const basePath = `submissions.${playerIndex}`;
+        update.$push[`${basePath}.questionDescriptions`] = questionInfo.questionDescription;
+        update.$push[`${basePath}.questionAnswers`] = questionInfo.correctAnswer;
+        update.$push[`${basePath}.studentAnswers`] = answer;
+
+        // Execute the atomic update
+        const updatedDuel = await Duels.findOneAndUpdate(filter, update, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!updatedDuel) {
+            return res.status(404).send('Unable to update submission.');
+        }
 
         res.status(200).send('Submission uploaded successfully');
     } catch (error) {
@@ -102,4 +132,40 @@ async function uploadSubmission(req, res) {
 
 
 
-export {getQuestion, getResult, uploadSubmission};
+async function updateReadiness(req,res) {
+    const opponent = req.body.opponent;
+    const ready = req.body.ready;
+    const number = req.body.number;
+    const playerName = req.params.playerName;
+    try {
+        if (ready === undefined || typeof ready !== 'boolean') {
+            return res.status(400).send('Invalid readiness provided');
+        }
+
+        const updatedPlayerName = await Players.findOneAndUpdate(
+            { playerName: playerName },
+            { ready: ready },
+            { new: true }  // Returns the updated document
+        );
+
+        if (!updatedPlayerName) {
+            return res.status(404).send('Player not found');
+        }
+
+        if (ready) {
+
+            const checkReadiness1 = playerName + "ReadinessforQ" + number
+            const checkReadiness2 = opponent + "ReadinessforQ"  + number
+            io.emit(checkReadiness1);
+            io.emit(checkReadiness2);
+        }
+        
+
+        res.status(200).send('Player readiness updated successful');
+    } catch (error) {
+        console.error('Error updating player readiness:', error);
+        res.status(500).send('Error updating player readiness');
+    }
+}
+
+export {getQuestion, getResult, uploadSubmission, updateReadiness};

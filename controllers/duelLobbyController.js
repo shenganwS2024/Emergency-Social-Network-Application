@@ -97,45 +97,47 @@ async function updateChallengeStatus(req,res) {
         if (!updatedChallenger) {
             return res.status(404).send('Challenger not found');
         }
-
-        const updatedChallenged = await Players.findOneAndUpdate(
-            { playerName: challenged },
-            { inChallenge: inChallenge },
-            { new: true }  // Returns the updated document
-        );
-
-        if (!updatedChallenged) {
-            return res.status(404).send('Challenged not found');
-        }
-        const channelName = challenged + "receivesAChallenge"
-        const decisionChannel = challenger + "ChallengeDecision"
-        const leaveDuelChannel1 = challenger + "LeftDuel"
-        const leaveDuelChannel2 = challenged + "LeftDuel"
-
-
-        if (inChallenge) {
-            if (accept) {
-                io.emit(decisionChannel, { accept: accept });
+        if (challenged) {
+            const updatedChallenged = await Players.findOneAndUpdate(
+                { playerName: challenged },
+                { inChallenge: inChallenge },
+                { new: true }  // Returns the updated document
+            );
+    
+            if (!updatedChallenged) {
+                return res.status(404).send('Challenged not found');
             }
-            else {
-                io.emit(channelName, { challenger: challenger});
+            const channelName = challenged + "receivesAChallenge"
+            const decisionChannel = challenger + "ChallengeDecision"
+            const leaveDuelChannel1 = challenger + "LeftDuel"
+            const leaveDuelChannel2 = challenged + "LeftDuel"
+    
+    
+            if (inChallenge) {
+                if (accept) {
+                    io.emit(decisionChannel, { accept: accept });
+                }
+                else {
+                    io.emit(channelName, { challenger: challenger});
+                }
+                
             }
+            else{
+                if (accept === false) {
+                    io.emit(decisionChannel, { accept: accept });
+                }
+    
+                if (accept === null) {
+                    io.emit(leaveDuelChannel1);
+                    io.emit(leaveDuelChannel2);
+                }
+            }
+    
+            
             
         }
-        else{
-            if (accept === false) {
-                io.emit(decisionChannel, { accept: accept });
-            }
-
-            if (accept === null) {
-                io.emit(leaveDuelChannel1);
-                io.emit(leaveDuelChannel2);
-            }
-        }
-
         
         io.emit('onlinePlayersUpdated');
-
         res.status(200).send('Players challenge statuses updated successful');
     } catch (error) {
         console.error('Error updating players challenge status:', error);
