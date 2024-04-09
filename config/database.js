@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { promises as fs } from 'fs';
 import { MultipleChoicesQuestions } from '../models/MultipleChoicesQuestions.js';
 import { TrueFalseQuestions } from '../models/TrueFalseQuestions.js';
 import { ShortAnswerQuestions } from '../models/ShortAnswerQuestions.js';
@@ -44,44 +45,28 @@ class DBConnection {
 
   async initializeQuestionsDatabase() {
     try {
-      let count = await MultipleChoicesQuestions.countDocuments();
-      if (count === 0) {
-        const defaultQuestion = new MultipleChoicesQuestions({
-          questionDescription: 'Considering fire disaster preparedness, which of the following is the most effective action to take when you detect a fire has started in your home, and you\'ve already ensured that all occupants are alerted?',
-          choices: [
-            'Attempt to extinguish the fire immediately with water, regardless of the fire\'s nature.',
-            'Gather valuables and personal documents before evacuating the premises.',
-            'Use an appropriate fire extinguisher on the fire, if it\'s small and contained, after ensuring a clear evacuation path.',
-            'Open all doors and windows to ventilate smoke and facilitate easier fire suppression for firefighters.'
-          ],
-          correctAnswer: 'Use an appropriate fire extinguisher on the fire, if it\'s small and contained, after ensuring a clear evacuation path.'
-        });
-        await defaultQuestion.save();
-        console.log('Initialized the database with a default multiple choices question.');
+      const data = await fs.readFile('config/questions.json', 'utf8');
+      const questions = JSON.parse(data);
+  
+      // Import multiple-choice questions
+      const mcCount = await MultipleChoicesQuestions.countDocuments();
+      if (mcCount === 0 && questions.multipleChoiceQuestions.length > 0) {
+        await MultipleChoicesQuestions.insertMany(questions.multipleChoiceQuestions);
+        console.log(`Initialized the database with ${questions.multipleChoiceQuestions.length} multiple choices questions.`);
       }
-
-      count = await TrueFalseQuestions.countDocuments();
-      if (count === 0) {
-        const defaultQuestion = new TrueFalseQuestions({
-          questionDescription: 'You should immediately turn on the gas supply to check if it is working after a natural disaster',
-          choices: [
-            'True',
-            'False'
-          ],
-          correctAnswer: 'False'
-        });
-        await defaultQuestion.save();
-        console.log('Initialized the database with a default true/false question.');
+  
+      // Import true/false questions
+      const tfCount = await TrueFalseQuestions.countDocuments();
+      if (tfCount === 0 && questions.trueFalseQuestions.length > 0) {
+        await TrueFalseQuestions.insertMany(questions.trueFalseQuestions);
+        console.log(`Initialized the database with ${questions.trueFalseQuestions.length} true/false questions.`);
       }
-
-      count = await ShortAnswerQuestions.countDocuments();
-      if (count === 0) {
-        const defaultQuestion = new ShortAnswerQuestions({
-          questionDescription: 'What is the number of repeated signals (e.g., blasts of a whistle, flashes of light) considered a universal distress signal in emergency situations? (Answer with numbers only, no words)',
-          correctAnswer: '3'
-        });
-        await defaultQuestion.save();
-        console.log('Initialized the database with a default short answer question.');
+  
+      // Import short answer questions
+      const saCount = await ShortAnswerQuestions.countDocuments();
+      if (saCount === 0 && questions.shortAnswerQuestions.length > 0) {
+        await ShortAnswerQuestions.insertMany(questions.shortAnswerQuestions);
+        console.log(`Initialized the database with ${questions.shortAnswerQuestions.length} short answer questions.`);
       }
     } catch (error) {
       console.error('Error initializing the questions database:', error);

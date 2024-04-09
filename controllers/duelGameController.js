@@ -38,7 +38,7 @@ async function getResult(req, res) {
         for (let i = 0; i < duel.submissions.length; i++) {
             let correctCount = 0;
             for (let j = 0; j < duel.submissions[i].questionAnswers.length; j++) {
-                if (duel.submissions[i].questionAnswers[j] === duel.submissions[i].studentAnswers[j]) {
+                if (duel.submissions[i].questionAnswers[j].toLowerCase() === duel.submissions[i].studentAnswers[j].toLowerCase()) {
                     correctCount++;
                 } else {
                     // Track the mistake

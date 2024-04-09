@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const decisionChannel = username + "ChallengeDecision"
     socket.on(decisionChannel, function (data) {
       const exitButton = document.getElementById('exitButton');
-      exitButton.style.backgroundColor = 'red';    
+      exitButton.style.backgroundColor = 'rgb(182, 5, 5)';    
       exitButton.disabled = false
       if (data.accept) {
         console.log("Duel starts!")  
@@ -296,8 +296,7 @@ function renderChallengeLetter(challenger, challenged) {
     const challengeHTML = `
         <div class="challenge-letter">
             <p>Dear ${challenged},</p>
-            <p>Prepare thy blade, we shall settle our differences of </p>
-            <p>disaster knowledge under the watchful eye of honor.</p>
+            <p>Prepare thy blade, we shall settle our differences of disaster knowledge under the watchful eye of honor.</p>
             <p>Yours in anticipation,</p>
             <p>${challenger}</p>
             <div class="response-buttons">
@@ -340,8 +339,7 @@ function renderRejection() {
     // Create the message in HTML format
     const challengeHTML = `
         <div class="challenge-letter">
-            <p>Your challenge invitation was either rejected </p>
-            <p>or has timed out.</p>
+            <p>Your challenge invitation was either rejected or has timed out.</p>
         </div>
         <div class="response-buttons">
           <button id="gotItButton" >Got it</button>
@@ -366,7 +364,7 @@ async function declineChallenge(challenger, challenged, messageDiv) {
         messageDiv.removeChild(messageDiv.firstChild);
     }
     const exitButton = document.getElementById('exitButton');
-    exitButton.style.backgroundColor = 'red';    
+    exitButton.style.backgroundColor = 'rgb(182, 5, 5)';    
     exitButton.disabled = false;
 }
 

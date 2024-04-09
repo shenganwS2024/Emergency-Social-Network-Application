@@ -31,15 +31,19 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
         const leaveDuelChannel1 = challengerName + "LeftDuel";
-        const leaveDuelChannel2 = challengedName + "LeftDuel";
+        // const leaveDuelChannel2 = challengedName + "LeftDuel";
 
-        socket.on(leaveDuelChannel1, function () {
+        socket.on(leaveDuelChannel1, function leaveDuel() {
+            alert("Someone forfeits, the duel ends");
             window.location.href = 'duelLobby.html';
+
+            socket.off(leaveDuelChannel1, leaveDuel);
+            
         });
 
-        socket.on(leaveDuelChannel2, function () {
-            window.location.href = 'duelLobby.html';
-        });
+        // socket.on(leaveDuelChannel2, function () {
+        //     window.location.href = 'duelLobby.html';
+        // });
         
         const checkReadiness1 = username + "ReadinessforQ1"
         socket.on(checkReadiness1, async function () {
@@ -79,6 +83,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 await renderOpponentStatus(opponent);
         
                 // Remove this event listener since it's no longer needed
+                await timeout(500);
                 socket.off(checkReadiness2, onCheckReadiness2);
             } else if (bothReady === 2) {
                 // This means your opponent is ready but you're not
@@ -100,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 renderSystemMessage(3,thirdQuestion.questionDescription)
                 await renderChoiceButtons("choice-buttons", 3, thirdQuestion, username, opponent)
                 await renderOpponentStatus(opponent)
-                
+                await timeout(500);
                 socket.off(checkReadiness3, onCheckReadiness3);
             }
             else if (bothReady === 2) {
@@ -127,6 +132,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 await renderChoiceButtons("choice-buttons", 4, result, username, opponent)
                 await renderOpponentStatus(opponent, result.isWin)
                 //await deleteDuel(username);
+                await timeout(500);
                 socket.off(checkReadiness4, onCheckReadiness4);
             }
             else if (bothReady === 2) {
@@ -134,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 await renderOpponentStatus(opponent, result.isWin)
             }
         });
-        let timeLeft = 15; // 15 seconds countdown
+        let timeLeft = 20; // 20 seconds countdown
         const countdownElement = document.getElementById('countdown');
         const updateCountdown = () => {
             countdownElement.textContent = `${timeLeft} seconds remaining`;
@@ -183,7 +189,9 @@ async function leaveDuelGame(username, opponent, inChallenge = false) {
     await updatePlayerReadiness(username, opponent,false)
     await updatePlayerReadiness(opponent,username, false)
     await updateChallengeStatuses(username, opponent, inChallenge);
-    window.location.href = 'duelLobby.html';
+    // alert("Someone forfeits, the duel ends");
+    // window.location.href = 'duelLobby.html';
+    
 }
 
 
@@ -201,7 +209,7 @@ async function renderOpponentStatus(opponent, opponentResult = null) {
             + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ready: ' + readinessIndicator;
     }
     else {
-        let isOpponentWin = 'Win 👑';
+        let isOpponentWin = 'Win';
         if (opponentResult === "win") {
             isOpponentWin = 'Lose 💀';
         }
@@ -225,10 +233,9 @@ async function renderSystemMessage(num, message) {
     let challengeHTML = `
         <div class="system-messages">
             <p>Start the duel by clicking "Ready" or flee with dishonor by clicking "Forfeit".</p>
-            <p>Please make your decision in 10 seconds.</p>
-            <br><br>
+            <p>Please read all the information here and make your decision in 20 seconds.</p>
             <p class="note-messages">Note that you will be redirected to lobby if someone clicks "Forfeit" or fails to respond in time.</p>
-            <p class="note-messages">And do not refresh your page!</p>
+            <p class="note-messages">And do not refresh your page unless you find your question is not updating correctly</p>
         </div>
     `;
 
@@ -269,7 +276,7 @@ async function renderSystemMessage(num, message) {
             challengeHTML = `
                 <div class="system-messages">
                     <p>Congratulations, you are the winner👑 of this duel! </p>
-                    <p>You outperformed your opponent by </p>
+                    <p>You outperformed your opponent </p>
                     <p>by having an accuracy of ${message.accuracy}. </p>
                 </div>
             `;
@@ -288,7 +295,7 @@ async function renderSystemMessage(num, message) {
                 <div class="system-messages">
                     <p>It looks like this duel has no winner nor loser. </p>
                     <p>Keep learning and improving—your next victory might just be around the corner!</p>
-                    <p>The accuracy of your answers: ${message.accuracy}. </p>
+                    <p>You and your opponent have the same number of accuracy: ${message.accuracy}. </p>
                 </div>
             `;
         }
@@ -340,10 +347,10 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
 
     if (num < 3) {
         if (num === 1) {
-            timeLeft = 5;
+            timeLeft = 25;
         }
         else if (num === 2) {
-            timeLeft = 5;
+            timeLeft = 15;
         }
 
         countdownElement.textContent = `You have ${timeLeft} seconds to make your decision.`
@@ -356,7 +363,7 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
             // Create a new button element
             const button = document.createElement('button');
             // Set the button's text to the current choice
-            button.textContent = choice;
+            button.textContent = '⚔️' + choice;
             // Assign an ID based on the index
             button.id = `choice-${index}`;
             // Add the 'choice-button' class to each button
@@ -366,6 +373,7 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
                 clearTimeout(autoDeclineTimer);
                 clearInterval(countdownTimer);
                 await uploadSubmission(username, questionInfo, choice)
+                await timeout(200);
                 disableChoiceButtons("choice-buttons")
                 await updatePlayerReadiness(username,opponent,true,num+1)
                 renderSystemMessage(-1)
@@ -377,13 +385,16 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
         autoDeclineTimer = setTimeout(async() => {
             clearInterval(countdownTimer);
             await uploadSubmission(username, questionInfo, " ")
+            await timeout(100);
             await updatePlayerReadiness(username,opponent,true,num+1)
         }, timeLeft*1000);
     }
     else if (num === 3) {
-        timeLeft = 5;
+        timeLeft = 20;
         countdownElement.textContent = `You have ${timeLeft} seconds to make your decision.`
         choiceButtonDiv.appendChild(countdownElement)
+        var br = document.createElement("br");
+        choiceButtonDiv.appendChild(br);
 
         // Create an input field
         const inputField = document.createElement('input');
@@ -393,7 +404,7 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
     
         // Create a submit button
         const submitButton = document.createElement('button');
-        submitButton.textContent = 'Submit'; // Setting the button text
+        submitButton.textContent = 'Submit ⚔️'; // Setting the button text
         submitButton.id = 'submitButton'; // Assigning an ID to the submit button
         submitButton.className = 'choice-button'; // Reusing the 'choice-button' class for styling
     
@@ -408,19 +419,24 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
             if (userAnswer.trim() !== '') {
                 console.log("submit1")
                 await uploadSubmission(username, questionInfo, userAnswer);
+                await timeout(200);
                 disableChoiceButtons("choice-buttons");
                 await updatePlayerReadiness(username, opponent, true, num + 1);
                 renderSystemMessage(-1);
             }
         });
         choiceButtonDiv.appendChild(inputField);
+
         choiceButtonDiv.appendChild(submitButton);
+        var br1 = document.createElement("br");
+        choiceButtonDiv.appendChild(br1);
 
         countdownTimer = setInterval(updateCountdown, 1000);
         autoDeclineTimer = setTimeout(async() => {
             clearInterval(countdownTimer);
             console.log("submit2")
             await uploadSubmission(username, questionInfo, " ")
+            await timeout(100);
             await updatePlayerReadiness(username,opponent,true,4)
 
         }, timeLeft*1000);
@@ -444,6 +460,8 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
         detailButton.className = 'choice-button';
         detailButton.id = 'detailButton';
         choiceButtonDiv.appendChild(detailButton);
+        var br = document.createElement("br");
+        choiceButtonDiv.appendChild(br);
         choiceButtonDiv.appendChild(exitButton);
 
         detailButton.addEventListener('click', async function() {
@@ -472,6 +490,8 @@ async function renderChoiceButtons(divName, num, questionInfo, username, opponen
         resultButton.className = 'choice-button';
         resultButton.id = 'resultButton';
         choiceButtonDiv.appendChild(resultButton);
+        var br = document.createElement("br");
+        choiceButtonDiv.appendChild(br);
         choiceButtonDiv.appendChild(exitButton);
 
         resultButton.addEventListener('click', async function() {

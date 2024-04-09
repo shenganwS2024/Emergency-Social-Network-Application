@@ -1,0 +1,99 @@
+{
+    "multipleChoiceQuestions": [
+      {
+        "questionDescription": "Considering fire disaster preparedness, which of the following is the most effective action to take when you detect a fire has started in your home, and you've already ensured that all occupants are alerted?",
+        "choices": ["Attempt to extinguish the fire immediately with water, regardless of the fire's nature", "Gather valuables and personal documents before evacuating the premises", "Use an appropriate fire extinguisher on the fire, if it's small and contained, after ensuring a clear evacuation path", "Open all doors and windows to ventilate smoke and facilitate easier fire suppression for firefighters"],
+        "correctAnswer": "Use an appropriate fire extinguisher on the fire, if it's small and contained, after ensuring a clear evacuation path"
+      },
+      {
+        "questionDescription": "In the event of a power outage lasting more than 24 hours, which of the following is the most critical item to have in your emergency preparedness kit?",
+        "choices": [
+          "A handheld electronic game to pass the time",
+          "A gallon of water per person per day for at least three days",
+          "An extensive collection of canned entertainment media",
+          "Decorative candles for ambient lighting"
+        ],
+        "correctAnswer": "A gallon of water per person per day for at least three days"
+      },
+      {
+        "questionDescription": "During a flood, what is the safest action to take if you encounter a flowing stream where water is above your ankles?",
+        "choices": [
+          "Try to walk through it quickly to the other side",
+          "Wait and assess the water's speed before crossing",
+          "Turn around, don't drown - seek an alternative route",
+          "Lay flat and attempt to float across"
+        ],
+        "correctAnswer": "Turn around, don't drown - seek an alternative route"
+      },
+      {
+        "questionDescription": "What is the most reliable method to purify water during a disaster when you have no access to clean water?",
+        "choices": [
+          "Add a pinch of salt to the water",
+          "Let the water sit overnight to allow contaminants to settle",
+          "Boil the water for at least one minute",
+          "Filter the water through a clean cloth"
+        ],
+        "correctAnswer": "Boil the water for at least one minute"
+      },
+      {
+        "questionDescription": "In the event of an earthquake, which of the following places is the safest to take cover?",
+        "choices": [
+          "Near a window to escape easily",
+          "In the doorway of a sturdy building",
+          "Outside away from buildings, trees, streetlights, and utility wires",
+          "Under a heavy desk or table"
+        ],
+        "correctAnswer": "Under a heavy desk or table"
+      }
+    ],
+    "trueFalseQuestions": [
+      {
+        "questionDescription": "You should immediately turn on the gas supply to check if it is working after a natural disaster.",
+        "choices": ["True", "False"],
+        "correctAnswer": "False"
+      },
+      {
+        "questionDescription": "If you are indoors during a tornado, it is safest to open the windows to equalize pressure and minimize damage.",
+        "choices": ["True", "False"],
+        "correctAnswer": "False"
+      },
+      {
+        "questionDescription": "During an earthquake, it is advised to run outside to avoid being trapped by collapsing structures.",
+        "choices": ["True", "False"],
+        "correctAnswer": "False"
+      },
+      {
+        "questionDescription": "After a flooding event, it's safe to consume food that has come in contact with flood water if it has been thoroughly cooked.",
+        "choices": ["True", "False"],
+        "correctAnswer": "False"
+      },
+      {
+        "questionDescription": "In a wildfire, if you are unable to evacuate, it's recommended to shelter in place and seal all vents, doors, and windows to keep smoke out.",
+        "choices": ["True", "False"],
+        "correctAnswer": "True"
+      }
+    ],
+    "shortAnswerQuestions": [
+      {
+        "questionDescription": "What is the number of repeated signals (e.g., blasts of a whistle, flashes of light) considered a universal distress signal in emergency situations? (Answer with numbers only, no words)",
+        "correctAnswer": "3"
+      },
+      {
+        "questionDescription": "At what minimum number of feet above sea level is a location generally considered safe from a tsunami? (Answer with numbers only, no words)",
+        "correctAnswer": "100"
+      },
+      {
+        "questionDescription": "For how many days should you ideally have water supplies in an emergency kit? (Answer with numbers only, no words)",
+        "correctAnswer": "3"
+      },
+      {
+        "questionDescription": "At what wind speed (in miles per hour) does a tropical storm officially become classified as a hurricane? (Answer with numbers only, no words)",
+        "correctAnswer": "74"
+      },
+      {
+        "questionDescription": "What type of tablet, or what chemical element, is commonly recommended to reduce the risk of thyroid cancer by blocking radioactive iodine absorption following a nuclear incident? (Answer with one word, no symbol)",
+        "correctAnswer": "Potassium"
+      }
+    ]
+  }
+  
