@@ -18,6 +18,15 @@ const userSchema = new mongoose.Schema({
   role: String,
   acknowledged: { type: Boolean, default: false },
   chatChecked: { type: Map, of: Boolean },
+  address: String,
+  contact:  {
+    emergency: [{
+      type: String, // Assuming references to other User documents
+    }],
+    primary: [{
+      type: String, // Assuming references to other User documents
+    }]
+  },
 });
 
 userSchema.pre('save', async function (next) {
