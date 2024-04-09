@@ -315,7 +315,7 @@ CICD: Sigrid
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Player(s) fetched successfully`                   |                          
+> | `200`     | `json/plain;charset=UTF-8`   | `Player(s) Information`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error fetching player(s)`                       |
 </details>
 
@@ -336,7 +336,7 @@ CICD: Sigrid
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Duel(s) fetched successfully`                   |                          
+> | `200`     | `json/plain;charset=UTF-8`   | `Duel(s) Infomation`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error fetching duel(s)`                       |
 </details>
 
@@ -357,7 +357,7 @@ CICD: Sigrid
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Result fetched successfully`                   |                          
+> | `200`     | `json/plain;charset=UTF-8`   | `Result Information`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the Result`                       |
 </details>
 
@@ -378,7 +378,7 @@ CICD: Sigrid
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Question fetched successfully`                   |                          
+> | `200`     | `json/plain;charset=UTF-8`   | `Question Information`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the question`                       |
 </details>
 
