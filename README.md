@@ -275,7 +275,7 @@ CICD: Sigrid
 #### location
 
 <details>
- <summary><code>GET</code> <code><b>/location/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+ <summary><code>GET</code> <code><b>/address/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
 
 
 ##### Parameters: e.g./location/${simon}
@@ -389,7 +389,7 @@ CICD: Sigrid
 #### Add new emergency contacts
 
 <details>
- <summary><code>PUT</code> <code><b>/:username</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>contacts/:username</b></code> <code></code></summary>
 
 ##### Parameters
 ##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
@@ -413,7 +413,7 @@ CICD: Sigrid
 #### Add location
 
 <details>
- <summary><code>PUT</code> <code><b>/:username</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>address/:username</b></code> <code></code></summary>
 
 ##### Parameters
 ##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
@@ -430,6 +430,43 @@ CICD: Sigrid
 > | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
 > | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
+#### DELETE Requests
+#### clear location
+
+<details>
+ <summary><code>DELETE</code> <code><b>address/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete location successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
+
+#### clear contacts
+
+<details>
+ <summary><code>DELETE</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete contacts successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
 </details>
 
 ---
