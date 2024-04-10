@@ -5,15 +5,11 @@ const socket = io('http://localhost:3000', {
 })
 
 const backButton = document.getElementById('backButton')
-backButton.addEventListener('click', function () {
-  navigateTo('ESN Directory.html')
-})
+backButton.addEventListener('click', () => navigateTo('ESN Directory.html'))
 
 const exercisesList = document.getElementById('exercisesList')
 const uploadButton = document.getElementById('uploadButton')
-uploadButton.addEventListener('click', function () {
-  navigateTo('UploadExercise.html')
-})
+uploadButton.addEventListener('click', () => navigateTo('UploadExercise.html'))
 
 async function fetchExercises() {
   try {
@@ -40,24 +36,31 @@ function addExerciseToDOM(exercise) {
 function createExerciseCard(exercise) {
   const exerciseCard = document.createElement('article')
   exerciseCard.className = 'exercise-card'
+  exerciseCard.addEventListener('click', () => navigateTo(`ExerciseDetails.html?id=${exercise._id}`))
 
-  const title = document.createElement('h2')
-  title.textContent = exercise.title
-
-  const userInfo = document.createElement('p')
-  userInfo.className = 'user-info'
-  userInfo.innerHTML = `${exercise.author} - <time datetime="${exercise.timestamp}">${new Date(
-    exercise.timestamp,
-  ).toLocaleString()}</time>`
-
-  exerciseCard.appendChild(title)
-  exerciseCard.appendChild(userInfo)
-
-  exerciseCard.addEventListener('click', () => {
-    navigateTo(`ExerciseDetails.html?id=${exercise._id}`)
+  const title = createElement('h2', { textContent: exercise.title })
+  const userInfo = createElement('p', {
+    className: 'user-info',
+    innerHTML: `${exercise.author} - <time datetime="${exercise.timestamp}">${new Date(
+      exercise.timestamp,
+    ).toLocaleString()}</time>`,
   })
 
+  appendChildren(exerciseCard, [title, userInfo])
+
   return exerciseCard
+}
+
+function createElement(tag, attributes = {}) {
+  const element = document.createElement(tag)
+  Object.entries(attributes).forEach(([key, value]) => {
+    element[key] = value
+  })
+  return element
+}
+
+function appendChildren(parent, children) {
+  children.forEach((child) => parent.appendChild(child))
 }
 
 function navigateTo(url) {
