@@ -2,6 +2,7 @@ import { Exercises } from '../models/TrainExercise.js'
 import { Users } from '../models/Users.js'
 import mongoose from 'mongoose'
 import { io } from '../config/serverConfig.js'
+import { eventManager } from './EventManager.js'
 
 async function getExercises(req, res) {
   try {
@@ -59,7 +60,7 @@ async function postExercise(req, res) {
   try {
     const newExercise = new Exercises({ title, author, timestamp, videoLink, quizQuestions })
     await newExercise.save()
-    io.emit('new exercise', newExercise)
+    eventManager.notify('new exercise', newExercise)
     res.status(201).json(newExercise)
   } catch (error) {
     console.error('Error posting exercise:', error)

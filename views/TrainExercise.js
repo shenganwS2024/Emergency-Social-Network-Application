@@ -14,7 +14,6 @@ uploadButton.addEventListener('click', function () {
   window.location.href = 'UploadExercise.html'
 })
 
-// Fetch exercises from the server and display them
 async function fetchExercises() {
   try {
     const response = await fetch('/exercises')
@@ -26,7 +25,7 @@ async function fetchExercises() {
 }
 
 function displayExercises(exercises) {
-  exercisesList.innerHTML = '' // Clear existing exercises
+  exercisesList.innerHTML = ''
   exercises.forEach((exercise) => {
     const exerciseCard = document.createElement('article')
     exerciseCard.className = 'exercise-card'
@@ -71,8 +70,7 @@ function addExerciseToDOM(exercise) {
     window.location.href = `ExerciseDetails.html?id=${exercise._id}`
   })
 
-  // Prepend the new exercise to the list to show it at the top
-  exercisesList.prepend(exerciseCard)
+  exercisesList.appendChild(exerciseCard)
 }
 
 socket.on('new exercise', (exercise) => {
