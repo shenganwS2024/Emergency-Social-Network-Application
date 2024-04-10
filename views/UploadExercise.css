@@ -1,12 +1,7 @@
+@import url('common.css');
+
 html {
   background-color: darkgray;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  padding: 0;
-  margin: 0;
-  background: #f7f7f7;
 }
 
 .container {
@@ -16,12 +11,6 @@ body {
   padding: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
 }
 
 .form-group {
@@ -84,12 +73,6 @@ button:hover {
   border-radius: 4px;
 }
 
-.hidden {
-  display: none;
-  color: red;
-  margin-top: 20px;
-}
-
 #addQuestionBtn {
   background: #28a745;
   margin-top: 20px;
@@ -101,50 +84,4 @@ button:hover {
 
 #addQuestionBtn i {
   margin-right: 5px;
-}
-
-.notification {
-  color: red;
-  margin-top: 5px;
-}
-
-.notification.show {
-  display: block;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 85% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 500px;
-  border-radius: 5px;
-  text-align: center;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
 }
