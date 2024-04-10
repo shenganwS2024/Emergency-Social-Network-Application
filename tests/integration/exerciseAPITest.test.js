@@ -47,6 +47,7 @@ describe('Exercise API', () => {
     await Users.deleteMany()
   })
 
+  //1
   test('GET /exercises should return all exercises', async () => {
     const response = await request(app).get('/exercises')
 
@@ -56,6 +57,7 @@ describe('Exercise API', () => {
     expect(response.body[0].author).toBe('Test Author')
   })
 
+  //2
   test('GET /exercises/:id/:username should return a specific exercise with user reaction', async () => {
     const response = await request(app).get(`/exercises/${testExercise._id}/${testUser.username}`)
 
@@ -66,6 +68,7 @@ describe('Exercise API', () => {
     expect(response.body.userReaction.dislike).toBe(false)
   })
 
+  //3
   test('POST /exercises should create a new exercise', async () => {
     const newExercise = {
       title: 'New Exercise',
@@ -89,6 +92,7 @@ describe('Exercise API', () => {
     expect(savedExercise.author).toBe('New Author')
   })
 
+  //4
   test('POST /exercises/:id/comments should add a comment to an exercise', async () => {
     const newComment = {
       author: 'Test User',
@@ -109,6 +113,7 @@ describe('Exercise API', () => {
     expect(updatedExercise.comments[0].content).toBe('Test Comment')
   })
 
+  //5
   test('PUT /exercises/:id/like should handle user liking an exercise', async () => {
     const response = await request(app).put(`/exercises/${testExercise._id}/like`).send({ username: testUser.username })
 
@@ -123,6 +128,7 @@ describe('Exercise API', () => {
     expect(updatedExercise.dislikes).not.toContain(testUser.username)
   })
 
+  //6
   test('PUT /exercises/:id/unlike should handle user unliking an exercise', async () => {
     // Like the exercise first
     await request(app).put(`/exercises/${testExercise._id}/like`).send({ username: testUser.username })

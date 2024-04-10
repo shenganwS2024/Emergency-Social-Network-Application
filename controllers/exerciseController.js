@@ -216,4 +216,5 @@ export {
   handleUnlike,
   handleUndislike,
   deleteComment,
+  findExerciseById,
 }
