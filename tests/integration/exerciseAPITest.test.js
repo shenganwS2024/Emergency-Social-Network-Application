@@ -98,8 +98,9 @@ describe('Exercise API', () => {
     const response = await request(app).post(`/exercises/${testExercise._id}/comments`).send(newComment)
 
     expect(response.status).toBe(201)
-    expect(response.body.author).toBe('Test User')
-    expect(response.body.content).toBe('Test Comment')
+    expect(response.body.comments.length).toBe(1) // Check the comments array length
+    expect(response.body.comments[0].author).toBe('Test User') // Check the author of the first comment
+    expect(response.body.comments[0].content).toBe('Test Comment') // Check the content of the first comment
 
     // Check if the comment is added to the exercise in the database
     const updatedExercise = await Exercises.findById(testExercise._id)

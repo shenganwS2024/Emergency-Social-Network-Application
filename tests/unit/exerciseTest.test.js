@@ -96,11 +96,12 @@ describe('Exercise Controller', () => {
     const res = await request(app).post(`/exercises/${exercise._id}/comments`).send(commentData)
 
     expect(res.statusCode).toBe(201)
-    expect(res.body.author).toBe('testuser')
-    expect(res.body.content).toBe('New Comment')
+    expect(res.body.comments.length).toBe(1) // Check that the comment count has increased
+    expect(res.body.comments[0].author).toBe('testuser') // Check the author of the first comment
+    expect(res.body.comments[0].content).toBe('New Comment') // Check the content of the first comment
 
     const updatedExercise = await Exercises.findById(exercise._id)
-    expect(updatedExercise.comments.length).toBe(1)
+    expect(updatedExercise.comments.length).toBe(1) // Check that the comment has been added to the database
   })
 
   test('handleLike should add a like to the exercise', async () => {
