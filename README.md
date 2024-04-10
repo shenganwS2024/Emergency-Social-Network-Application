@@ -79,7 +79,7 @@ CICD: Sigrid
 ---
 
 
-#### New Post
+#### New Message Post
 
 <details>
  <summary><code>POST</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to post new message)</code></summary>
@@ -143,7 +143,7 @@ CICD: Sigrid
 #### New TrainExercise
 
 <details>
- <summary><code>POST</code> <code><b>/trainexercises</b></code> <code>(post new trainexercise)</code></summary>
+ <summary><code>POST</code> <code><b>/exercises</b></code> <code>(post new trainexercise)</code></summary>
 
 ##### Parameters
 
@@ -151,8 +151,8 @@ CICD: Sigrid
 > |-----------|------------|-----------|----------------------------------|
 > | `title`| required   | string    | Title of the new trainexercise         |
 > | `author`| required   | string    | Author of the new trainexercise|
-> | `link`| required   | string    | Video string of the new trainexercise|
-> | `timestamp`  | required   | Date    | times when posting          |
+> | `videoLink`| string    | Video link of the new trainexercise|
+> | `timestamp`| Date    | times when posting|
 
 
 ##### Responses
@@ -169,7 +169,7 @@ CICD: Sigrid
 #### New comment for TrainExercise
 
 <details>
- <summary><code>POST</code> <code><b>/trainexercises/:id/comments</b></code> <code>(post new comment for trainexercise)</code></summary>
+ <summary><code>POST</code> <code><b>/exercises/:id/comments</b></code> <code>(post new comment for trainexercise)</code></summary>
 
 ##### Parameters
 
@@ -267,15 +267,16 @@ CICD: Sigrid
 #### One Trainexercise
 
 <details>
- <summary><code>GET</code> <code><b>/exercises/:id</b></code> <code>(fetch all trainexercises)</code></summary>
+ <summary><code>GET</code> <code><b>/exercises/:id/:username</b></code> <code>(fetch all trainexercises)</code></summary>
 
-##### Parameters: e.g.exercise/{123456}
+##### Parameters: e.g.exercise/123456/testuser
 
 ##### Responses
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `get one exercise successfully`                   |                         
+> | `200`     | `text/plain;charset=UTF-8`   | `get one exercise successfully`                   |
+> |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                  
 > | `500`     | `text/plain;charset=UTF-8`   | `get one exercise error`                       |
 </details>
 
@@ -432,32 +433,65 @@ CICD: Sigrid
 
 ---
 
-#### Update exercise likerate 
+#### Update exercise like
 
 <details>
- <summary><code>PUT</code> <code><b>/exercises/:id/likerate</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/exercises/:id/like</b></code> <code></code></summary>
 
 ##### Responses
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | ` updated like rate successfully`                   |                          
-> | `500`     | `text/plain;charset=UTF-8`   | `Error updating like rate`                       |
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated like  successfully`                   |
+>  |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating like `                       |
 </details>
 
 ---
 
-#### Update exercise dislikerate 
+#### Update exercise dislike
 
 <details>
- <summary><code>PUT</code> <code><b>/exercises/:id/dislikerate</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>/exercises/:id/dislike</b></code> <code></code></summary>
 
 ##### Responses
 
 > | http code | content-type                 | response                                      |
 > |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | ` updated dislike rate successfully`                   |                          
-> | `500`     | `text/plain;charset=UTF-8`   | `Error updating dislike rate`                       |
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated dislike successfully`                   |
+> |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                             
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating dislike`                       |
+</details>
+
+---
+#### Update exercise unlike
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/unlike</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated unlike  successfully`                   |
+>  |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating like `                       |
+</details>
+
+---
+
+#### Update exercise undislike
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/undislike</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated undislike successfully`                   |
+> |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                             
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating undislike`                       |
 </details>
 
 ---
