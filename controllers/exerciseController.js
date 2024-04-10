@@ -88,8 +88,11 @@ async function addComment(req, res) {
     exercise.comments.push(newComment)
     await exercise.save()
 
-    io.emit('new comment', newComment)
-    res.status(201).json(newComment)
+    // Emit the updated exercise object
+    io.emit('new comment', exercise)
+
+    // Return the updated exercise object
+    res.status(201).json(exercise)
   } catch (error) {
     console.error('Error adding comment:', error)
     res.status(500).send('Error adding comment')
@@ -258,6 +261,35 @@ async function handleUndislike(req, res) {
   }
 }
 
+async function deleteComment(req, res) {
+  const exerciseId = req.params.exerciseId
+  const commentId = req.params.commentId
+
+  try {
+    const exercise = await Exercises.findById(exerciseId)
+
+    if (!exercise) {
+      return res.status(404).send('Exercise not found')
+    }
+
+    const commentIndex = exercise.comments.findIndex((comment) => comment._id.equals(commentId))
+
+    if (commentIndex === -1) {
+      return res.status(404).send('Comment not found comment to delete')
+    }
+
+    exercise.comments.splice(commentIndex, 1)
+    await exercise.save()
+
+    io.emit('comment deleted', { exerciseId, commentId })
+
+    res.status(200).send('Comment deleted')
+  } catch (error) {
+    console.error('Error deleting comment:', error)
+    res.status(500).send('Error deleting comment')
+  }
+}
+
 export {
   getExercises,
   postExercise,
@@ -267,4 +299,5 @@ export {
   handleDislike,
   handleUnlike,
   handleUndislike,
+  deleteComment,
 }

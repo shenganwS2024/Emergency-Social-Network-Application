@@ -33,7 +33,7 @@ const commentSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { _id: false, timestamps: false },
+  { _id: true, timestamps: false },
 )
 
 const exerciseSchema = new mongoose.Schema({

@@ -100,10 +100,35 @@ function displayComments(comments) {
     commentFooter.appendChild(commentAuthor)
     commentFooter.appendChild(commentTimestamp)
 
+    if (localStorage.getItem('username') === comment.author) {
+      const deleteButton = document.createElement('button')
+      deleteButton.textContent = 'Delete'
+      deleteButton.classList.add('delete-comment-btn')
+      deleteButton.onclick = () => deleteComment(comment._id)
+      commentFooter.appendChild(deleteButton)
+    }
+
     commentElement.appendChild(commentFooter)
 
     commentsListElement.appendChild(commentElement)
   })
+}
+
+async function deleteComment(commentId) {
+  try {
+    const response = await fetch(`/exercises/${exerciseId}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+  } catch (error) {
+    console.error('Error deleting comment:', error)
+  }
 }
 
 function extractVideoID(url) {
@@ -301,9 +326,11 @@ async function submitComment() {
   }
 }
 
-socket.on('new comment', (comment) => {
-  exerciseDetails.comments.push(comment)
-  displayComments(exerciseDetails.comments)
+socket.on('new comment', (updatedExercise) => {
+  if (updatedExercise._id === exerciseId) {
+    exerciseDetails = updatedExercise
+    displayComments(exerciseDetails.comments)
+  }
 })
 
 socket.on('update exercise', (updatedExercise) => {
@@ -311,6 +338,13 @@ socket.on('update exercise', (updatedExercise) => {
     exerciseDetails = updatedExercise
     updateLikeDislikeUI(updatedExercise.userReaction)
     updateLikeDislikeRates(updatedExercise.likeRate, updatedExercise.dislikeRate)
+  }
+})
+
+socket.on('comment deleted', ({ exerciseId: deletedExerciseId, commentId }) => {
+  if (deletedExerciseId === exerciseId) {
+    exerciseDetails.comments = exerciseDetails.comments.filter((comment) => comment._id !== commentId)
+    displayComments(exerciseDetails.comments)
   }
 })
 
