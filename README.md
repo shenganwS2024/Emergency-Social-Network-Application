@@ -495,3 +495,22 @@ CICD: Sigrid
 </details>
 
 ---
+
+#### DELETE Requests
+
+#### Delete Comment
+
+<details>
+ <summary><code>DELETE</code> <code><b>/exercises/:exerciseId/comments/:commentId</b></code> <code></code></summary>
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `comment deleted successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `exercise not found` or `comment not found`     |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error delete comment`                       |
+</details>
+
+---
