@@ -35,10 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const timestamp = Date.now()
     let isValid = true
 
-    // Hide all notifications
-    document.querySelectorAll('.notification').forEach((notification) => {
-      notification.classList.remove('show')
-    })
+    // Clear all notifications
+    clearAllNotifications()
 
     // Validate title
     if (title === '') {
@@ -63,8 +61,15 @@ document.addEventListener('DOMContentLoaded', function () {
       const question = questionDiv.querySelector('input[name="question"]').value.trim()
       const answer = questionDiv.querySelector('input[name="answer"]').value.trim()
       if (question === '' || answer === '') {
-        showNotification(`Please fill in question ${index + 1} and its answer.`, 'quizNotification')
+        showNotification(`Please fill in the question and its answer.`, 'quizNotification')
         isValid = false
+      }
+    })
+
+    const quizQuestions = Array.from(questionElements).map((questionDiv) => {
+      return {
+        question: questionDiv.querySelector('input[name="question"]').value.trim(),
+        answer: questionDiv.querySelector('input[name="answer"]').value.trim(),
       }
     })
 
@@ -78,17 +83,26 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, author, videoLink, timestamp, questionElements }),
+        body: JSON.stringify({ title, author, videoLink, timestamp, quizQuestions }),
       })
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
+
       modal.style.display = 'block'
     } catch (error) {
       console.error('Error saving exercise:', error)
     }
   })
+
+  function clearAllNotifications() {
+    document.querySelectorAll('.notification').forEach((notification) => {
+      notification.textContent = ''
+      notification.classList.remove('show')
+    })
+  }
+
   function showNotification(message, elementId) {
     const notification = document.getElementById(elementId)
     notification.textContent = message
