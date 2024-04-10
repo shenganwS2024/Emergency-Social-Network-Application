@@ -37,7 +37,7 @@ CICD: Sigrid
 <details>
 <summary><code>GET</code> <code><b>/notifications/:nid</b></code> <code></code></summary>
 
-##### Parameters: e.g./notifications/{nid}
+##### Parameters: e.g./notifications/{username}
 
 ##### Responses
 
@@ -53,6 +53,7 @@ CICD: Sigrid
   "nid": "123",
   "type": "sometype",
   "sender": "dummy",
+  "receiver": "dummy1",
   "quantity": "1"
 }
 ```
@@ -131,7 +132,36 @@ Required fields in JSON format:
 > | http code | content-type              | response                                            |
 > |-----------|---------------------------|-----------------------------------------------------|
 > | `201`     | `text/html; charset=utf-8`| `User post successfully`                      |
-> | `500`     | `text/plain;charset=UTF-8`| `Error posting new announcement` |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new need` |
+
+</details>
+
+---
+
+#### Post New Resource Offer
+
+<details>
+<summary><code>POST</code> <code><b>/resourceOffers</b></code></summary>
+
+##### Allows for the submission of a new resource offer
+
+##### Request Body
+
+Required fields in JSON format:
+
+```json
+{
+  "quantity": "100"
+}
+```
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User post successfully`                      |
+> | `404`     | `text/plain;charset=UTF-8`| `Resource need not found.` |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new offer` |
 
 </details>
 
@@ -142,13 +172,13 @@ Required fields in JSON format:
 #### Update Resource Need Quantity
 
 <details>
-<summary><code>PUT</code> <code><b>/resourceNeeds/{rid}/quantity</b></code></summary>
+<summary><code>PUT</code> <code><b>/resourceNeeds/{needId}</b></code></summary>
 
 ##### Updates the quantity of an existing resource need
 
 ##### Parameters
 
-- `id`: The unique identifier of the resource need to update.
+- `needId`: The unique identifier of the resource need to update.
 
 ##### Request Body
 
@@ -167,6 +197,30 @@ Required fields in JSON format to specify the new quantity:
 > | `200`     | `text/plain;charset=UTF-8`   | `Resource need updated successfully`                   |
 > | `404`     | `text/plain;charset=UTF-8`   | `Resource not found during update`                   |
 > | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+
+</details>
+
+---
+
+#### <span style="color:#48C9B0;">Delete Requests</span>
+
+#### Update Resource Need Quantity
+
+<details>
+<summary><code>DELETE</code> <code><b>/notifications/{notificationId}</b></code></summary>
+
+##### Delete a specific notification for a user
+
+##### Parameters
+
+- `notificationId`: The unique identifier of the notification to delete.
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Notification deleted successfully`                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
 
 </details>
 
