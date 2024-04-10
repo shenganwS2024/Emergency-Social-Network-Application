@@ -141,6 +141,28 @@ CICD: Sigrid
 ---
 
 
+#### Address
+
+<details>
+ <summary><code>POST</code> <code><b>/addresses</b></code> <code>(create new address for user)</code></summary>
+
+##### Parameters
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the new user         |
+> | `address`| required   | string    | address of the user|
+> 
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `create address start successfully `                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
 #### Speed Test
 
 <details>
@@ -256,7 +278,7 @@ CICD: Sigrid
 #### Emergency Contact
 
 <details>
- <summary><code>GET</code> <code><b>/contacts:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+ <summary><code>GET</code> <code><b>/contacts/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
 
 
 ##### Parameters: e.g./contacts/${simon}
@@ -275,7 +297,7 @@ CICD: Sigrid
 #### location
 
 <details>
- <summary><code>GET</code> <code><b>/address/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+ <summary><code>GET</code> <code><b>/addresses/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
 
 
 ##### Parameters: e.g./location/${simon}
@@ -413,7 +435,7 @@ CICD: Sigrid
 #### Add location
 
 <details>
- <summary><code>PUT</code> <code><b>address/:username</b></code> <code></code></summary>
+ <summary><code>PUT</code> <code><b>addresses/:username</b></code> <code></code></summary>
 
 ##### Parameters
 ##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
@@ -438,7 +460,7 @@ CICD: Sigrid
 #### clear location
 
 <details>
- <summary><code>DELETE</code> <code><b>address/:username</b></code> <code></code></summary>
+ <summary><code>DELETE</code> <code><b>addresses/:username</b></code> <code></code></summary>
 
 ##### Parameters
 
