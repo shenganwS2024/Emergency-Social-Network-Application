@@ -33,7 +33,7 @@
 
         <div id="navigation-bar-container">
           <a href="ESN Directory.html" class="nav-item">
-            <div class="nav-icon" id = 'directory-button'>📁</div>
+            <div class="nav-icon" id="directory-button">📁</div>
             <div class="nav-label">Directory</div>
           </a>
           <a href="chatroom.html" class="nav-item">
@@ -57,7 +57,7 @@
     <script src="ChatScreen.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const socket = io('https://s24esnb2.onrender.com/', {
+        const socket = io('http://localhost:3000', {
           query: {
             token: localStorage.getItem('token'),
           },
@@ -398,51 +398,50 @@
       }
 
       .nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
-.nav-icon {
-  font-size: 24px; /* Adjust icon size as needed */
-}
+      .nav-icon {
+        font-size: 24px; /* Adjust icon size as needed */
+      }
 
-.nav-label {
-  font-size: 12px; /* Adjust label text size as needed */
-  margin-top: 5px; /* Space between icon and label */
-}
-#navigation-bar-container a {
-  text-decoration: none; /* Removes underline from links */
-  color: inherit; /* Inherits the text color from the parent */
-}
+      .nav-label {
+        font-size: 12px; /* Adjust label text size as needed */
+        margin-top: 5px; /* Space between icon and label */
+      }
+      #navigation-bar-container a {
+        text-decoration: none; /* Removes underline from links */
+        color: inherit; /* Inherits the text color from the parent */
+      }
 
-#navigation-bar-container a:active, 
-#navigation-bar-container a:focus, 
-#navigation-bar-container a:hover {
-  text-decoration: none; /* Keeps underline removed on hover/focus */
-}
+      #navigation-bar-container a:active,
+      #navigation-bar-container a:focus,
+      #navigation-bar-container a:hover {
+        text-decoration: none; /* Keeps underline removed on hover/focus */
+      }
 
-#navigation-bar-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0;
-    box-sizing: border-box;
-    z-index: 1000; /* Ensures it stays on top of other content */
-}
+      #navigation-bar-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px 0;
+        box-sizing: border-box;
+        z-index: 1000; /* Ensures it stays on top of other content */
+      }
 
-/* Add this to ensure the body's content does not get hidden under the navigation bar */
-body {
-    margin-bottom: 70px; /* Adjust this so the bottom of the content is above the navigation bar */
-}
-
+      /* Add this to ensure the body's content does not get hidden under the navigation bar */
+      body {
+        margin-bottom: 70px; /* Adjust this so the bottom of the content is above the navigation bar */
+      }
     </style>
   </body>
 </html>

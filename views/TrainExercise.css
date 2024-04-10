@@ -1,0 +1,93 @@
+body,
+h1,
+h2,
+p {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.app-header {
+  background: #4a4a4a;
+  color: #fff;
+  padding: 0 16px;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-link {
+  color: #9dcc7a;
+  position: absolute;
+  left: 16px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+}
+
+.page-title {
+  font-size: 1.6em;
+}
+
+.exercises-container {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background: #f7f7f7;
+  min-height: calc(100vh - 140px);
+}
+
+.exercise-card {
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.exercise-card h2 {
+  font-size: 1.2em;
+  margin: 0 0 10px;
+}
+
+.user-info {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 0;
+}
+
+.upload-footer {
+  background: #4a4a4a;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-button {
+  background: #9dcc7a;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #89b566;
+}

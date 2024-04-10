@@ -1,81 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings Page</title>
     <style>
-        /* Basic reset for body */
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+      /* Basic reset for body */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
 
-        /* Style for the navigation bar */
-        #navigation-bar-container {
-            display: flex;
-            justify-content: space-around;
-            background-color: #f0f0f0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-        }
+      /* Style for the navigation bar */
+      #navigation-bar-container {
+        display: flex;
+        justify-content: space-around;
+        background-color: #f0f0f0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      }
 
-        .nav-item {
-            text-decoration: none;
-            color: black;
-            text-align: center;
-            padding: 10px;
-        }
+      .nav-item {
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        padding: 10px;
+      }
 
-        .nav-icon {
-            font-size: 24px;
-        }
+      .nav-icon {
+        font-size: 24px;
+      }
 
-        .nav-label {
-            font-size: 12px;
-        }
+      .nav-label {
+        font-size: 12px;
+      }
 
-        /* Style for the content area */
-        .content {
-            padding: 20px;
-            margin-bottom: 60px; /* To ensure content doesn't hide behind the nav bar */
-        }
+      /* Style for the content area */
+      .content {
+        padding: 20px;
+        margin-bottom: 60px; /* To ensure content doesn't hide behind the nav bar */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Settings</h1>
+      <!-- Place your settings content here -->
+      <p>Here you can customize your preferences and account settings.</p>
+    </div>
 
-<div class="content">
-    <h1>Settings</h1>
-    <!-- Place your settings content here -->
-    <p>Here you can customize your preferences and account settings.</p>
-</div>
-
-<!-- Navigation bar -->
-<div id="navigation-bar-container">
-    <a href="ESN Directory.html" class="nav-item">
+    <!-- Navigation bar -->
+    <div id="navigation-bar-container">
+      <a href="ESN Directory.html" class="nav-item">
         <div class="nav-icon" id="directory-button">📁</div>
         <div class="nav-label">Directory</div>
-    </a>
-    <a href="chatroom.html" class="nav-item">
+      </a>
+      <a href="chatroom.html" class="nav-item">
         <div class="nav-icon">💬</div>
         <div class="nav-label">Chatroom</div>
-    </a>
-    <a href="Announcement.html" class="nav-item">
+      </a>
+      <a href="Announcement.html" class="nav-item">
         <div class="nav-icon">📢</div>
         <div class="nav-label">Announcement</div>
-    </a>
-    <a href="Settings.html" class="nav-item">
+      </a>
+      <a href="Settings.html" class="nav-item">
         <div class="nav-icon">⚙️</div>
         <div class="nav-label">Settings</div>
-    </a>
-</div>
-<script src="/socket.io/socket.io.js"></script>
-<script>
+      </a>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const socket = io('https://s24esnb2.onrender.com/', {
+        const socket = io('http://localhost:3000', {
           query: {
             token: localStorage.getItem('token'),
           },
@@ -136,7 +136,6 @@
 
         // Your existing DOMContentLoaded logic...
       })
-</script>
-
-</body>
+    </script>
+  </body>
 </html>

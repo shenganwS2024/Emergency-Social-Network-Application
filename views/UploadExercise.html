@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create a New Exercise</title>
+    <link rel="stylesheet" href="UploadExercise.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Create a New Exercise</h1>
+      <form id="newExerciseForm">
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" id="title" name="title" />
+          <div id="titleNotification" class="notification"></div>
+        </div>
+        <div class="form-group">
+          <label for="videoLink">Video link:</label>
+          <input type="text" id="videoLink" name="videoLink" />
+          <div id="videoLinkNotification" class="notification"></div>
+        </div>
+        <div id="quizQuestionsContainer"></div>
+        <button type="button" id="addQuestionBtn"><i class="fas fa-plus"></i> Add Question</button>
+        <div id="quizNotification" class="notification"></div>
+        <div class="button-group">
+          <button type="submit" id="submitBtn">Submit</button>
+          <button type="button" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="successModal" class="modal">
+      <div class="modal-content">
+        <p>Exercise created successfully!</p>
+        <button id="okBtn">OK</button>
+      </div>
+    </div>
+
+    <script src="UploadExercise.js"></script>
+  </body>
+</html>

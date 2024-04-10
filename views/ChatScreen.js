@@ -1,6 +1,6 @@
 // Global variables
 let pageNumber = 1
-const socket = io('https://s24esnb2.onrender.com/', {
+const socket = io('http://localhost:3000', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -59,11 +59,10 @@ async function searchMessages() {
 
   try {
     const result = await fetchSearchResults(searchURL)
-    if(result.data.results.length === 0) {
+    if (result.data.results.length === 0) {
       alert('No search result to display.')
     }
     displayMessages(result.data.results)
-    
   } catch (error) {
     console.error('Failed to fetch:', error.message)
   }
@@ -108,7 +107,7 @@ async function fetchMessages() {
       headers: { Accept: 'application/json' },
     })
     const result = await response.json()
-    if(result.data.results.length === 0) {
+    if (result.data.results.length === 0) {
       alert('No search result to display.')
       return
     }
