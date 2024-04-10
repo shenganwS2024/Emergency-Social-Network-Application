@@ -121,9 +121,9 @@ var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks the button, open the notification 
 // You need to trigger this somehow, for example, by an event or directly calling showNotification()
-function showNotification() {
-    notification.style.display = "block";
-}
+// function showNotification() {
+//     notification.style.display = "block";
+// }
 
 // When the user clicks on <span> (x), close the notification
 span.onclick = function() {
