@@ -204,7 +204,7 @@ Required fields in JSON format to specify the new quantity:
 
 #### <span style="color:#48C9B0;">Delete Requests</span>
 
-#### Update Resource Need Quantity
+#### Detele A Notification
 
 <details>
 <summary><code>DELETE</code> <code><b>/notifications/{notificationId}</b></code></summary>
