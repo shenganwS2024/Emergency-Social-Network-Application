@@ -1,16 +1,24 @@
+// Socket initialization
 const socket = io('http://localhost:3000', {
   query: {
     token: localStorage.getItem('token'),
   },
 })
 
+// DOM Elements
 const backButton = document.getElementById('backButton')
-backButton.addEventListener('click', () => navigateTo('ESN Directory.html'))
-
 const exercisesList = document.getElementById('exercisesList')
 const uploadButton = document.getElementById('uploadButton')
-uploadButton.addEventListener('click', () => navigateTo('UploadExercise.html'))
 
+// Event Listeners
+backButton.addEventListener('click', () => navigateTo('ESN Directory.html'))
+uploadButton.addEventListener('click', () => navigateTo('UploadExercise.html'))
+socket.on('new exercise', addExerciseToDOM)
+
+// Fetch and display exercises on load
+fetchExercises()
+
+// Functions
 async function fetchExercises() {
   try {
     const response = await fetch('/exercises')
@@ -23,9 +31,7 @@ async function fetchExercises() {
 
 function displayExercises(exercises) {
   exercisesList.innerHTML = ''
-  exercises.forEach((exercise) => {
-    addExerciseToDOM(exercise)
-  })
+  exercises.forEach(addExerciseToDOM)
 }
 
 function addExerciseToDOM(exercise) {
@@ -47,7 +53,6 @@ function createExerciseCard(exercise) {
   })
 
   appendChildren(exerciseCard, [title, userInfo])
-
   return exerciseCard
 }
 
@@ -66,9 +71,3 @@ function appendChildren(parent, children) {
 function navigateTo(url) {
   window.location.href = url
 }
-
-socket.on('new exercise', (exercise) => {
-  addExerciseToDOM(exercise)
-})
-
-fetchExercises()
