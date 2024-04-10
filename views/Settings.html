@@ -194,8 +194,8 @@
 
           let currentUser = JSON.parse(currentUserString)
           let username = currentUser.username
-          let secondName = data.sender === username ? data.receiver : data.sender
-          const roomName = [username, secondName].sort().join('_')
+          let secondUser = data.sender === username ? data.receiver : data.sender
+          const roomName = [username, secondUser].sort().join('_')
 
           // Update the chatChecked property based on the data from the socket event
           if (currentUser.chatChecked[roomName] !== undefined) {
