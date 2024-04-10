@@ -63,7 +63,8 @@ async function handleConfirmClick() {
 
                 } else {
                     // For other types of errors, you might want to handle them differently
-                    throw new Error('Failed to update contact');
+                    const errorText = await response.text(); // Assuming the server sends back a plain text error message
+                    throw new Error(errorText);
                 }
             }
     

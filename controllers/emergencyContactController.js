@@ -54,10 +54,10 @@ async function updateContact(req, res) {
   
     // Check if contacts are the same or match the username before DB operations
     if (contact1 === contact2) {
-      return res.status(400).send('Contacts cannot be the same');
+      return res.status(401).send('Contacts cannot be the same');
     }
     if (contact1 === username || contact2 === username) {
-      return res.status(400).send('Contacts cannot be the same as the user');
+      return res.status(402).send('Contacts cannot be the same as the user');
     }
   
     // Check if the user exists
@@ -75,7 +75,7 @@ async function updateContact(req, res) {
   
     if (contactsExist.length < 2) {
       // This means one or both contacts don't exist in the database
-      return res.status(404).send('One or both contacts not found');
+      return res.status(403).send('One or both contacts not found');
     }
   
     // Assuming the operation to update contacts here

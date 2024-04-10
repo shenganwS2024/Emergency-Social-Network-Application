@@ -181,7 +181,7 @@ async function showNotification() {
 
         socket.on('emergency', function (user) {
           console.log('emergency frontend', user.username)
-          console.log('current user', currentUser.contact.primary)
+          console.log('current user primary', currentUser.contact.primary)
           if(currentUser.contact.primary.includes(user.username)) {
           localStorage.setItem('emergency', user.username)
           document.querySelector('.notification-header h2').textContent = `${user.username} is in danger!`;
