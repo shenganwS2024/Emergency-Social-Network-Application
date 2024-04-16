@@ -182,11 +182,12 @@ async function showNotification() {
         socket.on('emergency', function (user) {
           console.log('emergency frontend', user.username)
           console.log('current user primary', currentUser.contact.primary)
+          currentUser = JSON.parse(localStorage.getItem('currentUser'));
+          
           if(currentUser.contact.primary.includes(user.username)) {
           localStorage.setItem('emergency', user.username)
           document.querySelector('.notification-header h2').textContent = `${user.username} is in danger!`;
           // document.querySelector('.notification-body').textContent = `Status history: ${user.status}`;
-      
           // Show the notification
           showNotification();
         }})
@@ -640,7 +641,7 @@ async function showNotification() {
             console.error('Error:', error)
           })
           .finally(() => {
-            //socket.emit("exituser");
+            
             // Remove the token from localStorage
             localStorage.removeItem('token')
 
