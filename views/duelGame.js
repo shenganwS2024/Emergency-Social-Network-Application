@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 
                 //{ isWin: isWin, accuracy: accuracies[playerIndex], mistakes: playerMistakes }
                 const result = await getGameResult(username)
+                
                 console.log("Announcing winner or loser", result)
                 await updatePlayerReadiness(username,opponent,false)
                 await updatePlayerReadiness(opponent,username,false)
@@ -137,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
             else if (bothReady === 2) {
                 //this means your opponent is ready but you're not
-                await renderOpponentStatus(opponent, result.isWin)
+                await renderOpponentStatus(opponent)
             }
         });
         let timeLeft = 20; // 20 seconds countdown
@@ -173,6 +174,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             renderSystemMessage(-1)         //order might be a problem?
 
         });
+
     } catch (error) {
         console.error('An error occurred while setting up the duel game:', error);
         
