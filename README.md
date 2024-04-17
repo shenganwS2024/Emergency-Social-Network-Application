@@ -162,7 +162,7 @@ CICD: Sigrid
 #### Change Profile
 
 <details>
- <summary><code>POST</code> <code><b>/profile</b></code> <code>(post a citizen's profile)</code></summary>
+ <summary><code>POST</code> <code><b>users/profile</b></code> <code>(post a citizen's profile)</code></summary>
 
 ##### Req.body Field:
 
@@ -281,7 +281,7 @@ CICD: Sigrid
 #### GET Profile
 
 <details>
- <summary><code>GET</code> <code><b>profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
+ <summary><code>GET</code> <code><b>users/profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
 
 ##### Parameters:
 
@@ -396,7 +396,7 @@ CICD: Sigrid
 #### Update Profile
 
 <details>
- <summary><code>PUT</code> <code><b>profile</b></code> <code>(modify a citizen's profile)</code></summary>
+ <summary><code>PUT</code> <code><b>users/profile</b></code> <code>(modify a citizen's profile)</code></summary>
 
 ##### Req.body Field:
 
