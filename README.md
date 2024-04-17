@@ -159,7 +159,7 @@ CICD: Sigrid
 
 ---
 
-#### Change Profile
+#### Add new Profile
 
 <details>
  <summary><code>POST</code> <code><b>users/profile</b></code> <code>(post a citizen's profile)</code></summary>
@@ -278,7 +278,7 @@ CICD: Sigrid
 </details>
 
 ---
-#### GET Profile
+#### Fetch Profile
 
 <details>
  <summary><code>GET</code> <code><b>users/profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
