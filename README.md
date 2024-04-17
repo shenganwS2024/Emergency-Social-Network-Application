@@ -162,7 +162,7 @@ CICD: Sigrid
 #### Change Profile
 
 <details>
- <summary><code>POST</code> <code><b>/profile</b></code> <code>(modify a citizen's profile)</code></summary>
+ <summary><code>POST</code> <code><b>/profile</b></code> <code>(post a citizen's profile)</code></summary>
 
 ##### Req.body Field:
 
@@ -177,8 +177,8 @@ CICD: Sigrid
 
 > | http code | content-type              | response                                            |
 > |-----------|---------------------------|-----------------------------------------------------|
-> | `201`     | `text/html; charset=utf-8`| `User profile updated successfully`                      |
-> | `500`     | `text/plain;charset=UTF-8`| `Error updating user profile`                        |
+> | `201`     | `text/html; charset=utf-8`| `User profile posted successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting user profile`                        |
 
 </details>
 
@@ -281,7 +281,7 @@ CICD: Sigrid
 #### GET Profile
 
 <details>
- <summary><code>GET</code> <code><b>profile/:type</b></code> <code>(modify a citizen's profile)</code></summary>
+ <summary><code>GET</code> <code><b>profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
 
 ##### Parameters:
 
