@@ -164,7 +164,7 @@ CICD: Sigrid
 <details>
  <summary><code>POST</code> <code><b>/profile</b></code> <code>(modify a citizen's profile)</code></summary>
 
-##### Parameters
+##### Req.body Field:
 
 > | name      | type       | data type | description                      |
 > |-----------|------------|-----------|----------------------------------|
@@ -278,6 +278,27 @@ CICD: Sigrid
 </details>
 
 ---
+#### GET Profile
+
+<details>
+ <summary><code>GET</code> <code><b>profile/:type</b></code> <code>(modify a citizen's profile)</code></summary>
+
+##### Parameters:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `type`| required   | string    | name of the profile parameter: name, password, activeness or priviledge       |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile fetched successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error fetching user profile`                        |
+
+</details>
+
+---
 
 #### PUT Requests
 
@@ -369,6 +390,30 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `User check updated successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+</details>
+
+---
+#### Update Profile
+
+<details>
+ <summary><code>PUT</code> <code><b>profile</b></code> <code>(modify a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile updated successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error updating user profile`                        |
+
 </details>
 
 ---
