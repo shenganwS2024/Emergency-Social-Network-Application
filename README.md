@@ -162,7 +162,7 @@ CICD: Sigrid
 #### Change Profile
 
 <details>
- <summary><code>POST</code> <code><b>/profile</b></code> <code>(modify a citizen's activeness)</code></summary>
+ <summary><code>POST</code> <code><b>/profile</b></code> <code>(modify a citizen's profile)</code></summary>
 
 ##### Parameters
 
