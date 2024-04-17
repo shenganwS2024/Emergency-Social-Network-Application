@@ -159,6 +159,32 @@ CICD: Sigrid
 
 ---
 
+#### Change Profile
+
+<details>
+ <summary><code>POST</code> <code><b>/profile</b></code> <code>(modify a citizen's activeness)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User profile updated successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error updating user profile`                        |
+
+</details>
+
+---
+
+
 #### GET Requests
 #### All Messages
 
