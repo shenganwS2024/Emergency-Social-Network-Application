@@ -141,6 +141,28 @@ CICD: Sigrid
 ---
 
 
+#### Address
+
+<details>
+ <summary><code>POST</code> <code><b>/addresses</b></code> <code>(create new address for user)</code></summary>
+
+##### Parameters
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the new user         |
+> | `address`| required   | string    | address of the user|
+> 
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `create address start successfully `                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
 #### Speed Test
 
 <details>
@@ -154,6 +176,31 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `SpeedTest start successfully `                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
+#### Add new Profile
+
+<details>
+ <summary><code>POST</code> <code><b>users/profile</b></code> <code>(post a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User profile posted successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting user profile`                        |
 
 </details>
 
@@ -299,6 +346,65 @@ CICD: Sigrid
 </details>
 
 ---
+#### Fetch Profile
+
+<details>
+ <summary><code>GET</code> <code><b>users/profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
+
+##### Parameters:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `type`| required   | string    | name of the profile parameter: name, password, activeness or priviledge       |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile fetched successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error fetching user profile`                        |
+
+</details>
+
+---
+
+#### Emergency Contact
+
+<details>
+ <summary><code>GET</code> <code><b>/contacts/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+
+
+##### Parameters: e.g./contacts/${simon}
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get contacts successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### location
+
+<details>
+ <summary><code>GET</code> <code><b>/addresses/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+
+
+##### Parameters: e.g./location/${simon}
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get location successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
 
 #### Get all players or a certain player
 
@@ -405,6 +511,7 @@ CICD: Sigrid
 
 ---
 
+
 #### Users acknowledgement
 
 <details>
@@ -440,7 +547,7 @@ CICD: Sigrid
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
 > | timestamp  | required  | Date      | time when updating         |
-> | status     | required  | string    | status for updating        |
+> | status     | required  | string    | status for updating         |
 
 
 
@@ -474,6 +581,80 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `User check updated successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+</details>
+
+---
+
+
+#### Add new emergency contacts
+
+<details>
+ <summary><code>PUT</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that set the emergency contact     |
+> | emergency1  | required  | string    | the first emergency contact     |
+> | emergency2  | required  | string    | the second emergency contact     |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
+#### Add location
+
+<details>
+ <summary><code>PUT</code> <code><b>addresses/:username</b></code> <code></code></summary>
+
+##### Parameters
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that set the emergency contact     |
+> | location  | required  | string    | user's location    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
+#### Update Profile
+
+<details>
+ <summary><code>PUT</code> <code><b>users/profile</b></code> <code>(modify a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile updated successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error updating user profile`                        |
+
 </details>
 
 ---
@@ -559,8 +740,42 @@ CICD: Sigrid
 
 ---
 
-
 #### DELETE Requests
+#### clear location
+
+<details>
+ <summary><code>DELETE</code> <code><b>addresses/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete location successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
+
+#### clear contacts
+
+<details>
+ <summary><code>DELETE</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete contacts successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
 
 #### Delete a duel
 
