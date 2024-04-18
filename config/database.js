@@ -1,4 +1,8 @@
 import mongoose from 'mongoose';
+import { promises as fs } from 'fs';
+import { MultipleChoicesQuestions } from '../models/MultipleChoicesQuestions.js';
+import { TrueFalseQuestions } from '../models/TrueFalseQuestions.js';
+import { ShortAnswerQuestions } from '../models/ShortAnswerQuestions.js';
 
 class DBConnection {
   static instance = null;
@@ -32,10 +36,41 @@ class DBConnection {
       try {
           await mongoose.connect(dbUri, {});
           console.log(`MongoDB connected successfully to ${dbUri}`);
+          await this.initializeQuestionsDatabase();
       } catch (error) {
           console.error('MongoDB connection failed:', error.message);
           process.exit(1);
       }
+  }
+
+  async initializeQuestionsDatabase() {
+    try {
+      const data = await fs.readFile('config/questions.json', 'utf8');
+      const questions = JSON.parse(data);
+  
+      // Import multiple-choice questions
+      const mcCount = await MultipleChoicesQuestions.countDocuments();
+      if (mcCount === 0 && questions.multipleChoiceQuestions.length > 0) {
+        await MultipleChoicesQuestions.insertMany(questions.multipleChoiceQuestions);
+        console.log(`Initialized the database with ${questions.multipleChoiceQuestions.length} multiple choices questions.`);
+      }
+  
+      // Import true/false questions
+      const tfCount = await TrueFalseQuestions.countDocuments();
+      if (tfCount === 0 && questions.trueFalseQuestions.length > 0) {
+        await TrueFalseQuestions.insertMany(questions.trueFalseQuestions);
+        console.log(`Initialized the database with ${questions.trueFalseQuestions.length} true/false questions.`);
+      }
+  
+      // Import short answer questions
+      const saCount = await ShortAnswerQuestions.countDocuments();
+      if (saCount === 0 && questions.shortAnswerQuestions.length > 0) {
+        await ShortAnswerQuestions.insertMany(questions.shortAnswerQuestions);
+        console.log(`Initialized the database with ${questions.shortAnswerQuestions.length} short answer questions.`);
+      }
+    } catch (error) {
+      console.error('Error initializing the questions database:', error);
+    }
   }
 }
 

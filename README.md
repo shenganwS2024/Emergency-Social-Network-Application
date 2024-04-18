@@ -206,6 +206,52 @@ CICD: Sigrid
 
 ---
 
+#### Register a new online player
+
+<details>
+ <summary><code>POST</code> <code><b>/players/:playerName</b></code> <code></code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `playerName`| required   | string    | Name of the new online player         |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `New player registered successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error registering new player`                        |
+
+</details>
+
+---
+
+#### Create a new duel
+
+<details>
+ <summary><code>POST</code> <code><b>/duels/:challenger/:challenged</b></code> <code></code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `challenger`| required   | string    | Challenger of this duel      | 
+> | `challenged`| required   | string    | The one who gets challenged in this duel         |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `New duel created successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error creating new duel`                        |
+
+</details>
+
+---
 
 #### GET Requests
 #### All Messages
@@ -356,6 +402,90 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `get location successfully`                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### Get all players or a certain player
+
+<details>
+ <summary><code>GET</code> <code><b>/players/:playerName?</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | optional  | string    | the player whose information is about getting fetched    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Player(s) Information`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching player(s)`                       |
+</details>
+
+---
+
+#### Get all duels or a specific duel
+
+<details>
+ <summary><code>GET</code> <code><b>/duels/:playerName?</b></code> <code></code></summary>
+
+##### Parameters: e.g. /duels/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | optional  | string    | one of the participants of the targeting duel    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Duel(s) Infomation`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching duel(s)`                       |
+</details>
+
+---
+
+#### Get the result of the player
+
+<details>
+ <summary><code>GET</code> <code><b>/results/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /results/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player whose duel result is getting fetched    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Result Information`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the Result`                       |
+</details>
+
+---
+
+#### Get the corresponding question
+
+<details>
+ <summary><code>GET</code> <code><b>/questions/:number</b></code> <code></code></summary>
+
+##### Parameters: e.g. /questions/{1}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | number  | required  | int    | the number of the current question (ex. question one, question two, etc.)    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Question Information`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the question`                       |
 </details>
 
 ---
@@ -529,6 +659,87 @@ CICD: Sigrid
 
 ---
 
+#### Update player's challenge status
+
+<details>
+ <summary><code>PUT</code> <code><b>/challengeStatuses/:challenger/:challenged?</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | challenger  | required  | string    | the player who started the duel     |
+> | challenged  | optional  | string    | the player who gets challenged     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | inChallenge  | required  | boolean      | the desired challenge status         |
+> | accept  | optional  | boolean      | whether challenged accepted or rejected the challenge         |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player challenge statuses updated successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating challenge statuses`                       |
+</details>
+
+---
+#### Submit player's answer
+
+<details>
+ <summary><code>PUT</code> <code><b>/submissions/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /submissions/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player who's submitting their answer     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | questionInfo  | required  | object      | the question that the player is answering         |
+> | answer  | required  | string      | player's answer         |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player's answer submitted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error submitting player's answer`                       |
+</details>
+
+---
+#### Update player's readiness
+
+<details>
+ <summary><code>PUT</code> <code><b>/readyStatuses/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /readyStatuses/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player whose ready status gets changed     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | ready  | required  | boolean      | if player is ready        |
+> | opponent  | required  | string      | name of the opponent        |
+> | number  | optional  | int      | number of the current question        |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player's readiness updated successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating player's readiness`                       |
+</details>
+
+---
+
 #### DELETE Requests
 #### clear location
 
@@ -566,4 +777,44 @@ CICD: Sigrid
 
 ---
 
+#### Delete a duel
 
+<details>
+ <summary><code>DELETE</code> <code><b>/duels/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /duels/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | name of the player who's involved in the deleting duel     |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Duel deleted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the duel`                       |
+</details>
+
+---
+
+#### Delete a player
+
+<details>
+ <summary><code>DELETE</code> <code><b>/players/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | name of the deleting player     |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player deleted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the player`                       |
+</details>
+
+---

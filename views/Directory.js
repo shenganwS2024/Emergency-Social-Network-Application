@@ -355,6 +355,11 @@ async function showNotification() {
           fetchMessages() // Call the function to fetch the next page of messages
         })
 
+        document.getElementById('enterDuel').addEventListener('click', function () {
+          const username = localStorage.getItem('username')
+          registerNewPlayer(username)
+        })
+
         socket.on('alertUpdated', (data) => {
           const roomName = [data.sender, data.receiver].sort().join('_')
 
@@ -693,3 +698,21 @@ async function showNotification() {
         }
       }
   
+
+      function registerNewPlayer(username) {
+        fetch(`/players/${encodeURIComponent(username)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // No need to send a body if the username is in the URL
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    
