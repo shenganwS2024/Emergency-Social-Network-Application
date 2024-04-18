@@ -35,7 +35,7 @@
           // Optionally, update the UI to notify the user that the search failed
         }
       }
-      const socket = io('https://s24esnb2.onrender.com/', {
+      const socket = io('http://localhost:3000', {
         query: {
           token: localStorage.getItem('token'),
         },
@@ -112,6 +112,86 @@
 
           displayUsers(users, currentUser)
         })
+
+          // Get the notification
+var notification = document.getElementById("myNotification");
+
+// Get the <span> element that closes the notification
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the notification 
+// You need to trigger this somehow, for example, by an event or directly calling showNotification()
+// function showNotification() {
+//     notification.style.display = "block";
+// }
+
+// When the user clicks on <span> (x), close the notification
+span.onclick = function() {
+    notification.style.display = "none";
+}
+
+// Get the dismiss button and add a click event handler to close the notification
+var dismissBtn = document.getElementById("dismissBtn");
+dismissBtn.onclick = function() {
+    notification.style.display = "none";
+}
+
+// Get the view location button and redirect when clicked
+var viewLocationBtn = document.getElementById("viewLocationBtn");
+viewLocationBtn.onclick = function() {
+    window.location.href = "Map.html";
+}
+
+        
+async function showNotification() {
+  var notification = document.getElementById("myNotification");
+  notification.style.display = "block";
+  pageNumber = 1;
+  sender = localStorage.getItem('username');
+  receiver = localStorage.getItem('emergency');
+
+  const searchURL = `/search/privateMessage/${'status'}/${pageNumber.toString()}/${
+    sender}/${receiver}`
+
+  try {
+    const response = await fetch(searchURL, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json', // Expecting a JSON response
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.statusText}`)
+    }
+
+    const result = await response.json()
+    const messages = result.data.results
+    messages.forEach((message) => {
+      renderStatusHistory(message, 'notification', 'myNotification');
+
+    })
+
+    // Assuming `displayMessages` is a function you've defined to update the UI with the fetched messages
+  } catch (error) {
+    console.error('Failed to fetch:', error.message)
+    // Optionally, update the UI to notify the user that the search failed
+  }
+}
+
+        socket.on('emergency', function (user) {
+          console.log('emergency frontend', user.username)
+          console.log('current user primary', currentUser.contact.primary)
+          currentUser = JSON.parse(localStorage.getItem('currentUser'));
+          
+          if(currentUser.contact.primary.includes(user.username)) {
+          localStorage.setItem('emergency', user.username)
+          document.querySelector('.notification-header h2').textContent = `${user.username} is in danger!`;
+          // document.querySelector('.notification-body').textContent = `Status history: ${user.status}`;
+          // Show the notification
+          showNotification();
+        }})
+        
 
         document.getElementById('search-btn').addEventListener('click', async function () {
           const searchInput = document.getElementById('search-input').value.trim()
@@ -208,7 +288,7 @@
             messages.forEach((message) => {
               if (searchInput === 'status') {
                 console.log('going to status history' + message)
-                renderStatusHistory(message)
+                renderStatusHistory(message, 'chat', 'chat-modal')
               } else {
                 renderMSG(message)
               }
@@ -335,15 +415,6 @@
             userElement.appendChild(alertIcon)
           }
 
-          // if(user.chatChecked && user.chatChecked.has(roomName) && !user.chatChecked.get(roomName)) {
-          //   // This means there's an unchecked message for the current user from this user
-          //   const alertIcon = document.createElement('span'); // Use an appropriate icon or emoji
-          //   alertIcon.textContent = '🚨'; // Example using an emoji
-          //   alertIcon.style.color = 'red'; // Style as needed
-          //   alertIcon.style.marginLeft = '5px'; // Add some space between the username and the alert icon
-          //   userElement.appendChild(alertIcon);
-          // }
-
           // Add click event listener to each user for opening the chat modal
           userElement.addEventListener('click', function () {
             updateChatStatus(localStorage.getItem('username'), user.username, 'join')
@@ -450,44 +521,57 @@
         msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
       }
 
-      function renderStatusHistory(message) {
-        let chatModal = document.getElementById('chat-modal') // Ensure this ID matches your chat modal
-        let msgContainer = chatModal.querySelector('.messages') // Select the messages container within the chat modal
-
-        let messageElement = document.createElement('div')
-        messageElement.classList.add('message')
-
+      function renderStatusHistory(message, mode, containerId) {
+        let parentContainer = document.getElementById(containerId); // Get the container by ID
+        let msgContainer;
+    
+        // Determine where to append the message based on the mode or container
+        if (mode === 'chat') {
+            msgContainer = parentContainer.querySelector('.messages'); // For chat modal
+        } else if (mode === 'notification') {
+            msgContainer = parentContainer.querySelector('.status-history'); // For notification section
+            console.log('msgContainer', msgContainer)
+        } else {
+            console.error('Invalid mode or containerId provided');
+            return;
+        }
+    
+        let messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+    
         // Format the timestamp
         let formattedTimestamp = new Date(message.date).toLocaleString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        })
-
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
+    
         // Construct the message header
-        let messageHeader = document.createElement('div')
-        messageHeader.classList.add('message-header')
-
-        let senderElement = document.createElement('span')
-        senderElement.classList.add('sender')
-        senderElement.textContent = message.status + ' (' + formattedTimestamp + ')'
-
+        let messageHeader = document.createElement('div');
+        messageHeader.classList.add('message-header');
+    
+        let senderElement = document.createElement('span');
+        senderElement.classList.add('sender');
+        senderElement.textContent = message.status + ' (' + formattedTimestamp + ')';
+    
         // Append sender and status to the header
-        messageHeader.appendChild(senderElement)
-
+        messageHeader.appendChild(senderElement);
+    
         // Append the header and body to the message element
-        messageElement.appendChild(messageHeader)
-
+        messageElement.appendChild(messageHeader);
+    
         // Append the message element to the container
-        msgContainer.appendChild(messageElement)
-
-        // Ensure the container scrolls to show the newest message
-        msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
-      }
-      ;``
+        msgContainer.appendChild(messageElement);
+    
+        // Ensure the container scrolls to show the newest message, if applicable
+        if (msgContainer.scrollTop !== undefined) {
+            msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight;
+        }
+    }
+    
 
       function getUserStatus(username) {
         return new Promise((resolve, reject) => {
@@ -557,7 +641,7 @@
             console.error('Error:', error)
           })
           .finally(() => {
-            //socket.emit("exituser");
+            
             // Remove the token from localStorage
             localStorage.removeItem('token')
 
@@ -599,13 +683,6 @@
           // Check if the request was successful
           if (response.ok) {
             console.log('User chatChecked update successful')
-
-            // Depending on the action, emit the respective event
-            // if (joinOrLeave === 'join') {
-            //     socket.emit('joinPrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
-            // } else if (joinOrLeave === 'leave') {
-            //     socket.emit('leavePrivateRoom', { username: activeUsername, roomName: `${[activeUsername, passiveUsername].sort().join('_')}` });
-            // }
           } else {
             // Handle server errors or unsuccessful requests
             console.error('Failed to update chat status.')

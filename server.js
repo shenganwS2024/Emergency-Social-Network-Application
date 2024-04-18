@@ -4,6 +4,8 @@ import DBConnection from './config/database.js';
 import { PRODUCTION_DB_URI, TEST_DB_URI } from './config/serverConfig.js';
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
+import dotenv from 'dotenv';
+dotenv.config();
 
 app.use(express.json());
 app.use(express.static('views'));

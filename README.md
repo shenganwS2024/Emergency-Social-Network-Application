@@ -141,6 +141,28 @@ CICD: Sigrid
 ---
 
 
+#### Address
+
+<details>
+ <summary><code>POST</code> <code><b>/addresses</b></code> <code>(create new address for user)</code></summary>
+
+##### Parameters
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the new user         |
+> | `address`| required   | string    | address of the user|
+> 
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `create address start successfully `                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
 #### Speed Test
 
 <details>
@@ -300,6 +322,44 @@ CICD: Sigrid
 
 ---
 
+#### Emergency Contact
+
+<details>
+ <summary><code>GET</code> <code><b>/contacts/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+
+
+##### Parameters: e.g./contacts/${simon}
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get contacts successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### location
+
+<details>
+ <summary><code>GET</code> <code><b>/addresses/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+
+
+##### Parameters: e.g./location/${simon}
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get location successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
 #### PUT Requests
 
 #### Users log out
@@ -320,6 +380,7 @@ CICD: Sigrid
 </details>
 
 ---
+
 
 #### Users acknowledgement
 
@@ -393,6 +454,56 @@ CICD: Sigrid
 </details>
 
 ---
+
+
+#### Add new emergency contacts
+
+<details>
+ <summary><code>PUT</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that set the emergency contact     |
+> | emergency1  | required  | string    | the first emergency contact     |
+> | emergency2  | required  | string    | the second emergency contact     |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
+#### Add location
+
+<details>
+ <summary><code>PUT</code> <code><b>addresses/:username</b></code> <code></code></summary>
+
+##### Parameters
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that set the emergency contact     |
+> | location  | required  | string    | user's location    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
 #### Update Profile
 
 <details>
@@ -417,3 +528,42 @@ CICD: Sigrid
 </details>
 
 ---
+
+#### DELETE Requests
+#### clear location
+
+<details>
+ <summary><code>DELETE</code> <code><b>addresses/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete location successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
+
+#### clear contacts
+
+<details>
+ <summary><code>DELETE</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete contacts successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
+
+
