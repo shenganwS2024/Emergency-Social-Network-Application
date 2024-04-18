@@ -181,6 +181,32 @@ CICD: Sigrid
 
 ---
 
+#### Add new Profile
+
+<details>
+ <summary><code>POST</code> <code><b>users/profile</b></code> <code>(post a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User profile posted successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting user profile`                        |
+
+</details>
+
+---
+
+
 #### GET Requests
 #### All Messages
 
@@ -271,6 +297,27 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `search successfully`                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+#### Fetch Profile
+
+<details>
+ <summary><code>GET</code> <code><b>users/profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
+
+##### Parameters:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `type`| required   | string    | name of the profile parameter: name, password, activeness or priviledge       |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile fetched successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error fetching user profile`                        |
+
 </details>
 
 ---
@@ -408,6 +455,7 @@ CICD: Sigrid
 
 ---
 
+
 #### Add new emergency contacts
 
 <details>
@@ -456,6 +504,31 @@ CICD: Sigrid
 
 ---
 
+#### Update Profile
+
+<details>
+ <summary><code>PUT</code> <code><b>users/profile</b></code> <code>(modify a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile updated successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error updating user profile`                        |
+
+</details>
+
+---
+
 #### DELETE Requests
 #### clear location
 
@@ -492,4 +565,5 @@ CICD: Sigrid
 </details>
 
 ---
+
 
