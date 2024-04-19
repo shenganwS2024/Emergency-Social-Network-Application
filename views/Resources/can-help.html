@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Needs List</title>
+  <link rel="stylesheet" href="CanHelp.css">
+</head>
+<body>
+    <header>
+        <button onclick="goBack()" class="header-btn">Back</button>
+      </header>
+    <main class="needs-list-container">
+        <h1>Needs List</h1>
+        <template id="needCardTemplate">
+            <div class="need-item">
+                <div class="need-details">
+                    <p>Type: <span class="type">Food</span></p>
+                    <p>Initiator: <span class="initiator">10 kg of rice</span></p>
+                    <p>Quantity Needed: <span class="quantity">10</span></p>
+                    <p>Emergency Level: <span class="emergency-level">High</span></p>
+                </div>
+                <p>Progress:</p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 0%;"></div>
+                </div>
+                <button class="offer-button" onclick="toggleOfferInput(this)">I can offer</button>
+                <div class="offer-section" style="display: none; margin-top: 25px">
+                    <input type="number" class="offer-quantity" min="1" placeholder="Quantity" />
+                    <button class="submit-offer" onclick="offerResource(this)">Submit Offer</button>
+                </div>
+                <p class="quantity-error" style="color: red; display: none;"></p>
+            </div>
+        </template>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="CanHelp.js"></script>
+</body>
+</html>

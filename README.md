@@ -253,6 +253,65 @@ CICD: Sigrid
 
 ---
 
+#### Post New Resource Need
+
+<details>
+<summary><code>POST</code> <code><b>/resourceNeeds</b></code></summary>
+
+##### Allows for the submission of a new resource need
+
+##### Request Body
+
+Required fields in JSON format:
+
+```json
+{
+  "type": "Water",
+  "quantity": "100",
+  "urgency": "High"
+}
+```
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new need` |
+
+</details>
+
+---
+
+#### Post New Resource Offer
+
+<details>
+<summary><code>POST</code> <code><b>/resourceOffers</b></code></summary>
+
+##### Allows for the submission of a new resource offer
+
+##### Request Body
+
+Required fields in JSON format:
+
+```json
+{
+  "quantity": "100"
+}
+```
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User post successfully`                      |
+> | `404`     | `text/plain;charset=UTF-8`| `Resource need not found.` |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new offer` |
+
+</details>
+
+---
+
 #### GET Requests
 #### All Messages
 
@@ -486,6 +545,80 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `json/plain;charset=UTF-8`   | `Question Information`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the question`                       |
+</details>
+
+---
+
+#### retrieve notifications
+
+<details>
+<summary><code>GET</code> <code><b>/notifications/:nid</b></code> <code></code></summary>
+
+##### Parameters: e.g./notifications/{username}
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get notifications successfully`, JSON object(see example below)                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
+###### Example 200 Response Body
+
+```json
+{
+  "nid": "123",
+  "type": "sometype",
+  "sender": "dummy",
+  "receiver": "dummy1",
+  "quantity": "1"
+}
+```
+
+</details>
+
+---
+
+#### Retrieve Resource Need List
+
+<details>
+<summary><code>GET</code> <code><b>/resourceNeeds</b></code></summary>
+
+##### Retrieves a list of all current resource needs
+
+##### Responses
+
+| http code | content-type                | response                                   |
+|-----------|-----------------------------|--------------------------------------------|
+| `200`     | `application/json`          | `get resources needs list successfully`, JSON object(see example below) |
+| `404`     | `text/plain;charset=UTF-8`  | `Resource needs not found`                 |
+| `500`     | `text/plain;charset=UTF-8`  | `Internal server error`                    |
+
+###### Example 200 Response Body
+
+```json
+{
+  "needs": [
+    {
+      "id": "1",
+      "type": "Water",
+      "quantity": 100,
+      "detail": "dummy",
+      "urgency": "High",
+      "progress": "25"
+    },
+    {
+      "id": "2",
+      "type": "Food",
+      "quantity": 50,
+      "detail": "dummy",
+      "urgency": "Medium",
+      "progress": "0"
+    }
+  ]
+}
+```
+
 </details>
 
 ---
@@ -740,6 +873,39 @@ CICD: Sigrid
 
 ---
 
+#### Update Resource Need Quantity
+
+<details>
+<summary><code>PUT</code> <code><b>/resourceNeeds/{needId}</b></code></summary>
+
+##### Updates the quantity of an existing resource need
+
+##### Parameters
+
+- `needId`: The unique identifier of the resource need to update.
+
+##### Request Body
+
+Required fields in JSON format to specify the new quantity:
+
+```json
+{
+  "quantity": "150"
+}
+```
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Resource need updated successfully`                   |
+> | `404`     | `text/plain;charset=UTF-8`   | `Resource not found during update`                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+
+</details>
+
+---
+
 #### DELETE Requests
 #### clear location
 
@@ -815,6 +981,28 @@ CICD: Sigrid
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `Player deleted successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the player`                       |
+</details>
+
+---
+
+#### Detele A Notification
+
+<details>
+<summary><code>DELETE</code> <code><b>/notifications/{notificationId}</b></code></summary>
+
+##### Delete a specific notification for a user
+
+##### Parameters
+
+- `notificationId`: The unique identifier of the notification to delete.
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Notification deleted successfully`                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
 </details>
 
 ---

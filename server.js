@@ -1,5 +1,5 @@
 import {express,app,http,io} from './config/serverConfig.js'
-import { userRoutes, messageRoutes, speedTestRoutes, annoucementRoutes, searchRoutes, duelLobbyRoutes, duelGameRoutes} from './config/index.js'
+import { userRoutes, messageRoutes, speedTestRoutes, annoucementRoutes, searchRoutes, duelLobbyRoutes, duelGameRoutes, resourceNeedsRoutes, offerResourceRoutes} from './config/index.js'
 import DBConnection from './config/database.js';
 import { PRODUCTION_DB_URI, TEST_DB_URI } from './config/serverConfig.js';
 import * as Sentry from "@sentry/node";
@@ -47,6 +47,8 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(speedTestRoutes);
   app.use(annoucementRoutes);
   app.use(searchRoutes);
+  app.use(resourceNeedsRoutes);
+  app.use(offerResourceRoutes);
   app.use(duelLobbyRoutes);
   app.use(duelGameRoutes);
   
@@ -72,6 +74,8 @@ app.use(messageRoutes);
 app.use(speedTestRoutes);
 app.use(annoucementRoutes);
 app.use(searchRoutes);
+app.use(resourceNeedsRoutes);
+app.use(offerResourceRoutes);
 app.use(duelLobbyRoutes);
 app.use(duelGameRoutes);
 
