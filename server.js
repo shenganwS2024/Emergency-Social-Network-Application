@@ -1,9 +1,11 @@
 import {express,app,http,io} from './config/serverConfig.js'
-import { userRoutes, messageRoutes, speedTestRoutes, annoucementRoutes, searchRoutes, resourceNeedsRoutes, offerResourceRoutes} from './config/index.js'
+import { userRoutes, messageRoutes, speedTestRoutes, annoucementRoutes, searchRoutes, duelLobbyRoutes, duelGameRoutes, resourceNeedsRoutes, offerResourceRoutes} from './config/index.js'
 import DBConnection from './config/database.js';
 import { PRODUCTION_DB_URI, TEST_DB_URI } from './config/serverConfig.js';
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
+import dotenv from 'dotenv';
+dotenv.config();
 
 app.use(express.json());
 app.use(express.static('views'));
@@ -47,6 +49,8 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(searchRoutes);
   app.use(resourceNeedsRoutes);
   app.use(offerResourceRoutes);
+  app.use(duelLobbyRoutes);
+  app.use(duelGameRoutes);
   
   app.get("/debug-sentry", function mainHandler(req, res) {
     throw new Error("My first Sentry error!");
@@ -72,6 +76,7 @@ app.use(annoucementRoutes);
 app.use(searchRoutes);
 app.use(resourceNeedsRoutes);
 app.use(offerResourceRoutes);
-
+app.use(duelLobbyRoutes);
+app.use(duelGameRoutes);
 
 export {http,io, app, PRODUCTION_DB_URI, TEST_DB_URI};
