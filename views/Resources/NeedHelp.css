@@ -1,0 +1,191 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+}
+
+header {
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: #fff;
+  margin-bottom: 15px;
+}
+
+.header-btn {
+  background-color: #e0e0e0;
+  border: none;
+  width: 100%;
+  height: 100%;
+  padding: 20px 0;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+}
+
+.header-btn:hover {
+  background-color: #d0d0d0; 
+}
+
+.container {
+  width: 90%;
+  max-width: 500px;
+  margin-top: 20px;
+}
+
+.button {
+  background-color: #80808085;
+  border: none;
+  padding: 15px;
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.offer-history {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.offer-history-item {
+  height: 59px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Keeps items spaced out */
+  border: 1px solid #d7d7d7;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 0;
+}
+
+.text-wrapper {
+  flex-grow: 1; /* Allows the text wrapper to fill available space */
+  padding: 20px 20px 20px 40px; /* Adjusts padding inside the wrapper: top right bottom left */
+  display: flex; /* Utilizes flexbox */
+  align-items: center; /* Centers the text vertically */
+  justify-content: center; /* Centers the text horizontally */
+  margin-right: 10px; /* Adds some space before the delete button */
+}
+
+.notification-text {
+  text-align: left; /* Ensures the text is aligned to the left within its container */
+  margin: 10px 10px; /* Maintains existing top and bottom margin */
+  padding-left: 20px; /* Adds padding on the left to move text away from the edge */
+}
+
+.form-slide-down {
+  transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+  max-height: 0;
+  overflow: hidden;
+  width: 90%;
+  max-width: 500px;
+  z-index: 10;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0 20px; 
+  border-radius: 10px;
+  margin-top: 20px; 
+  margin-bottom: 20px;
+}
+
+.form-slide-down.active {
+  max-height: 1000px; 
+  padding: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin: 10px 0;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group button {
+  background-color: #000;
+  color: #fff;
+  border: none;
+}
+
+.greyed-out {
+  opacity: 0.5; 
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 20px; 
+  cursor: pointer;
+}
+
+/* Delete Button Style Adapted to Fit Existing Page Design */
+.delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #8080808f;
+  border: none;
+  padding: 0 10px; /* Adjust padding to ensure button content is centered */
+  height: 100%; /* Stretch to fill the height of the container */
+  border-radius: 0 5px 5px 0; /* Apply border-radius only to the right corners */
+  margin-left: auto; /* This ensures the button aligns to the right */
+}
+
+.delete-btn .text {
+  color: white;
+  font-weight: bold;
+  font-size: 14px; /* Adjusted for readability within notification items */
+  margin-right: 5px; /* Space between text and icon */
+}
+
+.delete-btn .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px; /* Size adjusted for context */
+  width: 24px; /* Size adjusted for context */
+}
+
+.delete-btn svg {
+  fill: #eee;
+  width: 15px; /* Icon size adjusted for balance */
+}
+
+.delete-btn:hover {
+  background: #9a9a9a; /* Hover state color adjusted to fit scheme */
+}
+
+.delete-btn:hover .text {
+  color: #fff; /* Ensures text remains visible on hover */
+}
+
+.delete-btn:active .icon svg {
+  transform: scale(0.9); /* Slight shrink effect on click */
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Need Help</title>
+  <link rel="stylesheet" href="NeedHelp.css">
+</head>
+<body>
+  <header>
+    <button onclick="goBack()" class="header-btn">Back</button>
+  </header>
+
+  <div class="container">
+    <button class="button" onclick="toggleForm()">Report Resource Need</button>
+
+    <div class="form-slide-down" id="reportForm">
+      <form id="resourceForm">
+        <div class="form-group">
+          <label for="resourceType">Select The Resource Type You Need</label>
+          <p id="type-error" style="color: red; display: none;"></p>
+          <label><input type="radio" name="resourceType" value="Food"> Food</label>
+          <label><input type="radio" name="resourceType" value="Water"> Water</label>
+          <label><input type="radio" name="resourceType" value="Medicine"> Medicine</label>
+          <label><input type="radio" name="resourceType" value="Shelter"> Shelter</label>
+          <label><input type="radio" name="resourceType" value="Clothing"> Clothing</label>
+          <label><input type="radio" name="resourceType" value="Other"> Other</label>
+          <input type="text" id="otherResource" name="otherResource" placeholder="Enter resource type" style="width: 93.69%;">
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Quantity Needed</label>
+            <p id="quantity-error" style="color: red; display: none;"></p>
+          <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" min="1" style="width: 93.69%;">
+        </div>
+
+        <div class="form-group">
+          <label>Select Urgency Level</label>
+          <p id="urgency-error" style="color: red; display: none;"></p>
+          <button type="button" id="lowUrgency" class="button urgency">Low</button>
+          <button type="button" id="mediumUrgency" class="button urgency">Medium</button>
+          <button type="button" id="highUrgency" class="button urgency">High</button>        
+        </div>
+
+        <button type="button" id="submit-btn" class="submit-btn">Submit</button>
+      </form>
+    </div>
+  
+    <div class="offer-history">
+      <h3>Offer Notification</h3>
+      <template id="offer-history-item-template">
+        <div class="offer-history-item">
+          <div class="text-wrapper"> <!-- New Wrapper -->
+            <div class="notification-text" id="notification-text">You received <strong>{{number}}</strong> resource from <strong>{{username}}</strong></div>
+          </div>
+          <button class="delete-btn">...</button>
+        </div>
+      </template>          
+    </div>    
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="NeedHelp.js"></script>
+</body>
+</html>

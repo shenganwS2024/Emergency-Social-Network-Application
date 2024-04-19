@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Main Menu</title>
+    <link rel="stylesheet" href="Resources.css">
+</head>
+<body>
+    <header>
+        <button onclick="goBack()" class="header-btn">Back</button>
+      </header>
+    <div class="menu-container">
+        <a href="need-help.html" class="menu-item need-help">
+            <i class="menu-icon">&#x26D4;</i>
+            <span class="menu-text">I need help</span>
+        </a>
+        <a href="can-help.html" class="menu-item can-help">
+            <i class="menu-icon">&#x2714;</i>
+            <span class="menu-text">I can help</span>
+        </a>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io('https://s24esnb2.onrender.com/', {
+        query: {
+            token: localStorage.getItem('token'),
+        },
+    });
+
+    function goBack() {
+  window.history.back();
+}
+</script>
+</html>

@@ -273,7 +273,9 @@ async function updateOneStatus(req, res) {
 
     updateStatusList(userFound.status, status);
     io.emit('update status', { username: username, status: status });
-
+    if (status === 'emergency') {
+      io.emit('emergency', { username: username });
+    }
     await userFound.save();
     res.status(200).send('User status update successful');
   } catch (error) {

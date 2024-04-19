@@ -1,7 +1,8 @@
-import { Server } from 'socket.io'
-import jwt from 'jsonwebtoken'
-import { Users } from '../models/Users.js'
-import { userNotificationMap } from './globalVariables.js'
+import { Server } from 'socket.io';
+import jwt from 'jsonwebtoken';
+import { Users } from '../models/Users.js';
+import { userNotificationMap } from './globalVariables.js';
+
 
 const authenticateSocket = (socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token !== 'null') {
@@ -15,21 +16,22 @@ const authenticateSocket = (socket, next) => {
   }
 }
 
+
 const handleNotificationConnection = (socket) => {
-  const username = socket.decoded?.username
+  const username = socket.decoded?.username;
 
   if (username) {
     // Map username to socket ID for notifications
-    userNotificationMap.set(username, socket.id)
-    console.log(`Notification handler connected: ${username} with socket ID ${socket.id}`)
+    userNotificationMap.set(username, socket.id);
+    console.log(`Notification handler connected: ${username} with socket ID ${socket.id}`);
 
     socket.on('disconnect', () => {
       // Remove the username from the notification map upon disconnection
-      userNotificationMap.delete(username)
-      console.log(`Notification handler disconnected: ${username}`)
-    })
+      userNotificationMap.delete(username);
+      console.log(`Notification handler disconnected: ${username}`);
+    });
   }
-}
+};
 
 const handleUserConnection = async (socket, username, io) => {
   try {
@@ -48,6 +50,8 @@ const handleUserDisconnection = async (socket, username, io) => {
       io.emit('userStatusChanged', { username: user.username, onlineStatus: false })
       socket.emit('updateInfo', `${username} logout`)
     }
+    
+
   } catch (err) {
     console.error(err)
   }
@@ -89,11 +93,11 @@ const socketConfig = (server) => {
   const io = new Server(server)
   let userRoomMap = {}
 
-  io.use(authenticateSocket)
+  io.use(authenticateSocket);
   io.on('connection', (socket) => {
-    handleConnection(socket, io, userRoomMap)
-    handleNotificationConnection(socket)
-  })
+    handleConnection(socket, io, userRoomMap);
+    handleNotificationConnection(socket);
+  });
 
   return io
 }
