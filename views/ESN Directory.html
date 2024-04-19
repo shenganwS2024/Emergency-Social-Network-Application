@@ -74,13 +74,13 @@
         color: white;
       }
       #stop-search {
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px; /* Slightly smaller font size */
-  background-color: #f44336;
-  color: white;
-}
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px; /* Slightly smaller font size */
+        background-color: #f44336;
+        color: white;
+      }
 
       .modal {
         display: none; /* Keep as is to show/hide modal */
@@ -158,9 +158,9 @@
 
       button#send-message,
       button#close-chat,
-      button#see-more{
+      button#see-more {
         flex-shrink: 0; /* Prevent buttons from shrinking */
-        margin-top: auto; /* Space between textarea and buttons */;
+        margin-top: auto; /* Space between textarea and buttons */
       }
 
       .message {
@@ -245,90 +245,88 @@
         bottom: 160px; /* Adjust based on the total height of buttons below */
       }
       #navigation-bar-container {
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #fff; /* Change as needed */
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Adds a slight shadow for depth */
-  display: flex;
-  justify-content: space-around; /* Evenly space the nav items */
-  align-items: center;
-  padding: 10px 0;
-  box-sizing: border-box;
-  z-index: 1000; /* Ensures it stays on top of other content */
-}
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff; /* Change as needed */
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Adds a slight shadow for depth */
+        display: flex;
+        justify-content: space-around; /* Evenly space the nav items */
+        align-items: center;
+        padding: 10px 0;
+        box-sizing: border-box;
+        z-index: 1000; /* Ensures it stays on top of other content */
+      }
 
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
-.nav-icon {
-  font-size: 24px; /* Adjust icon size as needed */
-}
+      .nav-icon {
+        font-size: 24px; /* Adjust icon size as needed */
+      }
 
-.nav-label {
-  font-size: 12px; /* Adjust label text size as needed */
-  margin-top: 5px; /* Space between icon and label */
-}
-#navigation-bar-container a {
-  text-decoration: none; /* Removes underline from links */
-  color: inherit; /* Inherits the text color from the parent */
-}
+      .nav-label {
+        font-size: 12px; /* Adjust label text size as needed */
+        margin-top: 5px; /* Space between icon and label */
+      }
+      #navigation-bar-container a {
+        text-decoration: none; /* Removes underline from links */
+        color: inherit; /* Inherits the text color from the parent */
+      }
 
-#navigation-bar-container a:active, 
-#navigation-bar-container a:focus, 
-#navigation-bar-container a:hover {
-  text-decoration: none; /* Keeps underline removed on hover/focus */
-}
+      #navigation-bar-container a:active,
+      #navigation-bar-container a:focus,
+      #navigation-bar-container a:hover {
+        text-decoration: none; /* Keeps underline removed on hover/focus */
+      }
 
-#chat-message {
-  /* Remove the fixed position and adjust the margin as necessary */
-  margin-bottom: 10px; /* Space between the input and the buttons */
-  width: calc(100% - 40px); /* Adjust width accounting for padding */
-  padding: 10px; /* Add padding for text inside */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
+      #chat-message {
+        /* Remove the fixed position and adjust the margin as necessary */
+        margin-bottom: 10px; /* Space between the input and the buttons */
+        width: calc(100% - 40px); /* Adjust width accounting for padding */
+        padding: 10px; /* Add padding for text inside */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      }
 
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* Ensure modal content uses full height */
-  padding-bottom: 60px; /* Adjust this value to ensure space for action buttons above navigation bar */
-}
+      .modal-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Ensure modal content uses full height */
+        padding-bottom: 60px; /* Adjust this value to ensure space for action buttons above navigation bar */
+      }
 
-.chatroom {
-  display: flex;
-  flex-direction: column;
-  height: calc(100% - 60px); /* Adjust based on the header and action buttons height */
-  overflow: hidden; /* Prevents overflow outside the modal content area */
-}
+      .chatroom {
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 60px); /* Adjust based on the header and action buttons height */
+        overflow: hidden; /* Prevents overflow outside the modal content area */
+      }
 
-.messages {
-  flex-grow: 1;
-  overflow-y: auto; /* Allow scrolling for message overflow */
-}
+      .messages {
+        flex-grow: 1;
+        overflow-y: auto; /* Allow scrolling for message overflow */
+      }
 
+      #chat-message {
+        margin-bottom: 5px; /* Space between the input and the buttons */
+        width: calc(100% - 40px); /* Adjust width accounting for padding */
+        padding: 10px; /* Add padding for text inside */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      }
 
-#chat-message {
-  margin-bottom: 5px; /* Space between the input and the buttons */
-  width: calc(100% - 40px); /* Adjust width accounting for padding */
-  padding: 10px; /* Add padding for text inside */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-/* Style for the new button container */
-.button-container {
-  display: flex;
-  justify-content: space-between; /* This spreads the buttons evenly */
-  padding: 10px; /* Add padding as needed */
-  box-sizing: border-box; /* Include padding in the width calculation */
-  margin-top: auto; /* Ensure there's space below the buttons */
-  margin-bottom: 40px; /* Adjust as needed */
-}
-
+      /* Style for the new button container */
+      .button-container {
+        display: flex;
+        justify-content: space-between; /* This spreads the buttons evenly */
+        padding: 10px; /* Add padding as needed */
+        box-sizing: border-box; /* Include padding in the width calculation */
+        margin-top: auto; /* Ensure there's space below the buttons */
+        margin-bottom: 40px; /* Adjust as needed */
+      }
 
 /* The Notification (background) */
 .notification {
@@ -444,6 +442,7 @@
     <div id="footer">
       <button id="exit-chat">Logout</button>
       <button id="share-status">Share Status</button>
+      <button id="train-exercise">Exercise</button>
     </div>
 
     <div id="navigation-bar-container">
@@ -494,12 +493,12 @@
         <div class="chatroom">
           <div class="messages"></div>
           <textarea id="chat-message" placeholder="Write a message..."></textarea>
-          <div class="button-container"> <!-- Add this container -->
+          <div class="button-container">
+            <!-- Add this container -->
             <button id="send-message">Send</button>
             <button id="close-chat">Back</button>
             <button id="see-more">See More</button>
           </div>
-          
         </div>
       </div>
     </div>

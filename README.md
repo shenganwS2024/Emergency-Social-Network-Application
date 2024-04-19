@@ -79,7 +79,7 @@ CICD: Sigrid
 ---
 
 
-#### New Post
+#### New Message Post
 
 <details>
  <summary><code>POST</code> <code><b>/messages/:senderName/:receiverName</b></code> <code>(Allows citizens to post new message)</code></summary>
@@ -135,6 +135,57 @@ CICD: Sigrid
 > |-----------|---------------------------|-----------------------------------------------------|
 > | `201`     | `text/html; charset=utf-8`| `User post announcement successfully`                      |
 > | `500`     | `text/plain;charset=UTF-8`| `Error posting new announcement`                        |
+
+</details>
+
+---
+
+#### New TrainExercise
+
+<details>
+ <summary><code>POST</code> <code><b>/exercises</b></code> <code>(post new trainexercise)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `title`| required   | string    | Title of the new trainexercise         |
+> | `author`| required   | string    | Author of the new trainexercise|
+> | `videoLink`| string    | Video link of the new trainexercise|
+> | `timestamp`| Date    | times when posting|
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post trainexercise successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new trainexercise`                        |
+
+</details>
+
+---
+
+#### New comment for TrainExercise
+
+<details>
+ <summary><code>POST</code> <code><b>/exercises/:id/comments</b></code> <code>(post new comment for trainexercise)</code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `content`| required   | string    | content of the comment         |
+> | `commentator`| required   | string    | Commentator of the new trainexercise|
+> | `timestamp`  | required   | Date    | times when posting          |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post comment successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new comment`                        |
 
 </details>
 
@@ -345,6 +396,41 @@ Required fields in JSON format:
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `get users successfully`                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### All Trainexercises
+
+<details>
+ <summary><code>GET</code> <code><b>/exercises</b></code> <code>(fetch all trainexercises)</code></summary>
+
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get exercises successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `get exercises error`                       |
+</details>
+
+---
+
+#### One Trainexercise
+
+<details>
+ <summary><code>GET</code> <code><b>/exercises/:id/:username</b></code> <code>(fetch all trainexercises)</code></summary>
+
+##### Parameters: e.g.exercise/123456/testuser
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get one exercise successfully`                   |
+> |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                  
+> | `500`     | `text/plain;charset=UTF-8`   | `get one exercise error`                       |
 </details>
 
 ---
@@ -718,13 +804,31 @@ Required fields in JSON format:
 
 ---
 
+#### Update exercise like
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/like</b></code> <code></code></summary>
+
+##### Parameters
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated like  successfully`                   |
+>  |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating like `                       |
+
+</details>
+
+---
 
 #### Add new emergency contacts
 
 <details>
  <summary><code>PUT</code> <code><b>contacts/:username</b></code> <code></code></summary>
 
-##### Parameters
+
 ##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
 > | name      | type      | data type | description                 |
 > |-----------|-----------|-----------|-----------------------------|
@@ -906,7 +1010,72 @@ Required fields in JSON format to specify the new quantity:
 
 ---
 
+#### Update exercise dislike
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/dislike</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated dislike successfully`                   |
+> |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                             
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating dislike`                       |
+</details>
+
+---
+#### Update exercise unlike
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/unlike</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated unlike  successfully`                   |
+>  |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating like `                       |
+</details>
+
+---
+
+#### Update exercise undislike
+
+<details>
+ <summary><code>PUT</code> <code><b>/exercises/:id/undislike</b></code> <code></code></summary>
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | ` updated undislike successfully`                   |
+> |`404`      |   `text/plain;charset=UTF-8` |`User not found` or  `exercise not found`|                             
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating undislike`                       |
+</details>
+
+---
+
 #### DELETE Requests
+
+#### Delete Comment
+
+<details>
+ <summary><code>DELETE</code> <code><b>/exercises/:exerciseId/comments/:commentId</b></code> <code></code></summary>
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `comment deleted successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `exercise not found` or `comment not found`     |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error delete comment`                       |
+</details>
+
+---
+
 #### clear location
 
 <details>

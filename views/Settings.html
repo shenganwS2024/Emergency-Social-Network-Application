@@ -1,185 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings Page</title>
     <style>
-        /* Basic reset for body */
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+      /* Basic reset for body */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
 
-        /* Style for the navigation bar */
-        #navigation-bar-container {
-            display: flex;
-            justify-content: space-around;
-            background-color: #f0f0f0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-        }
+      /* Style for the navigation bar */
+      #navigation-bar-container {
+        display: flex;
+        justify-content: space-around;
+        background-color: #f0f0f0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      }
 
-        .nav-item {
-            text-decoration: none;
-            color: black;
-            text-align: center;
-            padding: 10px;
-        }
+      .nav-item {
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        padding: 10px;
+      }
 
-        .nav-icon {
-            font-size: 24px;
-        }
+      .nav-icon {
+        font-size: 24px;
+      }
 
-        .nav-label {
-            font-size: 12px;
-        }
+      .nav-label {
+        font-size: 12px;
+      }
 
-        /* Style for the content area */
-        .content {
-            padding: 20px;
-            margin-bottom: 60px; /* To ensu
+      /* Style for the content area */
+      .content {
+        padding: 20px;
+        margin-bottom: 60px; /* To ensu
             
             re content doesn't hide behind the nav bar */
-        }
+      }
 
+      .contacts {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        padding: 20px; /* Keep your existing padding */
+      }
 
-        .contacts {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    padding: 20px; /* Keep your existing padding */
-}
+      button {
+        font-size: large;
+        display: flex;
+        justify-content: center;
+        align-items: center; /* This centers the button vertically */ /* Example height, adjust as necessary */
+        padding: 20px;
+        background-color: #4caf50; /* Green */
+        color: white;
+        font-weight: bold;
+        align-items: center;
+      }
 
-        button {
-            font-size: large;
-            display: flex;
-    justify-content: center;
-    align-items: center; /* This centers the button vertically */ /* Example height, adjust as necessary */
-    padding: 20px;
-    background-color: #4CAF50; /* Green */
-    color: white;
-    font-weight: bold;
-    align-items: center;
-        }
+      #popup {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+        padding-top: 100px; /* Location of the box */
+      }
 
-        #popup {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-            padding-top: 100px; /* Location of the box */
-        }
+      /* Style for popup content */
+      .popup-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+      }
 
-        /* Style for popup content */
-        .popup-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-        }
+      /* The Close Button */
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
 
-        /* The Close Button */
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+      #confirmButton {
+        background-color: #4caf50; /* Green */
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: medium;
+      }
 
-        #confirmButton {
-            background-color: #4CAF50; /* Green */
-            color: white;
-            padding: 10px 24px;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: medium
-        }
+      .popup-content .button-container {
+        width: 100%; /* Makes the container take the full width of the parent */
+        display: flex;
+        justify-content: space-between; /* Spreads the buttons to the opposite edges */
+      }
 
-        .popup-content .button-container {
-            width: 100%; /* Makes the container take the full width of the parent */
-            display: flex;
-            justify-content: space-between; /* Spreads the buttons to the opposite edges */
-        }
+      .popup-content button {
+        width: 48%; /* Sets the button width to almost half of the container */
+        padding: 10px; /* Adds some padding inside the buttons */
+        color: white; /* Sets the text color to white */
+        border: none; /* Removes the border */
+        cursor: pointer; /* Changes the cursor to a pointer on hover */
+      }
 
-        .popup-content button {
-            width: 48%; /* Sets the button width to almost half of the container */
-            padding: 10px; /* Adds some padding inside the buttons */
-            color: white; /* Sets the text color to white */
-            border: none; /* Removes the border */
-            cursor: pointer; /* Changes the cursor to a pointer on hover */
-        }
+      #confirmButton {
+        background-color: green; /* Sets the background color to green */
+      }
 
-        #confirmButton {
-            background-color: green; /* Sets the background color to green */
-        }
-
-        #clearButton {
-            background-color: red; /* Sets the background color to red */
-        }
+      #clearButton {
+        background-color: red; /* Sets the background color to red */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Settings</h1>
+      <!-- Place your settings content here -->
+      <p>Here you can customize your preferences and account settings.</p>
+    </div>
 
-<div class="content">
-    <h1>Settings</h1>
-    <!-- Place your settings content here -->
-    <p>Here you can customize your preferences and account settings.</p>
-</div>
+    <div class="content">
+      <h1>Settings</h1>
+      <!-- Place your settings content here -->
+      <p>Here you can customize your preferences and account settings.</p>
+    </div>
 
-<div class = "contacts">
-    <button id="addContact">Add Emergency Contact</button>
-</div>
-<div id="popup">
-    <div class="popup-content">
+    <div class="contacts">
+      <button id="addContact">Add Emergency Contact</button>
+    </div>
+    <div id="popup">
+      <div class="popup-content">
         <span class="close" onclick="document.getElementById('popup').style.display='none'">&times;</span>
         <h2>Add Emergency Contact</h2>
-        <input type="text" id="contact1" placeholder="Contact 1">
-        <input type="text" id="contact2" placeholder="Contact 2">
-        <input type="text" id="address" placeholder="Address">
+        <input type="text" id="contact1" placeholder="Contact 1" />
+        <input type="text" id="contact2" placeholder="Contact 2" />
+        <input type="text" id="address" placeholder="Address" />
         <div class="button-container">
-            <button id="confirmButton">Confirm</button> <!-- Button to confirm the data -->
-            <button id="clearButton">Clear Saved Info</button> <!-- Button to clear the data -->
+          <button id="confirmButton">Confirm</button>
+          <!-- Button to confirm the data -->
+          <button id="clearButton">Clear Saved Info</button>
+          <!-- Button to clear the data -->
         </div>
+      </div>
     </div>
-</div>
 
-<!-- Navigation bar -->
-<div id="navigation-bar-container">
-    <a href="ESN Directory.html" class="nav-item">
+    <!-- Navigation bar -->
+    <div id="navigation-bar-container">
+      <a href="ESN Directory.html" class="nav-item">
         <div class="nav-icon" id="directory-button">📁</div>
         <div class="nav-label">Directory</div>
-    </a>
-    <a href="chatroom.html" class="nav-item">
+      </a>
+      <a href="chatroom.html" class="nav-item">
         <div class="nav-icon">💬</div>
         <div class="nav-label">Chatroom</div>
-    </a>
-    <a href="Announcement.html" class="nav-item">
+      </a>
+      <a href="Announcement.html" class="nav-item">
         <div class="nav-icon">📢</div>
         <div class="nav-label">Announcement</div>
-    </a>
-    <a href="Settings.html" class="nav-item">
+      </a>
+      <a href="Settings.html" class="nav-item">
         <div class="nav-icon">⚙️</div>
         <div class="nav-label">Settings</div>
-    </a>
-</div>
-<script src="/socket.io/socket.io.js"></script>
-<script src="Settings.js"></script>
-<script>
+      </a>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="Settings.js"></script>
+    <script>
       document.addEventListener('DOMContentLoaded', function () {
         const socket = io('https://s24esnb2.onrender.com/', {
           query: {
@@ -242,9 +249,6 @@
 
         // Your existing DOMContentLoaded logic...
       })
-
-      
-</script>
-
-</body>
+    </script>
+  </body>
 </html>
