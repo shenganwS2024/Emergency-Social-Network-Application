@@ -26,206 +26,6 @@ CICD: Sigrid
 
 ### API Documentation
 
-### Resource Management Restful APIs - denghaos
-
----
-
-#### <span style="color:#48C9B0;">Get Requests</span>
-
-#### retrieve notifications
-
-<details>
-<summary><code>GET</code> <code><b>/notifications/:nid</b></code> <code></code></summary>
-
-##### Parameters: e.g./notifications/{username}
-
-##### Responses
-
-> | http code | content-type                 | response                                      |
-> |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `get notifications successfully`, JSON object(see example below)                   |
-> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
-
-###### Example 200 Response Body
-
-```json
-{
-  "nid": "123",
-  "type": "sometype",
-  "sender": "dummy",
-  "receiver": "dummy1",
-  "quantity": "1"
-}
-```
-
-</details>
-
----
-
-#### Retrieve Resource Need List
-
-<details>
-<summary><code>GET</code> <code><b>/resourceNeeds</b></code></summary>
-
-##### Retrieves a list of all current resource needs
-
-##### Responses
-
-| http code | content-type                | response                                   |
-|-----------|-----------------------------|--------------------------------------------|
-| `200`     | `application/json`          | `get resources needs list successfully`, JSON object(see example below) |
-| `404`     | `text/plain;charset=UTF-8`  | `Resource needs not found`                 |
-| `500`     | `text/plain;charset=UTF-8`  | `Internal server error`                    |
-
-###### Example 200 Response Body
-
-```json
-{
-  "needs": [
-    {
-      "id": "1",
-      "type": "Water",
-      "quantity": 100,
-      "detail": "dummy",
-      "urgency": "High",
-      "progress": "25"
-    },
-    {
-      "id": "2",
-      "type": "Food",
-      "quantity": 50,
-      "detail": "dummy",
-      "urgency": "Medium",
-      "progress": "0"
-    }
-  ]
-}
-```
-
-</details>
-
----
-
-#### <span style="color:#48C9B0;">Post Requests</span>
-
-#### Post New Resource Need
-
-<details>
-<summary><code>POST</code> <code><b>/resourceNeeds</b></code></summary>
-
-##### Allows for the submission of a new resource need
-
-##### Request Body
-
-Required fields in JSON format:
-
-```json
-{
-  "type": "Water",
-  "quantity": "100",
-  "urgency": "High"
-}
-```
-
-##### Responses
-
-> | http code | content-type              | response                                            |
-> |-----------|---------------------------|-----------------------------------------------------|
-> | `201`     | `text/html; charset=utf-8`| `User post successfully`                      |
-> | `500`     | `text/plain;charset=UTF-8`| `Error posting new need` |
-
-</details>
-
----
-
-#### Post New Resource Offer
-
-<details>
-<summary><code>POST</code> <code><b>/resourceOffers</b></code></summary>
-
-##### Allows for the submission of a new resource offer
-
-##### Request Body
-
-Required fields in JSON format:
-
-```json
-{
-  "quantity": "100"
-}
-```
-
-##### Responses
-
-> | http code | content-type              | response                                            |
-> |-----------|---------------------------|-----------------------------------------------------|
-> | `200`     | `text/html; charset=utf-8`| `User post successfully`                      |
-> | `404`     | `text/plain;charset=UTF-8`| `Resource need not found.` |
-> | `500`     | `text/plain;charset=UTF-8`| `Error posting new offer` |
-
-</details>
-
----
-
-#### <span style="color:#48C9B0;">Put Requests</span>
-
-#### Update Resource Need Quantity
-
-<details>
-<summary><code>PUT</code> <code><b>/resourceNeeds/{needId}</b></code></summary>
-
-##### Updates the quantity of an existing resource need
-
-##### Parameters
-
-- `needId`: The unique identifier of the resource need to update.
-
-##### Request Body
-
-Required fields in JSON format to specify the new quantity:
-
-```json
-{
-  "quantity": "150"
-}
-```
-
-##### Responses
-
-> | http code | content-type                 | response                                      |
-> |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Resource need updated successfully`                   |
-> | `404`     | `text/plain;charset=UTF-8`   | `Resource not found during update`                   |
-> | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
-
-</details>
-
----
-
-#### <span style="color:#48C9B0;">Delete Requests</span>
-
-#### Detele A Notification
-
-<details>
-<summary><code>DELETE</code> <code><b>/notifications/{notificationId}</b></code></summary>
-
-##### Delete a specific notification for a user
-
-##### Parameters
-
-- `notificationId`: The unique identifier of the notification to delete.
-
-##### Responses
-
-> | http code | content-type                 | response                                      |
-> |-----------|------------------------------|-----------------------------------------------|
-> | `200`     | `text/plain;charset=UTF-8`   | `Notification deleted successfully`                   |
-> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
-
-</details>
-
----
-
 #### POST Requests
 
 #### User Registration
@@ -277,6 +77,7 @@ Required fields in JSON format to specify the new quantity:
 </details>
 
 ---
+
 
 #### New Post
 
@@ -340,6 +141,28 @@ Required fields in JSON format to specify the new quantity:
 ---
 
 
+#### Address
+
+<details>
+ <summary><code>POST</code> <code><b>/addresses</b></code> <code>(create new address for user)</code></summary>
+
+##### Parameters
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the new user         |
+> | `address`| required   | string    | address of the user|
+> 
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `create address start successfully `                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
 #### Speed Test
 
 <details>
@@ -353,6 +176,137 @@ Required fields in JSON format to specify the new quantity:
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `SpeedTest start successfully `                   |                         
 > | `500`     | `text/plain;charset=UTF-8`   | `Internal Server Error`                       |
+
+</details>
+
+---
+
+#### Add new Profile
+
+<details>
+ <summary><code>POST</code> <code><b>users/profile</b></code> <code>(post a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User profile posted successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting user profile`                        |
+
+</details>
+
+---
+
+#### Register a new online player
+
+<details>
+ <summary><code>POST</code> <code><b>/players/:playerName</b></code> <code></code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `playerName`| required   | string    | Name of the new online player         |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `New player registered successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error registering new player`                        |
+
+</details>
+
+---
+
+#### Create a new duel
+
+<details>
+ <summary><code>POST</code> <code><b>/duels/:challenger/:challenged</b></code> <code></code></summary>
+
+##### Parameters
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `challenger`| required   | string    | Challenger of this duel      | 
+> | `challenged`| required   | string    | The one who gets challenged in this duel         |
+
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `New duel created successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error creating new duel`                        |
+
+</details>
+
+---
+
+#### Post New Resource Need
+
+<details>
+<summary><code>POST</code> <code><b>/resourceNeeds</b></code></summary>
+
+##### Allows for the submission of a new resource need
+
+##### Request Body
+
+Required fields in JSON format:
+
+```json
+{
+  "type": "Water",
+  "quantity": "100",
+  "urgency": "High"
+}
+```
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `201`     | `text/html; charset=utf-8`| `User post successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new need` |
+
+</details>
+
+---
+
+#### Post New Resource Offer
+
+<details>
+<summary><code>POST</code> <code><b>/resourceOffers</b></code></summary>
+
+##### Allows for the submission of a new resource offer
+
+##### Request Body
+
+Required fields in JSON format:
+
+```json
+{
+  "quantity": "100"
+}
+```
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User post successfully`                      |
+> | `404`     | `text/plain;charset=UTF-8`| `Resource need not found.` |
+> | `500`     | `text/plain;charset=UTF-8`| `Error posting new offer` |
 
 </details>
 
@@ -451,6 +405,223 @@ Required fields in JSON format to specify the new quantity:
 </details>
 
 ---
+#### Fetch Profile
+
+<details>
+ <summary><code>GET</code> <code><b>users/profile/:type</b></code> <code>(fetch a citizen's profile)</code></summary>
+
+##### Parameters:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `type`| required   | string    | name of the profile parameter: name, password, activeness or priviledge       |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile fetched successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error fetching user profile`                        |
+
+</details>
+
+---
+
+#### Emergency Contact
+
+<details>
+ <summary><code>GET</code> <code><b>/contacts/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+
+
+##### Parameters: e.g./contacts/${simon}
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get contacts successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### location
+
+<details>
+ <summary><code>GET</code> <code><b>/addresses/:username</b></code> <code>(allows users to search for a specific user's emergency contacts)</code></summary>
+
+
+##### Parameters: e.g./location/${simon}
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get location successfully`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+</details>
+
+---
+
+#### Get all players or a certain player
+
+<details>
+ <summary><code>GET</code> <code><b>/players/:playerName?</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | optional  | string    | the player whose information is about getting fetched    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Player(s) Information`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching player(s)`                       |
+</details>
+
+---
+
+#### Get all duels or a specific duel
+
+<details>
+ <summary><code>GET</code> <code><b>/duels/:playerName?</b></code> <code></code></summary>
+
+##### Parameters: e.g. /duels/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | optional  | string    | one of the participants of the targeting duel    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Duel(s) Infomation`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching duel(s)`                       |
+</details>
+
+---
+
+#### Get the result of the player
+
+<details>
+ <summary><code>GET</code> <code><b>/results/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /results/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player whose duel result is getting fetched    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Result Information`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the Result`                       |
+</details>
+
+---
+
+#### Get the corresponding question
+
+<details>
+ <summary><code>GET</code> <code><b>/questions/:number</b></code> <code></code></summary>
+
+##### Parameters: e.g. /questions/{1}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | number  | required  | int    | the number of the current question (ex. question one, question two, etc.)    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `json/plain;charset=UTF-8`   | `Question Information`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error fetching the question`                       |
+</details>
+
+---
+
+#### retrieve notifications
+
+<details>
+<summary><code>GET</code> <code><b>/notifications/:nid</b></code> <code></code></summary>
+
+##### Parameters: e.g./notifications/{username}
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `get notifications successfully`, JSON object(see example below)                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
+###### Example 200 Response Body
+
+```json
+{
+  "nid": "123",
+  "type": "sometype",
+  "sender": "dummy",
+  "receiver": "dummy1",
+  "quantity": "1"
+}
+```
+
+</details>
+
+---
+
+#### Retrieve Resource Need List
+
+<details>
+<summary><code>GET</code> <code><b>/resourceNeeds</b></code></summary>
+
+##### Retrieves a list of all current resource needs
+
+##### Responses
+
+| http code | content-type                | response                                   |
+|-----------|-----------------------------|--------------------------------------------|
+| `200`     | `application/json`          | `get resources needs list successfully`, JSON object(see example below) |
+| `404`     | `text/plain;charset=UTF-8`  | `Resource needs not found`                 |
+| `500`     | `text/plain;charset=UTF-8`  | `Internal server error`                    |
+
+###### Example 200 Response Body
+
+```json
+{
+  "needs": [
+    {
+      "id": "1",
+      "type": "Water",
+      "quantity": 100,
+      "detail": "dummy",
+      "urgency": "High",
+      "progress": "25"
+    },
+    {
+      "id": "2",
+      "type": "Food",
+      "quantity": 50,
+      "detail": "dummy",
+      "urgency": "Medium",
+      "progress": "0"
+    }
+  ]
+}
+```
+
+</details>
+
+---
 
 #### PUT Requests
 
@@ -472,6 +643,7 @@ Required fields in JSON format to specify the new quantity:
 </details>
 
 ---
+
 
 #### Users acknowledgement
 
@@ -542,6 +714,295 @@ Required fields in JSON format to specify the new quantity:
 > |-----------|------------------------------|-----------------------------------------------|
 > | `200`     | `text/plain;charset=UTF-8`   | `User check updated successfully`                   |                          
 > | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+</details>
+
+---
+
+
+#### Add new emergency contacts
+
+<details>
+ <summary><code>PUT</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that set the emergency contact     |
+> | emergency1  | required  | string    | the first emergency contact     |
+> | emergency2  | required  | string    | the second emergency contact     |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
+#### Add location
+
+<details>
+ <summary><code>PUT</code> <code><b>addresses/:username</b></code> <code></code></summary>
+
+##### Parameters
+##### Parameters: e.g. /alert/{userA}/{userB}/‘join'
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the user that set the emergency contact     |
+> | location  | required  | string    | user's location    |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `update contacts successfully`                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                         
+> | `500`     | `text/plain;charset=UTF-8`   | `Error setting`                       |
+</details>
+
+---
+
+#### Update Profile
+
+<details>
+ <summary><code>PUT</code> <code><b>users/profile</b></code> <code>(modify a citizen's profile)</code></summary>
+
+##### Req.body Field:
+
+> | name      | type       | data type | description                      |
+> |-----------|------------|-----------|----------------------------------|
+> | `username`| required   | string    | Username of the user         |
+> | `password`| required   | string    | Password for the user account|
+> | `activeness`  | optional   | string    | Activeness of the user           |
+> | `privilege`    | optional   | string    | Role assigned to the user    |
+
+##### Responses
+
+> | http code | content-type              | response                                            |
+> |-----------|---------------------------|-----------------------------------------------------|
+> | `200`     | `text/html; charset=utf-8`| `User profile updated successfully`                      |
+> | `500`     | `text/plain;charset=UTF-8`| `Error updating user profile`                        |
+
+</details>
+
+---
+
+#### Update player's challenge status
+
+<details>
+ <summary><code>PUT</code> <code><b>/challengeStatuses/:challenger/:challenged?</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | challenger  | required  | string    | the player who started the duel     |
+> | challenged  | optional  | string    | the player who gets challenged     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | inChallenge  | required  | boolean      | the desired challenge status         |
+> | accept  | optional  | boolean      | whether challenged accepted or rejected the challenge         |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player challenge statuses updated successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating challenge statuses`                       |
+</details>
+
+---
+#### Submit player's answer
+
+<details>
+ <summary><code>PUT</code> <code><b>/submissions/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /submissions/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player who's submitting their answer     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | questionInfo  | required  | object      | the question that the player is answering         |
+> | answer  | required  | string      | player's answer         |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player's answer submitted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error submitting player's answer`                       |
+</details>
+
+---
+#### Update player's readiness
+
+<details>
+ <summary><code>PUT</code> <code><b>/readyStatuses/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /readyStatuses/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | the player whose ready status gets changed     |
+
+##### Req.body Field:
+
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | ready  | required  | boolean      | if player is ready        |
+> | opponent  | required  | string      | name of the opponent        |
+> | number  | optional  | int      | number of the current question        |
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player's readiness updated successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating player's readiness`                       |
+</details>
+
+---
+
+#### Update Resource Need Quantity
+
+<details>
+<summary><code>PUT</code> <code><b>/resourceNeeds/{needId}</b></code></summary>
+
+##### Updates the quantity of an existing resource need
+
+##### Parameters
+
+- `needId`: The unique identifier of the resource need to update.
+
+##### Request Body
+
+Required fields in JSON format to specify the new quantity:
+
+```json
+{
+  "quantity": "150"
+}
+```
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Resource need updated successfully`                   |
+> | `404`     | `text/plain;charset=UTF-8`   | `Resource not found during update`                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Error updating status`                       |
+
+</details>
+
+---
+
+#### DELETE Requests
+#### clear location
+
+<details>
+ <summary><code>DELETE</code> <code><b>addresses/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete location successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
+
+#### clear contacts
+
+<details>
+ <summary><code>DELETE</code> <code><b>contacts/:username</b></code> <code></code></summary>
+
+##### Parameters
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `delete contacts successfully `                   | 
+> | `404`     | `text/plain;charset=UTF-8`   | `User not found during validation`                   |                                       |
+</details>
+
+---
+
+#### Delete a duel
+
+<details>
+ <summary><code>DELETE</code> <code><b>/duels/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /duels/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | name of the player who's involved in the deleting duel     |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Duel deleted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the duel`                       |
+</details>
+
+---
+
+#### Delete a player
+
+<details>
+ <summary><code>DELETE</code> <code><b>/players/:playerName</b></code> <code></code></summary>
+
+##### Parameters: e.g. /players/{Player A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | playerName  | required  | string    | name of the deleting player     |
+
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Player deleted successfully`                   |                          
+> | `500`     | `text/plain;charset=UTF-8`   | `Error deleting the player`                       |
+</details>
+
+---
+
+#### Detele A Notification
+
+<details>
+<summary><code>DELETE</code> <code><b>/notifications/{notificationId}</b></code></summary>
+
+##### Delete a specific notification for a user
+
+##### Parameters
+
+- `notificationId`: The unique identifier of the notification to delete.
+
+##### Responses
+
+> | http code | content-type                 | response                                      |
+> |-----------|------------------------------|-----------------------------------------------|
+> | `200`     | `text/plain;charset=UTF-8`   | `Notification deleted successfully`                   |
+> | `500`     | `text/plain;charset=UTF-8`   | `Internal server error`                       |
+
 </details>
 
 ---
