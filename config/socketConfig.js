@@ -1,7 +1,7 @@
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
 import { Users } from '../models/Users.js'
-import { eventManager } from '../controllers/EventManager.js'
+import { userNotificationMap } from './globalVariables.js'
 
 const authenticateSocket = (socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token !== 'null') {
@@ -12,6 +12,22 @@ const authenticateSocket = (socket, next) => {
     })
   } else {
     next(new Error('Authentication error'))
+  }
+}
+
+const handleNotificationConnection = (socket) => {
+  const username = socket.decoded?.username
+
+  if (username) {
+    // Map username to socket ID for notifications
+    userNotificationMap.set(username, socket.id)
+    console.log(`Notification handler connected: ${username} with socket ID ${socket.id}`)
+
+    socket.on('disconnect', () => {
+      // Remove the username from the notification map upon disconnection
+      userNotificationMap.delete(username)
+      console.log(`Notification handler disconnected: ${username}`)
+    })
   }
 }
 
@@ -74,7 +90,10 @@ const socketConfig = (server) => {
   let userRoomMap = {}
 
   io.use(authenticateSocket)
-  io.on('connection', (socket) => handleConnection(socket, io, userRoomMap))
+  io.on('connection', (socket) => {
+    handleConnection(socket, io, userRoomMap)
+    handleNotificationConnection(socket)
+  })
 
   return io
 }
