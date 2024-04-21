@@ -1,39 +1,49 @@
 let pageNumber = 1
-async function fetchMessages() {
-  const searchInput = document.getElementById('search-input-private').value.trim()
-  // Assuming the first page. Adjust as needed.
-  ++pageNumber
-  // Encoding URI components to ensure special characters in the searchInput do not break the URL
-  const encodedSearchInput = encodeURIComponent(searchInput)
 
-  const sender = localStorage.getItem('username') // Assuming sender's username is stored in localStorage
-  const receiver = localStorage.getItem('receiver') // Adjust according to your application's logic
-  const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(
-    sender,
-  )}/${encodeURIComponent(receiver)}`
+function incrementPageNumber() {
+  pageNumber++
+}
+
+function getEncodedValues() {
+  const searchInput = document.getElementById('search-input-private').value.trim()
+  const encodedSearchInput = encodeURIComponent(searchInput)
+  const sender = encodeURIComponent(localStorage.getItem('username'))
+  const receiver = encodeURIComponent(localStorage.getItem('receiver'))
+
+  return { encodedSearchInput, sender, receiver }
+}
+
+function constructSearchURL({ encodedSearchInput, sender, receiver }) {
+  return `/search/privateMessage/${encodedSearchInput}/${pageNumber}/${sender}/${receiver}`
+}
+
+async function fetchMessages() {
+  incrementPageNumber()
+  const { encodedSearchInput, sender, receiver } = getEncodedValues()
+  const searchURL = constructSearchURL({ encodedSearchInput, sender, receiver })
 
   try {
     const response = await fetch(searchURL, {
       method: 'GET',
-      headers: {
-        Accept: 'application/json', // Expecting a JSON response
-      },
+      headers: { Accept: 'application/json' },
     })
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.statusText}`)
     }
 
-    const result = await response.json()
-    const messages = result.data.results
-    messages.forEach((message) => {
-      renderMSG(message)
-    })
+    const messages = await response.json()
+    displayMessages(messages.data.results)
   } catch (error) {
     console.error('Failed to fetch:', error.message)
     // Optionally, update the UI to notify the user that the search failed
   }
 }
+
+function displayMessages(messages) {
+  messages.forEach(renderMSG)
+}
+
 const socket = io('http://localhost:3000', {
   query: {
     token: localStorage.getItem('token'),
@@ -459,37 +469,28 @@ function openChatModal(username) {
   const chatModal = document.getElementById('chat-modal')
   chatModal.style.display = 'block'
 
-  // Placeholder for loading message history
-  // Implement fetching message history here and display in #message-container
-
   document.getElementById('close-chat').addEventListener('click', function () {
     socket.off(roomName)
     updateChatStatus(localStorage.getItem('username'), receiver, 'leave')
     chatModal.style.display = 'none'
     const messagesContainer = chatModal.querySelector('.messages')
-    messagesContainer.innerHTML = '' // This line clears the chat messages
+    messagesContainer.innerHTML = ''
   })
-
-  // document.getElementById('send-message').addEventListener('click', function() {
-  //     // Implement sending message functionality here
-  // });
 }
 
 function renderMSG(message) {
-  let chatModal = document.getElementById('chat-modal') // Ensure this ID matches your chat modal
-  let msgContainer = chatModal.querySelector('.messages') // Select the messages container within the chat modal
+  let chatModal = document.getElementById('chat-modal')
+  let msgContainer = chatModal.querySelector('.messages')
 
   let messageElement = document.createElement('div')
   messageElement.classList.add('message')
 
-  // Format the timestamp
   let formattedTimestamp = new Date(message.timestamp).toLocaleString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
   })
 
-  // Construct the message header
   let messageHeader = document.createElement('div')
   messageHeader.classList.add('message-header')
 
@@ -501,35 +502,28 @@ function renderMSG(message) {
   timestampElement.classList.add('timestamp')
   timestampElement.textContent = formattedTimestamp
 
-  // Append sender and status to the header
   messageHeader.appendChild(senderElement)
-  // messageHeader.appendChild(statusElement);
   messageHeader.appendChild(timestampElement)
 
-  // Construct the message body
   let messageBody = document.createElement('div')
   messageBody.textContent = message.content
 
-  // Append the header and body to the message element
   messageElement.appendChild(messageHeader)
   messageElement.appendChild(messageBody)
 
-  // Append the message element to the container
   msgContainer.appendChild(messageElement)
 
-  // Ensure the container scrolls to show the newest message
   msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
 }
 
 function renderStatusHistory(message, mode, containerId) {
-  let parentContainer = document.getElementById(containerId) // Get the container by ID
+  let parentContainer = document.getElementById(containerId)
   let msgContainer
 
-  // Determine where to append the message based on the mode or container
   if (mode === 'chat') {
-    msgContainer = parentContainer.querySelector('.messages') // For chat modal
+    msgContainer = parentContainer.querySelector('.messages')
   } else if (mode === 'notification') {
-    msgContainer = parentContainer.querySelector('.status-history') // For notification section
+    msgContainer = parentContainer.querySelector('.status-history')
     console.log('msgContainer', msgContainer)
   } else {
     console.error('Invalid mode or containerId provided')
@@ -539,7 +533,6 @@ function renderStatusHistory(message, mode, containerId) {
   let messageElement = document.createElement('div')
   messageElement.classList.add('message')
 
-  // Format the timestamp
   let formattedTimestamp = new Date(message.date).toLocaleString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
@@ -549,7 +542,6 @@ function renderStatusHistory(message, mode, containerId) {
     year: 'numeric',
   })
 
-  // Construct the message header
   let messageHeader = document.createElement('div')
   messageHeader.classList.add('message-header')
 
@@ -557,16 +549,12 @@ function renderStatusHistory(message, mode, containerId) {
   senderElement.classList.add('sender')
   senderElement.textContent = message.status + ' (' + formattedTimestamp + ')'
 
-  // Append sender and status to the header
   messageHeader.appendChild(senderElement)
 
-  // Append the header and body to the message element
   messageElement.appendChild(messageHeader)
 
-  // Append the message element to the container
   msgContainer.appendChild(messageElement)
 
-  // Ensure the container scrolls to show the newest message, if applicable
   if (msgContainer.scrollTop !== undefined) {
     msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
   }
