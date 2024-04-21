@@ -1,4 +1,4 @@
-import {findAllAnnouncements} from '../models/Announcements.js';
+import {findAllAnnouncements} from '../../models/Announcements.js';
 import SearchStrategy from './searchStrategyInterface.js';
 
 class announcementSearch extends SearchStrategy {

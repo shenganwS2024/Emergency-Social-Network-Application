@@ -1,6 +1,6 @@
 import SearchStrategy from './searchStrategyInterface.js'
-import {findMessages} from '../models/Messages.js';
-import {findStatuses} from '../models/Users.js';
+import {findMessages} from '../../models/Messages.js';
+import {findStatuses} from '../../models/Users.js';
 
 class privateMessageSearch extends SearchStrategy {
     async search(criteria, sender = null, receiver = null) {
