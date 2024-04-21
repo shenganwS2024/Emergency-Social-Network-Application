@@ -25,7 +25,6 @@ async function getLatestAnnouncements(req, res) {
                 ret = []; // or any other fallback logic you prefer
             }
         }
-        console.log("anything ", ret)
         
         res.status(200).json({data:{announcements: ret}});
         

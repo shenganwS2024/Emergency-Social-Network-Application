@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
     default: [{ status: 'undefined', date: new Date() }],
     validate: [arrayLimit, '{PATH} exceeds the limit of 10']
   },
-  role: String,
+  activeness: { type: Boolean, default: true },
+  privilege: { type: String, default: "Citizen" },
   acknowledged: { type: Boolean, default: false },
   chatChecked: { type: Map, of: Boolean },
   address: String,
@@ -68,4 +69,27 @@ async function findStatuses(username) {
   }
 }
 
-export { findAllUsers, Users, findStatuses };
+async function privilegeChangeCheck(username, privilege) {
+  try {
+    const user = await Users.findOne({ username });
+    if (!user) {
+      throw new Error(`User ${username} not found.`);
+    }
+    //check if the user is the last admin in the system
+    if (user.privilege === 'Administrator' && privilege !== 'Administrator') {
+      // Count how many administrators are currently in the system
+      const adminCount = await Users.countDocuments({ privilege: 'Administrator' });
+      if (adminCount === 1) { // Check if this user is the last administrator
+        console.log('Cannot change privilege: User is the last administrator.');
+        return false; // Return false, indicating the privilege cannot be changed
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in privilege change checking:", error);
+    throw error;
+  }
+}
+
+export { findAllUsers, Users, findStatuses, privilegeChangeCheck };

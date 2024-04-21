@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { MultipleChoicesQuestions } from '../models/MultipleChoicesQuestions.js';
 import { TrueFalseQuestions } from '../models/TrueFalseQuestions.js';
 import { ShortAnswerQuestions } from '../models/ShortAnswerQuestions.js';
+import { Users} from '../models/Users.js';
 
 class DBConnection {
   static instance = null;
@@ -37,6 +38,7 @@ class DBConnection {
           await mongoose.connect(dbUri, {});
           console.log(`MongoDB connected successfully to ${dbUri}`);
           await this.initializeQuestionsDatabase();
+          await this.initializeUsersDatabase();
       } catch (error) {
           console.error('MongoDB connection failed:', error.message);
           process.exit(1);
@@ -70,6 +72,29 @@ class DBConnection {
       }
     } catch (error) {
       console.error('Error initializing the questions database:', error);
+    }
+  }
+
+  async initializeUsersDatabase() {
+    try {
+      const adminExists = await Users.findOne({ username: "ESNAdmin" });
+      if (!adminExists) {
+        // If not exists, create a new admin user
+        const adminUser = new Users({
+          username: "ESNAdmin",
+          password: "admin", // Hash the password before saving
+          privilege: "Administrator",
+          status: [{ status: 'OK', date: new Date() }],
+          activeness: true
+        });
+
+        // Save the new admin user
+        await adminUser.save();
+        console.log("Admin user 'ESNAdmin' added to the database.");
+      }
+      
+    } catch (error) {
+      console.error('Error initializing the Users database:', error);
     }
   }
 }
