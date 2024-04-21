@@ -1,4 +1,5 @@
 import getStrategy from '../searchStrategies/searchIndex.js'
+import {Users} from '../models/Users.js'
 import stop_words from '../config/stopWords.json' assert { type: 'json' };
 
 
@@ -17,14 +18,26 @@ function validateCriteria(criteria) {
         const { criteria, context, pageNumber, sender, receiver } = extractParameters(req);
         const searchResults = await getStrategy(context, criteria, sender, receiver);
         const validatedCriteria = validateCriteria(criteria);
-        
-        let results = prepareResults(searchResults, pageNumber, validatedCriteria);
-        console.log("Results", results, pageNumber);
-        
+
+        // Retrieve all usernames from searchResults
+        const usernames = searchResults.map(item => item.username);
+        // Fetch activeness status for these users in one query
+        const activeUsers = await Users.find({
+            username: { $in: usernames },
+            activeness: true
+        }).select('username -_id');  // We only need the username field
+
+        // Convert activeUsers to a set for quick lookup
+        const activeUsernames = new Set(activeUsers.map(user => user.username));
+
+        // Filter results to include only those with an active username
+        let results = searchResults.filter(item => activeUsernames.has(item.username));
+        results = prepareResults(results, pageNumber, validatedCriteria);  // Apply any additional preparation based on pagination and criteria validation
+
         res.status(200).json({ data: { results } });
     } catch (error) {
         console.error('Error getting search results:', error);
-        res.status(500).send('Error search results');
+        res.status(500).send('Error getting search results');
     }
 }
 

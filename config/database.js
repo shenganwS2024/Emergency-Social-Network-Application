@@ -84,7 +84,7 @@ class DBConnection {
           username: "ESNAdmin",
           password: "admin", // Hash the password before saving
           privilege: "Administrator",
-          status: [{ status: 'OK', date: new Date() }],
+          status: [{ status: 'ok', date: new Date() }],
           activeness: true
         });
 
