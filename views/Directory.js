@@ -477,41 +477,61 @@ function openChatModal(username) {
 }
 
 function renderMSG(message) {
-  let chatModal = document.getElementById('chat-modal')
-  let msgContainer = chatModal.querySelector('.messages')
+  const chatModal = document.getElementById('chat-modal')
+  const msgContainer = chatModal.querySelector('.messages')
 
-  let messageElement = document.createElement('div')
+  const messageElement = createMessageElement(message)
+  msgContainer.appendChild(messageElement)
+  scrollToBottom(msgContainer)
+}
+
+function createMessageElement(message) {
+  const messageElement = document.createElement('div')
   messageElement.classList.add('message')
+  messageElement.appendChild(createMessageHeader(message))
+  messageElement.appendChild(createMessageBody(message.content))
+  return messageElement
+}
 
-  let formattedTimestamp = new Date(message.timestamp).toLocaleString('en-US', {
+function createMessageHeader(message) {
+  const messageHeader = document.createElement('div')
+  messageHeader.classList.add('message-header')
+
+  const senderElement = createSenderElement(message)
+  const timestampElement = createTimestampElement(message.timestamp)
+
+  messageHeader.appendChild(senderElement)
+  messageHeader.appendChild(timestampElement)
+  return messageHeader
+}
+
+function createSenderElement(message) {
+  const senderElement = document.createElement('span')
+  senderElement.classList.add('sender')
+  senderElement.textContent = message.username + ' (' + message.status + ')'
+  return senderElement
+}
+
+function createTimestampElement(timestamp) {
+  const formattedTimestamp = new Date(timestamp).toLocaleString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
   })
-
-  let messageHeader = document.createElement('div')
-  messageHeader.classList.add('message-header')
-
-  let senderElement = document.createElement('span')
-  senderElement.classList.add('sender')
-  senderElement.textContent = message.username + ' (' + message.status + ')'
-
-  let timestampElement = document.createElement('span')
+  const timestampElement = document.createElement('span')
   timestampElement.classList.add('timestamp')
   timestampElement.textContent = formattedTimestamp
+  return timestampElement
+}
 
-  messageHeader.appendChild(senderElement)
-  messageHeader.appendChild(timestampElement)
+function createMessageBody(content) {
+  const messageBody = document.createElement('div')
+  messageBody.textContent = content
+  return messageBody
+}
 
-  let messageBody = document.createElement('div')
-  messageBody.textContent = message.content
-
-  messageElement.appendChild(messageHeader)
-  messageElement.appendChild(messageBody)
-
-  msgContainer.appendChild(messageElement)
-
-  msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+function scrollToBottom(container) {
+  container.scrollTop = container.scrollHeight - container.clientHeight
 }
 
 function renderStatusHistory(message, mode, containerId) {
@@ -560,23 +580,37 @@ function renderStatusHistory(message, mode, containerId) {
 
 function getUserStatus(username) {
   return new Promise((resolve, reject) => {
-    fetch(`/status/${username}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Status got successfully:', data.data.status)
-        resolve(data.data.status)
-      })
-      .catch((error) => {
-        console.error('Error getting status:', error)
-        reject(error)
-      })
+    fetchStatus(username).then(handleStatusResponse(resolve, reject)).catch(handleStatusError(reject))
   })
 }
+
+function fetchStatus(username) {
+  return fetch(`/status/${username}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => response.json())
+}
+
+function handleStatusResponse(resolve, reject) {
+  return (data) => {
+    if (data && data.data && data.data.status) {
+      console.log('Status got successfully:', data.data.status)
+      resolve(data.data.status)
+    } else {
+      reject(new Error('Invalid data structure'))
+    }
+  }
+}
+
+function handleStatusError(reject) {
+  return (error) => {
+    console.error('Error getting status:', error)
+    reject(error)
+  }
+}
+
 const shareStatusButton = document.getElementById('share-status')
 const statusModal = document.getElementById('status-modal')
 const statusOptions = document.getElementsByClassName('status-option')
