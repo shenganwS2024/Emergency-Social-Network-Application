@@ -398,41 +398,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 function displayUsers(users, currentUser) {
   const userList = document.getElementById('userList')
   userList.innerHTML = '' // Clear existing list
+  sortUsers(users)
+  users.forEach((user) => {
+    const userElement = createUserElement(user, currentUser)
+    addUserAlertIcon(user, currentUser, userElement)
+    addUserClickListener(user, userElement)
+    userList.appendChild(userElement)
+  })
+}
 
-  // Sort users first by online status (online users first), then alphabetically
+function sortUsers(users) {
   users.sort((a, b) => {
     if (a.onlineStatus === b.onlineStatus) {
       return a.username.localeCompare(b.username) // Sort alphabetically if online status is the same
     }
     return b.onlineStatus ? 1 : -1 // Sort by online status, online users first
   })
+}
 
-  users.forEach((user) => {
-    const userElement = document.createElement('li')
-    userElement.textContent = `${user.username} (${user.status})`
-    userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
-    const roomName = [currentUser.username, user.username].sort().join('_')
-    const alertIcon = document.createElement('span') // Use an appropriate icon or emoji
+function createUserElement(user, currentUser) {
+  const userElement = document.createElement('li')
+  userElement.textContent = `${user.username} (${user.status})`
+  userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
+  return userElement
+}
 
-    if (
-      currentUser.chatChecked &&
-      currentUser.chatChecked[roomName] !== undefined &&
-      !currentUser.chatChecked[roomName]
-    ) {
-      alertIcon.textContent = '🚨' // Example using an emoji
-      alertIcon.style.color = 'red' // Style as needed
-      alertIcon.style.marginLeft = '5px' // Add some space between the username and the alert icon
-      userElement.appendChild(alertIcon)
-    }
+function addUserAlertIcon(user, currentUser, userElement) {
+  const roomName = [currentUser.username, user.username].sort().join('_')
+  if (currentUser.chatChecked && currentUser.chatChecked[roomName] === false) {
+    const alertIcon = document.createElement('span')
+    alertIcon.textContent = '🚨'
+    alertIcon.style.color = 'red'
+    alertIcon.style.marginLeft = '5px'
+    userElement.appendChild(alertIcon)
+  }
+}
 
-    // Add click event listener to each user for opening the chat modal
-    userElement.addEventListener('click', function () {
-      updateChatStatus(localStorage.getItem('username'), user.username, 'join')
-
-      openChatModal(user.username)
-    })
-
-    userList.appendChild(userElement)
+function addUserClickListener(user, userElement) {
+  userElement.addEventListener('click', () => {
+    updateChatStatus(localStorage.getItem('username'), user.username, 'join')
+    openChatModal(user.username)
   })
 }
 
@@ -605,41 +610,45 @@ const trainExerciseButton = document.getElementById('train-exercise')
 trainExerciseButton.addEventListener('click', function () {
   window.location.href = 'TrainExercise.html'
 })
-
 function logout() {
-  const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
+  const userId = getUserID()
+  const logoutData = createLogoutData(userId)
 
-  // Data to be sent in the request
-  const data = {
+  postLogoutRequest(logoutData).then(handleLogoutResponse).catch(handleLogoutError).finally(cleanupAfterLogout)
+}
+
+function getUserID() {
+  return localStorage.getItem('userID')
+}
+
+function createLogoutData(userId) {
+  return {
     id: userId,
     status: false,
   }
+}
 
-  // Send a POST request to the server
-  fetch('/logout', {
-    method: 'POST', // or 'PUT' if updating the status
+function postLogoutRequest(data) {
+  return fetch('/logout', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // Add any other headers your server requires, such as authentication tokens
     },
-    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-  })
-    .then((response) => response.json()) // Parse the JSON response
-    .then((data) => {
-      console.log('Success:', data)
-      // Here you can also trigger any additional logout logic, like redirecting the user
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-    })
-    .finally(() => {
-      // Remove the token from localStorage
-      localStorage.removeItem('token')
+    body: JSON.stringify(data),
+  }).then((response) => response.json())
+}
 
-      // Optionally, redirect the user to the login page or home page
-      window.location.href = '/'
-    })
-  //window.location.href = '/'
+function handleLogoutResponse(data) {
+  console.log('Success:', data)
+}
+
+function handleLogoutError(error) {
+  console.error('Error:', error)
+}
+
+function cleanupAfterLogout() {
+  localStorage.removeItem('token')
+  window.location.href = '/'
 }
 
 function updateUserStatus(status) {
