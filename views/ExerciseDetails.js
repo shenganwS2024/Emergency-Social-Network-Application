@@ -2,7 +2,7 @@ const urlParams = new URLSearchParams(window.location.search)
 const exerciseId = urlParams.get('id')
 let exerciseDetails = null
 
-const socket = io('https://s24esnb2.onrender.com/', {
+const socket = io('https://s24esnb2.onrender.com', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -199,57 +199,101 @@ function submitQuiz() {
   const formData = new FormData(quizForm)
   const quizResults = document.getElementById('quizResults')
 
-  quizResults.innerHTML = ''
+  clearResults(quizResults)
+  processQuizQuestions(formData, quizResults)
+  scrollToResults(quizResults)
+}
 
+function clearResults(element) {
+  element.innerHTML = ''
+}
+
+function processQuizQuestions(formData, resultsContainer) {
   if (exerciseDetails) {
     exerciseDetails.quizQuestions.forEach((question, index) => {
-      const userAnswer = formData.get(`answer${index}`).trim().toLowerCase()
-      const resultElement = document.getElementById(`result${index}`)
-
-      if (userAnswer === question.answer.toLowerCase()) {
-        resultElement.innerHTML = `Correct! Your answer: ${userAnswer}`
-        resultElement.classList.add('correct')
-        resultElement.classList.remove('incorrect')
-      } else {
-        resultElement.innerHTML = `Incorrect. Your answer: ${userAnswer}. Correct answer: ${question.answer}`
-        resultElement.classList.add('incorrect')
-        resultElement.classList.remove('correct')
-      }
+      const userAnswer = getUserAnswer(formData, index)
+      const isCorrect = checkAnswer(userAnswer, question.answer)
+      displayResult(isCorrect, userAnswer, question, resultsContainer, index)
     })
   }
+}
 
-  quizResults.scrollIntoView({ behavior: 'smooth' })
+function getUserAnswer(formData, index) {
+  return formData.get(`answer${index}`).trim().toLowerCase()
+}
+
+function checkAnswer(userAnswer, correctAnswer) {
+  return userAnswer === correctAnswer.toLowerCase()
+}
+
+function displayResult(isCorrect, userAnswer, question, container, index) {
+  const resultElement = document.getElementById(`result${index}`)
+  if (isCorrect) {
+    resultElement.innerHTML = `Correct! Your answer: ${userAnswer}`
+    resultElement.classList.add('correct')
+    resultElement.classList.remove('incorrect')
+  } else {
+    resultElement.innerHTML = `Incorrect. Your answer: ${userAnswer}. Correct answer: ${question.answer}`
+    resultElement.classList.add('incorrect')
+    resultElement.classList.remove('correct')
+  }
+}
+
+function scrollToResults(element) {
+  element.scrollIntoView({ behavior: 'smooth' })
 }
 
 async function submitComment() {
-  const commentContent = document.getElementById('commentInput').value.trim()
+  const commentContent = getCommentContent()
+
   if (commentContent === '') {
     alert('Please enter a comment.')
     return
   }
-  const commentData = {
+
+  const commentData = createCommentData(commentContent)
+
+  try {
+    await postComment(commentData)
+    clearCommentInput()
+  } catch (error) {
+    handleCommentError(error)
+  }
+}
+
+function getCommentContent() {
+  return document.getElementById('commentInput').value.trim()
+}
+
+function createCommentData(commentContent) {
+  return {
     author: localStorage.getItem('username'),
     content: commentContent,
     timestamp: new Date(),
   }
+}
 
-  try {
-    const response = await fetch(`/exercises/${exerciseId}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(commentData),
-    })
+async function postComment(commentData) {
+  const response = await fetch(`/exercises/${exerciseId}/comments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(commentData),
+  })
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    document.getElementById('commentInput').value = ''
-  } catch (error) {
-    console.error('Error submitting comment:', error)
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
   }
+  return response
+}
+
+function clearCommentInput() {
+  document.getElementById('commentInput').value = ''
+}
+
+function handleCommentError(error) {
+  console.error('Error submitting comment:', error)
 }
 
 socket.on('new comment', (updatedExercise) => {

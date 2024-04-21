@@ -1,40 +1,50 @@
 let pageNumber = 1
-async function fetchMessages() {
-  const searchInput = document.getElementById('search-input-private').value.trim()
-  // Assuming the first page. Adjust as needed.
-  ++pageNumber
-  // Encoding URI components to ensure special characters in the searchInput do not break the URL
-  const encodedSearchInput = encodeURIComponent(searchInput)
 
-  const sender = localStorage.getItem('username') // Assuming sender's username is stored in localStorage
-  const receiver = localStorage.getItem('receiver') // Adjust according to your application's logic
-  const searchURL = `/search/privateMessage/${encodedSearchInput}/${pageNumber.toString()}/${encodeURIComponent(
-    sender,
-  )}/${encodeURIComponent(receiver)}`
+function incrementPageNumber() {
+  pageNumber++
+}
+
+function getEncodedValues() {
+  const searchInput = document.getElementById('search-input-private').value.trim()
+  const encodedSearchInput = encodeURIComponent(searchInput)
+  const sender = encodeURIComponent(localStorage.getItem('username'))
+  const receiver = encodeURIComponent(localStorage.getItem('receiver'))
+
+  return { encodedSearchInput, sender, receiver }
+}
+
+function constructSearchURL({ encodedSearchInput, sender, receiver }) {
+  return `/search/privateMessage/${encodedSearchInput}/${pageNumber}/${sender}/${receiver}`
+}
+
+async function fetchMessages() {
+  incrementPageNumber()
+  const { encodedSearchInput, sender, receiver } = getEncodedValues()
+  const searchURL = constructSearchURL({ encodedSearchInput, sender, receiver })
 
   try {
     const response = await fetch(searchURL, {
       method: 'GET',
-      headers: {
-        Accept: 'application/json', // Expecting a JSON response
-      },
+      headers: { Accept: 'application/json' },
     })
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.statusText}`)
     }
 
-    const result = await response.json()
-    const messages = result.data.results
-    messages.forEach((message) => {
-      renderMSG(message)
-    })
+    const messages = await response.json()
+    displayMessages(messages.data.results)
   } catch (error) {
     console.error('Failed to fetch:', error.message)
     // Optionally, update the UI to notify the user that the search failed
   }
 }
-const socket = io('https://s24esnb2.onrender.com/', {
+
+function displayMessages(messages) {
+  messages.forEach(renderMSG)
+}
+
+const socket = io('https://s24esnb2.onrender.com', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -118,13 +128,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Get the <span> element that closes the notification
   var span = document.getElementsByClassName('close')[0]
 
-  // When the user clicks the button, open the notification
-  // You need to trigger this somehow, for example, by an event or directly calling showNotification()
-  // function showNotification() {
-  //     notification.style.display = "block";
-  // }
-
-  // When the user clicks on <span> (x), close the notification
   span.onclick = function () {
     notification.style.display = 'none'
   }
@@ -388,41 +391,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 function displayUsers(users, currentUser) {
   const userList = document.getElementById('userList')
   userList.innerHTML = '' // Clear existing list
+  sortUsers(users)
+  users.forEach((user) => {
+    const userElement = createUserElement(user, currentUser)
+    addUserAlertIcon(user, currentUser, userElement)
+    addUserClickListener(user, userElement)
+    userList.appendChild(userElement)
+  })
+}
 
-  // Sort users first by online status (online users first), then alphabetically
+function sortUsers(users) {
   users.sort((a, b) => {
     if (a.onlineStatus === b.onlineStatus) {
       return a.username.localeCompare(b.username) // Sort alphabetically if online status is the same
     }
     return b.onlineStatus ? 1 : -1 // Sort by online status, online users first
   })
+}
 
-  users.forEach((user) => {
-    const userElement = document.createElement('li')
-    userElement.textContent = `${user.username} (${user.status})`
-    userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
-    const roomName = [currentUser.username, user.username].sort().join('_')
-    const alertIcon = document.createElement('span') // Use an appropriate icon or emoji
+function createUserElement(user, currentUser) {
+  const userElement = document.createElement('li')
+  userElement.textContent = `${user.username} (${user.status})`
+  userElement.classList.add('user', user.onlineStatus ? 'online' : 'offline')
+  return userElement
+}
 
-    if (
-      currentUser.chatChecked &&
-      currentUser.chatChecked[roomName] !== undefined &&
-      !currentUser.chatChecked[roomName]
-    ) {
-      alertIcon.textContent = '🚨' // Example using an emoji
-      alertIcon.style.color = 'red' // Style as needed
-      alertIcon.style.marginLeft = '5px' // Add some space between the username and the alert icon
-      userElement.appendChild(alertIcon)
-    }
+function addUserAlertIcon(user, currentUser, userElement) {
+  const roomName = [currentUser.username, user.username].sort().join('_')
+  if (currentUser.chatChecked && currentUser.chatChecked[roomName] === false) {
+    const alertIcon = document.createElement('span')
+    alertIcon.textContent = '🚨'
+    alertIcon.style.color = 'red'
+    alertIcon.style.marginLeft = '5px'
+    userElement.appendChild(alertIcon)
+  }
+}
 
-    // Add click event listener to each user for opening the chat modal
-    userElement.addEventListener('click', function () {
-      updateChatStatus(localStorage.getItem('username'), user.username, 'join')
-
-      openChatModal(user.username)
-    })
-
-    userList.appendChild(userElement)
+function addUserClickListener(user, userElement) {
+  userElement.addEventListener('click', () => {
+    updateChatStatus(localStorage.getItem('username'), user.username, 'join')
+    openChatModal(user.username)
   })
 }
 
@@ -459,77 +467,81 @@ function openChatModal(username) {
   const chatModal = document.getElementById('chat-modal')
   chatModal.style.display = 'block'
 
-  // Placeholder for loading message history
-  // Implement fetching message history here and display in #message-container
-
   document.getElementById('close-chat').addEventListener('click', function () {
     socket.off(roomName)
     updateChatStatus(localStorage.getItem('username'), receiver, 'leave')
     chatModal.style.display = 'none'
     const messagesContainer = chatModal.querySelector('.messages')
-    messagesContainer.innerHTML = '' // This line clears the chat messages
+    messagesContainer.innerHTML = ''
   })
-
-  // document.getElementById('send-message').addEventListener('click', function() {
-  //     // Implement sending message functionality here
-  // });
 }
 
 function renderMSG(message) {
-  let chatModal = document.getElementById('chat-modal') // Ensure this ID matches your chat modal
-  let msgContainer = chatModal.querySelector('.messages') // Select the messages container within the chat modal
+  const chatModal = document.getElementById('chat-modal')
+  const msgContainer = chatModal.querySelector('.messages')
 
-  let messageElement = document.createElement('div')
+  const messageElement = createMessageElement(message)
+  msgContainer.appendChild(messageElement)
+  scrollToBottom(msgContainer)
+}
+
+function createMessageElement(message) {
+  const messageElement = document.createElement('div')
   messageElement.classList.add('message')
+  messageElement.appendChild(createMessageHeader(message))
+  messageElement.appendChild(createMessageBody(message.content))
+  return messageElement
+}
 
-  // Format the timestamp
-  let formattedTimestamp = new Date(message.timestamp).toLocaleString('en-US', {
+function createMessageHeader(message) {
+  const messageHeader = document.createElement('div')
+  messageHeader.classList.add('message-header')
+
+  const senderElement = createSenderElement(message)
+  const timestampElement = createTimestampElement(message.timestamp)
+
+  messageHeader.appendChild(senderElement)
+  messageHeader.appendChild(timestampElement)
+  return messageHeader
+}
+
+function createSenderElement(message) {
+  const senderElement = document.createElement('span')
+  senderElement.classList.add('sender')
+  senderElement.textContent = message.username + ' (' + message.status + ')'
+  return senderElement
+}
+
+function createTimestampElement(timestamp) {
+  const formattedTimestamp = new Date(timestamp).toLocaleString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
   })
-
-  // Construct the message header
-  let messageHeader = document.createElement('div')
-  messageHeader.classList.add('message-header')
-
-  let senderElement = document.createElement('span')
-  senderElement.classList.add('sender')
-  senderElement.textContent = message.username + ' (' + message.status + ')'
-
-  let timestampElement = document.createElement('span')
+  const timestampElement = document.createElement('span')
   timestampElement.classList.add('timestamp')
   timestampElement.textContent = formattedTimestamp
+  return timestampElement
+}
 
-  // Append sender and status to the header
-  messageHeader.appendChild(senderElement)
-  // messageHeader.appendChild(statusElement);
-  messageHeader.appendChild(timestampElement)
+function createMessageBody(content) {
+  const messageBody = document.createElement('div')
+  messageBody.textContent = content
+  return messageBody
+}
 
-  // Construct the message body
-  let messageBody = document.createElement('div')
-  messageBody.textContent = message.content
-
-  // Append the header and body to the message element
-  messageElement.appendChild(messageHeader)
-  messageElement.appendChild(messageBody)
-
-  // Append the message element to the container
-  msgContainer.appendChild(messageElement)
-
-  // Ensure the container scrolls to show the newest message
-  msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
+function scrollToBottom(container) {
+  container.scrollTop = container.scrollHeight - container.clientHeight
 }
 
 function renderStatusHistory(message, mode, containerId) {
-  let parentContainer = document.getElementById(containerId) // Get the container by ID
+  let parentContainer = document.getElementById(containerId)
   let msgContainer
 
-  // Determine where to append the message based on the mode or container
   if (mode === 'chat') {
-    msgContainer = parentContainer.querySelector('.messages') // For chat modal
+    msgContainer = parentContainer.querySelector('.messages')
   } else if (mode === 'notification') {
-    msgContainer = parentContainer.querySelector('.status-history') // For notification section
+    msgContainer = parentContainer.querySelector('.status-history')
     console.log('msgContainer', msgContainer)
   } else {
     console.error('Invalid mode or containerId provided')
@@ -539,7 +551,6 @@ function renderStatusHistory(message, mode, containerId) {
   let messageElement = document.createElement('div')
   messageElement.classList.add('message')
 
-  // Format the timestamp
   let formattedTimestamp = new Date(message.date).toLocaleString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
@@ -549,7 +560,6 @@ function renderStatusHistory(message, mode, containerId) {
     year: 'numeric',
   })
 
-  // Construct the message header
   let messageHeader = document.createElement('div')
   messageHeader.classList.add('message-header')
 
@@ -557,16 +567,12 @@ function renderStatusHistory(message, mode, containerId) {
   senderElement.classList.add('sender')
   senderElement.textContent = message.status + ' (' + formattedTimestamp + ')'
 
-  // Append sender and status to the header
   messageHeader.appendChild(senderElement)
 
-  // Append the header and body to the message element
   messageElement.appendChild(messageHeader)
 
-  // Append the message element to the container
   msgContainer.appendChild(messageElement)
 
-  // Ensure the container scrolls to show the newest message, if applicable
   if (msgContainer.scrollTop !== undefined) {
     msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
   }
@@ -574,23 +580,37 @@ function renderStatusHistory(message, mode, containerId) {
 
 function getUserStatus(username) {
   return new Promise((resolve, reject) => {
-    fetch(`/status/${username}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Status got successfully:', data.data.status)
-        resolve(data.data.status)
-      })
-      .catch((error) => {
-        console.error('Error getting status:', error)
-        reject(error)
-      })
+    fetchStatus(username).then(handleStatusResponse(resolve, reject)).catch(handleStatusError(reject))
   })
 }
+
+function fetchStatus(username) {
+  return fetch(`/status/${username}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => response.json())
+}
+
+function handleStatusResponse(resolve, reject) {
+  return (data) => {
+    if (data && data.data && data.data.status) {
+      console.log('Status got successfully:', data.data.status)
+      resolve(data.data.status)
+    } else {
+      reject(new Error('Invalid data structure'))
+    }
+  }
+}
+
+function handleStatusError(reject) {
+  return (error) => {
+    console.error('Error getting status:', error)
+    reject(error)
+  }
+}
+
 const shareStatusButton = document.getElementById('share-status')
 const statusModal = document.getElementById('status-modal')
 const statusOptions = document.getElementsByClassName('status-option')
@@ -617,41 +637,45 @@ const trainExerciseButton = document.getElementById('train-exercise')
 trainExerciseButton.addEventListener('click', function () {
   window.location.href = 'TrainExercise.html'
 })
-
 function logout() {
-  const userId = localStorage.getItem('userID') // Implement this function based on your app's logic
+  const userId = getUserID()
+  const logoutData = createLogoutData(userId)
 
-  // Data to be sent in the request
-  const data = {
+  postLogoutRequest(logoutData).then(handleLogoutResponse).catch(handleLogoutError).finally(cleanupAfterLogout)
+}
+
+function getUserID() {
+  return localStorage.getItem('userID')
+}
+
+function createLogoutData(userId) {
+  return {
     id: userId,
     status: false,
   }
+}
 
-  // Send a POST request to the server
-  fetch('/logout', {
-    method: 'POST', // or 'PUT' if updating the status
+function postLogoutRequest(data) {
+  return fetch('/logout', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // Add any other headers your server requires, such as authentication tokens
     },
-    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-  })
-    .then((response) => response.json()) // Parse the JSON response
-    .then((data) => {
-      console.log('Success:', data)
-      // Here you can also trigger any additional logout logic, like redirecting the user
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-    })
-    .finally(() => {
-      // Remove the token from localStorage
-      localStorage.removeItem('token')
+    body: JSON.stringify(data),
+  }).then((response) => response.json())
+}
 
-      // Optionally, redirect the user to the login page or home page
-      window.location.href = '/'
-    })
-  //window.location.href = '/'
+function handleLogoutResponse(data) {
+  console.log('Success:', data)
+}
+
+function handleLogoutError(error) {
+  console.error('Error:', error)
+}
+
+function cleanupAfterLogout() {
+  localStorage.removeItem('token')
+  window.location.href = '/'
 }
 
 function updateUserStatus(status) {

@@ -1,5 +1,5 @@
 // Socket initialization
-const socket = io('https://s24esnb2.onrender.com/', {
+const socket = io('https://s24esnb2.onrender.com', {
   query: {
     token: localStorage.getItem('token'),
   },
