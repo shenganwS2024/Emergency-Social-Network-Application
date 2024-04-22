@@ -390,9 +390,6 @@ async function updateProfile(req, res) {
         return res.status(500).send('Attempt to change the privilege of the last administrator');
       }
     }
-    else {
-      return res.status(500).send('Attempt to update profile with invalid field');
-    }
     await userFound.save();
     res.status(200).send('User profile update successful');
   } catch (error) {
