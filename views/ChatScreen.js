@@ -24,6 +24,15 @@ socket.on('chat message', function (msg) {
   }
 })
 
+socket.on('changeActiveness', function(data) {
+  console.log('Activeness Change Received:', data);
+
+  // Check if the activeness is false
+  if (data.activeness === false) {
+    logout();
+  }
+});
+
 // Initialize chat
 function initializeChat() {
   const username = localStorage.getItem('username')

@@ -174,7 +174,7 @@
       function updateDisplay(user) {
         document.getElementById('username').textContent = user.username || 'No username'
         document.getElementById('privilege').textContent = user.privilege || 'No privilege'
-        document.getElementById('activeness').textContent = user.activeness || 'No status'
+        document.getElementById('activeness').textContent = user.activeness
         document.getElementById('privilegeInput').value = user.privilege || 'Citizen'
         document.getElementById('activenessInput').value = user.activeness.toString() || 'Active'
       }
@@ -237,8 +237,22 @@
               activeness: activeness,
             }
             localStorage.setItem('selectedUser', JSON.stringify(user)) // Update local storage
+            //rename the updated user in the users variable
+            users = users.map((user) => {
+              if (user.username === username) {
+                return {
+                  username: newUsername || username,
+                  privilege: privilege,
+                  activeness: activeness,
+                }
+              }
+              return user
+            })
+            localStorage.setItem('users', JSON.stringify(users)) // Update local storage
             updateDisplay(user) // Update display without reloading
             alert('User profile update successful')
+            document.querySelector('.submit-btn').style.display = 'none' 
+            document.querySelector('.validate-btn').style.display = 'block' 
           } else {
             const result = await response.text()
             alert(result) // Display error message
