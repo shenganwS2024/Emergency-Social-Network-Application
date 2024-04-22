@@ -358,9 +358,16 @@ async function updateProfile(req, res) {
       //update userFound's username and save it to DB
       userFound.username = new_username;
       io.emit('changeUsername', { username: username, new_username: new_username });
+      // Update all messages where the old username was used as the sender
       await Messages.updateMany(
-        { $or: [{ username: username }, { receiver: username }] },
-        { $set: { username: new_username, receiver: new_username } }
+        { username: username },
+        { $set: { username: new_username } }
+      );
+
+      // Update all messages where the old username was used as the receiver
+      await Messages.updateMany(
+        { receiver: username },
+        { $set: { receiver: new_username } }
       );
     }
     else if (password !== undefined ) {
