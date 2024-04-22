@@ -8,6 +8,7 @@ class privateMessageSearch extends SearchStrategy {
             if (criteria === 'status') {
                 let statuses = await findStatuses(receiver);
                 let filteredStatuses = statuses.filter(status => status.status !== 'undefined');
+                console.log(filteredStatuses);
                 return filteredStatuses;
             }
 

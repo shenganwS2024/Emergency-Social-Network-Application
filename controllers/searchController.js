@@ -33,7 +33,9 @@ function validateCriteria(criteria) {
         // Filter results to include only those with an active username
         let results = searchResults.filter(item => activeUsernames.has(item.username));
         results = prepareResults(results, pageNumber, validatedCriteria);  // Apply any additional preparation based on pagination and criteria validation
-
+        if(criteria === 'status'){
+            results = searchResults;
+        }
         res.status(200).json({ data: { results } });
     } catch (error) {
         console.error('Error getting search results:', error);

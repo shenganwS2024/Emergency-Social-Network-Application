@@ -39,7 +39,7 @@ async function fetchMessages() {
     // Optionally, update the UI to notify the user that the search failed
   }
 }
-const socket = io('https://s24esnb2.onrender.com/', {
+const socket = io('http://localhost:3000', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -200,6 +200,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const result = await response.json()
       const messages = result.data.results
+      console.log('anything' + messages)
+      console.log('result' + result.data.results)
       messages.forEach((message) => {
         renderStatusHistory(message, 'notification', 'myNotification')
       })
@@ -212,11 +214,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   socket.on('emergency', function (user) {
-    console.log('emergency frontend', user.username)
-    console.log('current user primary', currentUser.contact.primary)
     currentUser = JSON.parse(localStorage.getItem('currentUser'))
 
-    if (currentUser.contact.primary.includes(user.username)) {
+    if (user.users.includes(currentUser.username)) {
       localStorage.setItem('emergency', user.username)
       document.querySelector('.notification-header h2').textContent = `${user.username} is in danger!`
       // document.querySelector('.notification-body').textContent = `Status history: ${user.status}`;
