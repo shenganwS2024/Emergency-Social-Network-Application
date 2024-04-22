@@ -389,4 +389,25 @@ async function updateProfile(req, res) {
   }
 }
 
-  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked, updateProfile};
+// add a helper function to call updateProfile in the userController but the user's privilege level is administrator
+async function updateProfileByAdmin(req, res) {
+  try {
+    const username = req.params.username;
+    const userFound = await Users.findOne({ username: username });
+
+    if (userFound.privilege !== 'Administrator') {
+      return res.status(403).send('User does not have the privilege to update profile');
+    }
+    else {
+      updateProfile(req, res);
+    }
+
+  }
+  catch (error) {
+    console.error("update profile error: ", error);
+    res.status(500).send('User profile update server error');
+  }
+
+}
+
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked, updateProfile, updateProfileByAdmin};
