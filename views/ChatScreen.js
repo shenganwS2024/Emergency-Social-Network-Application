@@ -27,8 +27,9 @@ socket.on('chat message', function (msg) {
 socket.on('changeActiveness', function(data) {
   console.log('Activeness Change Received:', data);
 
+  let currentUser = JSON.parse(localStorage.getItem('currentUser'))
   // Check if the activeness is false
-  if (data.activeness === false) {
+  if (data.activeness === false && data.username === currentUser.username) {
     logout();
   }
 });

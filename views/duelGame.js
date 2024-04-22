@@ -226,13 +226,8 @@ async function renderOpponentStatus(opponent, opponentResult = null) {
 }
 
 
-async function renderSystemMessage(num, message) {
-    const messageDiv = document.getElementById('systemMessage');
-    // Clear any existing content
-    messageDiv.innerHTML = '';
-
-    // Create the message in HTML format
-    let challengeHTML = `
+function getDefaultMessage() {
+    return `
         <div class="system-messages">
             <p>Start the duel by clicking "Ready" or flee with dishonor by clicking "Forfeit".</p>
             <p>Please read all the information here and make your decision in 20 seconds.</p>
@@ -240,89 +235,88 @@ async function renderSystemMessage(num, message) {
             <p class="note-messages">And do not refresh your page unless you find your question is not updating correctly</p>
         </div>
     `;
-
-    if (num === -1) {
-        challengeHTML = `
-        <div class="system-messages">
-            <p>Please patiently wait for your opponent. </p>
-        </div>
-    `;
-    }
-    else if (num === 1) {
-        challengeHTML = `
-        <div class="system-messages">
-            <p>First Question: </p>
-            <p>${message}</p>
-        </div>
-    `;
-    }
-    else if (num === 2) {
-        challengeHTML = `
-        <div class="system-messages">
-            <p>Second Question: </p>
-            <p>${message}</p>
-        </div>
-    `;
-    }
-    else if (num === 3) {
-        challengeHTML = `
-        <div class="system-messages">
-            <p>Third Question: </p>
-            <p>${message}</p>
-        </div>
-    `;
-    }
-    else if (num === 4) {
-        //{ isWin: isWin, accuracy: accuracies[playerIndex], mistakes: playerMistakes }
-        if (message.isWin === "win") {
-            challengeHTML = `
-                <div class="system-messages">
-                    <p>Congratulations, you are the winner👑 of this duel! </p>
-                    <p>You outperformed your opponent </p>
-                    <p>by having an accuracy of ${message.accuracy}. </p>
-                </div>
-            `;
-        }
-        else if (message.isWin === "lose") {
-            challengeHTML = `
-                <div class="system-messages">
-                    <p>Unfortunately, you lost the duel. </p>
-                    <p>Turn your loss into a learning moment: enhance your disaster preparedness to come back stronger.</p>
-                    <p>The accuracy of your answers: ${message.accuracy}. </p>
-                </div>
-            `;
-        }
-        else if (message.isWin === "tie") {
-            challengeHTML = `
-                <div class="system-messages">
-                    <p>It looks like this duel has no winner nor loser. </p>
-                    <p>Keep learning and improving—your next victory might just be around the corner!</p>
-                    <p>You and your opponent have the same number of accuracy: ${message.accuracy}. </p>
-                </div>
-            `;
-        }
-        
-    }
-    else if (num === 5) {
-        challengeHTML = `<div class="system-messages"><p>Questions you answered wrong:</p><p>---------------------------------------------------------------------</p>`;
-    
-        message.mistakes.forEach((mistake) => {
-            challengeHTML += `
-                <div class="mistake">
-                    <p>Question: ${mistake.question}</p>
-                    <p>Correct answer: ${mistake.correctAnswer}</p>
-                    <p>Your answer: ${mistake.userAnswer}</p>
-                    <p>---------------------------------------------------------------------</p>
-                </div>
-            `;
-        });
-    
-        challengeHTML += `</div>`;
-    }
-
-    // Insert the challenge message into the div
-    messageDiv.innerHTML = challengeHTML;
 }
+
+function getWaitMessage() {
+    return `
+        <div class="system-messages">
+            <p>Please patiently wait for your opponent.</p>
+        </div>
+    `;
+}
+
+function getQuestionMessage(num, message) {
+    return `
+        <div class="system-messages">
+            <p>${num} Question:</p>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+function getEndGameMessage(message) {
+    let statusMessage;
+    switch (message.isWin) {
+        case "win":
+            statusMessage = `Congratulations, you are the winner👑 of this duel! <br>You outperformed your opponent by having an accuracy of ${message.accuracy}.`;
+            break;
+        case "lose":
+            statusMessage = `Unfortunately, you lost the duel.<br>Turn your loss into a learning moment: enhance your disaster preparedness to come back stronger. <br>The accuracy of your answers: ${message.accuracy}.`;
+            break;
+        case "tie":
+            statusMessage = `It looks like this duel has no winner nor loser. <br>Keep learning and improving—your next victory might just be around the corner! <br>You and your opponent have the same number of accuracy: ${message.accuracy}.`;
+            break;
+        default:
+            statusMessage = "The duel ended in an unexpected state.";
+    }
+    return `
+        <div class="system-messages">
+            <p>${statusMessage}</p>
+        </div>
+    `;
+}
+
+function getMistakesMessage(message) {
+    let challengeHTML = `<div class="system-messages"><p>Questions you answered wrong:</p><p>---------------------------------------------------------------------</p>`;
+    
+    message.mistakes.forEach(mistake => {
+        challengeHTML += `
+            <div class="mistake">
+                <p>Question: ${mistake.question}</p>
+                <p>Correct answer: ${mistake.correctAnswer}</p>
+                <p>Your answer: ${mistake.userAnswer}</p>
+                <p>---------------------------------------------------------------------</p>
+            </div>
+        `;
+    });
+    challengeHTML += `</div>`;
+    return challengeHTML;
+}
+
+async function renderSystemMessage(num, message) {
+    const messageDiv = document.getElementById('systemMessage');
+    messageDiv.innerHTML = '';  // Clear any existing content
+
+    switch (num) {
+        case -1:
+            messageDiv.innerHTML = getWaitMessage();
+            break;
+        case 1:
+        case 2:
+        case 3:
+            messageDiv.innerHTML = getQuestionMessage(num === 1 ? 'First' : num === 2 ? 'Second' : 'Third', message);
+            break;
+        case 4:
+            messageDiv.innerHTML = getEndGameMessage(message);
+            break;
+        case 5:
+            messageDiv.innerHTML = getMistakesMessage(message);
+            break;
+        default:
+            messageDiv.innerHTML = getDefaultMessage();
+    }
+}
+
 
 async function renderChoiceButtons(divName, num, questionInfo, username, opponent) {
     const choiceButtonDiv = document.getElementById(divName);

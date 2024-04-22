@@ -106,7 +106,9 @@
           console.log('Activeness Change Received:', data);
 
           // Check if the activeness is false
-          if (data.activeness === false) {
+          let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+          // Check if the activeness is false
+          if (data.activeness === false && data.username === currentUser.username) {
             logout();
           }
         });

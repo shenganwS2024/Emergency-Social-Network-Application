@@ -120,9 +120,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   socket.on('changeActiveness', function(data) {
     console.log('Activeness Change Received:', data);
-  
+    
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'))
     // Check if the activeness is false
-    if (data.activeness === false) {
+    if (data.activeness === false && data.username === currentUser.username) {
       // Perform your action here when activeness is false
       console.log('Activeness for', data.username, 'is now inactive.');
       // You can call any function here to handle what should happen when inactive
