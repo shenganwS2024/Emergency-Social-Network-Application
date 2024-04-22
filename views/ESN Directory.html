@@ -408,8 +408,23 @@
   color: white;
 }
 
+#profile-chat-modal {
+  position: fixed; /* Keeps the modal fixed on the page */
+  top: 50%;        /* Positions the top edge of the modal at the center of the viewport */
+  left: 50%;       /* Positions the left edge of the modal at the center of the viewport */
+  transform: translate(-50%, -50%); /* Adjusts the modal's position to be truly centered */
+  width: 60%;     /* Sets the width of the modal as a percentage of the viewport width */
+  background-color: white; /* Background color of the modal */
+  height: 40%;   /* Sets the height of the modal as a percentage of the viewport height */
+  padding: 20px;   /* Padding inside the modal */
+  border-radius: 8px; /* Optional: rounds the corners of the modal */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Optional: adds a shadow for 3D effect */
+  z-index: 1001;   /* Ensures the modal is above other content */
+}
 
-
+#profile-option{
+  margin-bottom: 10px;
+}
 
 
       /* You might need to adjust the height of the `.modal-content` or `.messages` if there's overflow or alignment issues */
@@ -522,6 +537,15 @@
     </div>
   </div>
 
+</div>
+
+<!--option modal-->
+<div id="profile-chat-modal" class="modal">
+  <div class="modal-content">
+    <h2>Select Option</h2>
+    <button id="profile-option">Profile</button>
+    <button id="private-chat-option">Private Chat</button>
+  </div>
 </div>
 
 

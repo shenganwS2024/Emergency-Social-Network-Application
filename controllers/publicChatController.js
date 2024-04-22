@@ -5,28 +5,73 @@ import {userRoomMap} from '../config/globalVariables.js'
 
 // Function to get the latest messages from the server
 async function getLatestMessages(req, res) {
-    
     try {
-        let sender = req.params.senderName;
-        let receiver = req.params.receiverName;
-        let messages;
+        const sender = req.params.senderName;
+        const receiver = req.params.receiverName;
+        let pipeline;
+
         if (receiver === "public") {
-            messages = await Messages.find({receiver: receiver});
+            // Aggregate pipeline to filter out inactive users for public messages
+            pipeline = [
+                {
+                    $match: { receiver: "public" }
+                },
+                {
+                    $lookup: {
+                        from: "users", // Adjust this to your actual collection name as per MongoDB
+                        localField: "username",
+                        foreignField: "username",
+                        as: "sender_info"
+                    }
+                },
+                {
+                    $match: { "sender_info.activeness": true }
+                },
+                {
+                    $project: {
+                        sender_info: 0 // Exclude sender_info from the output
+                    }
+                }
+            ];
+        } else {
+            // Aggregate pipeline for private messages filtering inactive users
+            pipeline = [
+                {
+                    $match: {
+                        $or: [
+                            { username: sender, receiver: receiver },
+                            { username: receiver, receiver: sender }
+                        ]
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users", // Adjust this to your actual collection name as per MongoDB
+                        localField: "username",
+                        foreignField: "username",
+                        as: "sender_info"
+                    }
+                },
+                {
+                    $match: { "sender_info.activeness": true }
+                },
+                {
+                    $project: {
+                        sender_info: 0 // Exclude sender_info from the output
+                    }
+                }
+            ];
         }
-        else {
-            messages = await Messages.find({$or: [
-                { username: sender, receiver: receiver},
-                { username: receiver, receiver: sender }
-              ]});
-        }
-        
-        res.status(200).json({data:{messages: messages}});
-        
+
+        const messages = await Messages.aggregate(pipeline);
+
+        res.status(200).json({ data: { messages } });
     } catch (error) {
         console.error('Error getting messages:', error);
         res.status(500).send('Error getting messages');
     }
 }
+
 
 // function to post a new message to the server
 async function postNewMessage(req, res) {

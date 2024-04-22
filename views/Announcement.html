@@ -92,7 +92,7 @@
       const app = document.querySelector('.app')
       document.addEventListener('DOMContentLoaded', function () {
         console.log('localstorage token', localStorage.getItem('token'))
-        const socket = io('http://localhost:3000', {
+        const socket = io('http://localhost:3000/', {
           query: {
             token: localStorage.getItem('token'),
           },
@@ -165,6 +165,11 @@
 
         document.getElementById('send-msg').addEventListener('click', async function () {
           const username = localStorage.getItem('username')
+          let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+          if(currentUser.privilege !== 'Coordinator' && currentUser.privilege !== 'Administrator'){
+            alert('You do not have the privilege to post an announcement.')
+            return
+          }
           const messageInput = document.getElementById('message-input')
           const messageText = messageInput.value.trim()
           const currentTime = new Date().toISOString()
@@ -237,7 +242,7 @@
         msgContainer.scrollTop = msgContainer.scrollHeight - msgContainer.clientHeight
       }
       document.addEventListener('DOMContentLoaded', function () {
-        const socket = io('http://localhost:3000', {
+        const socket = io('http://localhost:3000/', {
           query: {
             token: localStorage.getItem('token'),
           },

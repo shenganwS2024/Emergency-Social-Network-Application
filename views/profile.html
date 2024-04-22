@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Profile</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 40px;
+        color: #333;
+      }
+      h1 {
+        color: #0073e6;
+        text-align: center;
+        font-size: 60px; /* Increased from 50px for larger title */
+      }
+      form {
+        background: white;
+        padding: 30px; /* Increased padding for more internal space */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      div {
+        margin-bottom: 30px; /* Increased spacing between form fields */
+      }
+      label {
+        font-weight: bold;
+        font-size: 30px; /* Increased font size for better readability */
+      }
+      .input-box {
+        font-style: italic;
+        display: block; /* Makes the label take a new line */
+        margin-top: 5px; /* Optional: adds some space above the label */
+      }
+
+      input[type='text'],
+      input[type='password'],
+      select {
+        border-radius: 4px;
+        height: 40px; /* Increased height for better interaction */
+        font-size: 30px; /* Larger text within inputs */
+      }
+      .button-container {
+        overflow: hidden; /* Clears the float */
+        padding-top: 20px; /* Space above the buttons */
+      }
+      .button-container button {
+        padding: 12px 24px; /* Larger buttons */
+        text-transform: uppercase;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 30px; /* Larger font size for buttons */
+        border: none;
+      }
+      .submit-btn {
+        float: left;
+        background-color: #0073e6;
+        color: white;
+      }
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+      .validate-btn {
+        float: middle;
+        background-color: green;
+        color: white;
+        margin-left: 10px;
+      }
+      .validate-btn:hover {
+        background-color: green;
+      }
+      .back-btn {
+        float: right;
+        background-color: #d9534f;
+        color: white;
+      }
+      .back-btn:hover {
+        background-color: #c9302c;
+      }
+      #username,
+      #password,
+      #privilege,
+      #activeness {
+        font-size: 40px; /* Larger font size for user details */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>User Profile</h1>
+    <form id="userForm">
+      <div>
+        <label for="username">Current Username:</label>
+        <span id="username">Loading...</span>
+        <span class="input-box">
+          <label class="update-label">New Username:</label>
+          <input type="text" id="newUsernameInput" placeholder="Enter new username" />
+        </span>
+      </div>
+      <div>
+        <label for="password">Current Password:</label>
+        <span id="password">********</span>
+        <span class="input-box">
+          <label class="update-label">Update Password:</label>
+          <input type="password" id="passwordInput" placeholder="Enter new password" />
+        </span>
+      </div>
+      <div>
+        <label for="privilege">Current Privilege:</label>
+        <span id="privilege">Loading...</span>
+        <span class="input-box">
+          <label class="update-label">Update Privilege:</label>
+          <select id="privilegeInput">
+            <option value="Administrator">Administrator</option>
+            <option value="Coordinator">Coordinator</option>
+            <option value="Citizen">Citizen</option>
+          </select>
+        </span>
+      </div>
+      <div>
+        <label for="activeness">Current Activeness:</label>
+        <span id="activeness">Loading...</span>
+        <span class="input-box">
+          <label class="update-label">Update Activeness:</label>
+          <select id="activenessInput">
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        </span>
+      </div>
+      <div class="button-container">
+        <button type="validate" class="validate-btn">Validate</button>
+        <button type="submit" class="submit-btn">Submit Changes</button>
+        <button type="button" class="back-btn" onclick="window.location.href = 'ESN Directory.html'">
+          Back to Users
+        </button>
+      </div>
+    </form>
+
+    <script>
+      document.querySelector('button[type="submit"]').style.display = 'none'
+      let bannedUsernames = []
+      let users = JSON.parse(localStorage.getItem('users'))
+      let username
+      let newUsername
+      let password
+      let privilege
+      let activeness
+
+      async function fetchBannedUsernames() {
+        try {
+          const response = await fetch('./bannedUsernames.json')
+          const data = await response.json()
+          bannedUsernames = data.reservedUsernames.map((username) => username.toLowerCase())
+        } catch (error) {
+          console.error('Error loading JSON file:', error)
+          alert('Failed to load banned usernames. Update might not validate correctly.')
+        }
+      }
+
+      function loadUserData() {
+        const userJson = localStorage.getItem('selectedUser')
+        if (userJson) {
+          try {
+            const user = JSON.parse(userJson)
+            updateDisplay(user)
+          } catch (e) {
+            console.error('Error parsing user data:', e)
+          }
+        } else {
+          console.log('No user data available.')
+        }
+      }
+
+      function updateDisplay(user) {
+        document.getElementById('username').textContent = user.username || 'No username'
+        document.getElementById('privilege').textContent = user.privilege || 'No privilege'
+        document.getElementById('activeness').textContent = user.activeness || 'No status'
+        document.getElementById('privilegeInput').value = user.privilege || 'Citizen'
+        document.getElementById('activenessInput').value = user.activeness.toString() || 'Active'
+      }
+
+      document.querySelector('.validate-btn').addEventListener('click', async function (event) {
+        username = document.getElementById('username').textContent
+        newUsername = document.getElementById('newUsernameInput').value.trim()
+        password = document.getElementById('passwordInput').value
+        privilege = document.getElementById('privilegeInput').value
+        activeness = document.getElementById('activenessInput').value
+        activeness = activeness === 'true' // Convert to boolean
+        event.preventDefault() // Prevent form from submitting normally
+        await fetchBannedUsernames() // Ensure the latest banned list is loaded
+        console.log('Validating user profile changes...')
+
+        let errors = []
+        if ((newUsername.length < 3 || bannedUsernames.includes(newUsername.toLowerCase())) && newUsername) {
+          errors.push('Invalid username. It must be at least 3 characters long and not a banned username.')
+        } else if (users.some((user) => user.username.toLowerCase() === newUsername.toLowerCase())) {
+          errors.push('This username is already in use. Please choose a different username.')
+        }
+        if (password.length < 4 && password) {
+          errors.push('Password must be at least 4 characters long.')
+        }
+        if (errors.length > 0) {
+          errors.push('Please re-enter and try again.')
+          alert(errors.join('\n'))
+          document.getElementById('newUsernameInput').value = ''
+          document.getElementById('passwordInput').value = ''
+        } else {
+          const confirmation = confirm('Validation successful. Click submit to confirm changes.')
+          if (confirmation) {
+            document.querySelector('button[type="submit"]').style.display = 'block' // Show the submit button
+            document.querySelector('.validate-btn').style.display = 'none' // Hide the validate button
+          }
+        }
+      })
+
+      document.querySelector('.submit-btn').addEventListener('click', async function (event) {
+        event.preventDefault();
+        const data = {
+          new_username: newUsername || undefined,
+          password: password || undefined,
+          activeness: activeness,
+          privilege: privilege || undefined,
+        }
+
+        try {
+          const response = await fetch(`/users/profile/${username}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+          if (response.ok) {
+            const user = {
+              username: newUsername || username, // Fallback to old username if not changed
+              privilege: privilege,
+              activeness: activeness,
+            }
+            localStorage.setItem('selectedUser', JSON.stringify(user)) // Update local storage
+            updateDisplay(user) // Update display without reloading
+            alert('User profile update successful')
+          } else {
+            const result = await response.text()
+            alert(result) // Display error message
+          }
+        } catch (error) {
+          console.error('Error updating user profile:', error)
+          alert('Failed to update user profile.', error)
+        }
+      })
+
+      window.onload = loadUserData // Call loadUserData when the page is loaded to fill in the current user details
+    </script>
+  </body>
+</html>

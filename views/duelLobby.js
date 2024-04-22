@@ -2,17 +2,43 @@
 document.addEventListener('DOMContentLoaded', function () {
     const username = localStorage.getItem('username');
 
-    const socket = io('http://localhost:3000', {
+    const socket = io('http://localhost:3000/', {
       query: {
         token: localStorage.getItem('token'),
       },
     })
     
-    document.getElementById('exitButton').addEventListener('click', async function() {
+    document.getElementById('directory').addEventListener('click', async function() {
         await deletePlayer(username);
         // Assuming deletePlayer resolves after completion and handles its own errors
         window.location.href = 'ESN Directory.html';
     });
+
+    document.getElementById('chatroom').addEventListener('click', async function() {
+      await deletePlayer(username);
+      // Assuming deletePlayer resolves after completion and handles its own errors
+      window.location.href = 'chatroom.html';
+    });
+
+    document.getElementById('announcements').addEventListener('click', async function() {
+      await deletePlayer(username);
+      // Assuming deletePlayer resolves after completion and handles its own errors
+      window.location.href = 'Announcement.html';
+    });
+
+    document.getElementById('settings').addEventListener('click', async function() {
+      await deletePlayer(username);
+      // Assuming deletePlayer resolves after completion and handles its own errors
+      window.location.href = 'Settings.html';
+    });
+
+    document.getElementById('resources').addEventListener('click', async function() {
+      await deletePlayer(username);
+      // Assuming deletePlayer resolves after completion and handles its own errors
+      window.location.href = 'Resources/Resources.html';
+    });
+
+
     
 
     renderOnlinePlayers()
@@ -31,17 +57,11 @@ document.addEventListener('DOMContentLoaded', function () {
     socket.on(channelName, function (challenger) {
         
         renderChallengeLetter(challenger.challenger, username)
-        const exitButton = document.getElementById('exitButton');
-        exitButton.style.backgroundColor = 'gray';    
-        exitButton.disabled = true;
 
     })
 
     const decisionChannel = username + "ChallengeDecision"
     socket.on(decisionChannel, function (data) {
-      const exitButton = document.getElementById('exitButton');
-      exitButton.style.backgroundColor = 'rgb(182, 5, 5)';    
-      exitButton.disabled = false
       if (data.accept) {
         console.log("Duel starts!")  
         window.location.href = 'duelGame.html';
@@ -243,9 +263,6 @@ function populatePlayerList(players) {
             detailsButton.className = 'challenge-button';
             detailsButton.style.marginLeft = '4px';
             detailsButton.onclick = async function() { 
-              const exitButton = document.getElementById('exitButton');
-              exitButton.style.backgroundColor = 'gray';    
-              exitButton.disabled = true;
               await challengeClicked (username, player.playerName); 
             };
 
@@ -363,9 +380,7 @@ async function declineChallenge(challenger, challenged, messageDiv) {
     while (messageDiv.firstChild) {
         messageDiv.removeChild(messageDiv.firstChild);
     }
-    const exitButton = document.getElementById('exitButton');
-    exitButton.style.backgroundColor = 'rgb(182, 5, 5)';    
-    exitButton.disabled = false;
+
 }
 
 
