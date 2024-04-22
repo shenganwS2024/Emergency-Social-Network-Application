@@ -378,7 +378,12 @@ async function updateProfile(req, res) {
     if (activeness !== undefined ) {
       //update userFound's activenss and save it to DB
       userFound.activeness = activeness;
-      io.emit('changeActiveness', { username: username, activeness: activeness });
+      let name = username;
+      if (new_username !== undefined ) {
+        name = new_username;
+      }
+      io.emit('changeActiveness', { username: name, activeness: activeness });
+      
     }
     if (privilege !== undefined ) {
       //update userFound's privilege and save it to DB
