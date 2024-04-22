@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const username = localStorage.getItem('username');
 
-    const socket = io('http://localhost:3000//', {
+    const socket = io('https://s24esnb2.onrender.com/', {
       query: {
         token: localStorage.getItem('token'),
       },
