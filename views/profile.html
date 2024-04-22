@@ -137,14 +137,14 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      const socket = io('https://s24esnb2.onrender.com', {
+      const socket = io('http://localhost:3000/', {
         query: {
           token: localStorage.getItem('token'),
         },
       })
       document.querySelector('button[type="submit"]').style.display = 'none'
       let bannedUsernames = []
-      let users = await fetchUsers();
+      let users;
       let username
       let newUsername
       let password
@@ -185,10 +185,11 @@
         }
       }
 
-      function loadUserData() {
+      async function loadUserData() {
         const userJson = localStorage.getItem('selectedUser')
         if (userJson) {
           try {
+            users = await fetchUsers();
             const user = JSON.parse(userJson)
             updateDisplay(user)
           } catch (e) {
