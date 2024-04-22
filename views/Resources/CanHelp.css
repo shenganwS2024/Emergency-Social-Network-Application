@@ -13,12 +13,11 @@ body {
 header {
     width: 100%;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    background: #fff;
+    background: #89bbf5;
 }
 
 .header-btn {
-    background-color: #e0e0e0;
+    background-color: #89bbf5;
     border: none;
     width: 100%;
     height: 100%;
@@ -32,7 +31,7 @@ header {
   }
   
   .header-btn:hover {
-    background-color: #d0d0d0; 
+    background-color: #89bbf5; 
   }
 
 .needs-list-container {
@@ -42,7 +41,7 @@ header {
 }
 
 .need-item {
-    background-color: #fff;
+    background-color: #89bbf5;
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
@@ -54,8 +53,7 @@ input[type=number] {
     appearance: none;
     border: none;
     outline: none;
-    border-bottom: 2px solid #000;
-    background: #c2baba5e;
+    border-bottom: 2px solid #fab855;
     border-radius: 0.2em 0.2em 0 0;
     padding: 10px;
     color: #000;
@@ -80,15 +78,15 @@ input[type=number] {
 }
 
 .progress {
-    background-color: #77c8d9ba;
+    background-color: #4caf50;
     width: 0%;
     height: 100%;
     position: absolute;
 }
 
 .offer-button {
-    background-color: #000;
-    color: #fff;
+    background-color: #fab855;
+    color: #000;
     border: none;
     padding: 10px;
     border-radius: 5px;
@@ -98,11 +96,44 @@ input[type=number] {
 }
 
 .submit-offer {
-    background-color: #000;
-    color: #fff;
+    background-color: #fab855;
+    color: #000;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     width: 53%;
 }
+
+#navigation-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
+  
+  .nav-item {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .nav-icon {
+    font-size: 24px;
+  }
+  
+  .nav-label {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
