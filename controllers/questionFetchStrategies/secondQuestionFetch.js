@@ -1,4 +1,4 @@
-import { TrueFalseQuestions } from '../models/TrueFalseQuestions.js';
+import { TrueFalseQuestions } from '../../models/TrueFalseQuestions.js';
 import QuestionFetchStrategy from './questionFetchStrategyInterface.js';
 
 class secondQuestionFetch extends QuestionFetchStrategy {

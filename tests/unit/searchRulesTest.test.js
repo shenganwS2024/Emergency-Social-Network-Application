@@ -106,23 +106,29 @@ describe('Search Functionality', () => {
     // 5
     test('Public announcements search returns announcements containing the keyword', async () => {
         const keyword = 'important';
-        const announcements = [
-          { content: "This is an important announcement", username: "Admin", timestamp: new Date() },
-          { content: "This announcement is not important", username: "Admin", timestamp: new Date()}
-        ];
-        await Announcements.create(announcements);
         
+        // create user first
+        await User.create([
+          { username: "coordinatorUser", password: "password", status: [{status: "Ok", date: new Date()}], onlineStatus: true }
+        ]);
+
+        // create announcements
+        await Announcements.create([
+          { content: "This is an important announcement", username: "coordinatorUser", timestamp: new Date() },
+          { content: "This is a regular announcement", username: "coordinatorUser", timestamp: new Date() }
+        ]);
+
         const res = await request(app)
-        .get(`/search/announcement/${keyword}/0`);
+          .get(`/search/announcement/${keyword}/0`);
+
         expect(res.statusCode).toBe(200);
         expect(res.body.data.results).toEqual(expect.arrayContaining([
-            expect.objectContaining({
-                content: "This is an important announcement",
-                username: "Admin"
-            })
+          expect.objectContaining({
+            content: "This is an important announcement",
+            username: "coordinatorUser"
+          })
         ]));
       });
-
     // 6
     test('Search with only stop words returns no results', async () => {
 
@@ -197,7 +203,7 @@ describe('Search Functionality', () => {
           .get('/search/publicMessage/someKeyword/0'); 
       
         expect(res.statusCode).toBe(500);
-        expect(res.text).toContain('Error search results'); 
+        expect(res.text).toBe('Error getting search results');
       
         mongoose.Model.find.mockRestore();
       });

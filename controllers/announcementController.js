@@ -59,6 +59,14 @@ async function getLatestAnnouncements(req, res) {
 // function to post a new message to the server
 async function postNewAnnouncement(req,res) {
     const { username, content, timestamp } = req.body;
+
+    // add a checker to ensure tht user's privlege level is coordinator or higher
+    const user = await Users.findOne({  username: username });
+    if (user.privilege !== 'Coordinator' && user.privilege !== 'Administrator') {
+        res.status(403).send('User does not have the privilege to post announcements');
+        return;
+    }
+
     console.log(req.body);
     try {
         const newAnnouncement = new Announcements({

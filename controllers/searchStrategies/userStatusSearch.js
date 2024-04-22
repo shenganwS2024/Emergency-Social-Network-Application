@@ -1,5 +1,5 @@
 import SearchStrategy from './searchStrategyInterface.js'
-import {findAllUsers} from '../models/Users.js';
+import {findAllUsers} from '../../models/Users.js';
 
 class statusSearch extends SearchStrategy {
     async search(criteria) {

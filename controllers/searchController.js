@@ -1,4 +1,4 @@
-import getStrategy from '../searchStrategies/searchIndex.js'
+import getStrategy from './searchStrategies/searchIndex.js'
 import {Users} from '../models/Users.js'
 import stop_words from '../config/stopWords.json' assert { type: 'json' };
 

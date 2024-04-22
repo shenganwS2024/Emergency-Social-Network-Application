@@ -1,5 +1,5 @@
 import SearchStrategy from './searchStrategyInterface.js'
-import {findMessages} from '../models/Messages.js';
+import {findMessages} from '../../models/Messages.js';
 
 class publicMessageSearch extends SearchStrategy {
     async search(criteria) {

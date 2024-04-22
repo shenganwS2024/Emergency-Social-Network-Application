@@ -1,4 +1,4 @@
-import { MultipleChoicesQuestions } from '../models/MultipleChoicesQuestions.js';
+import { MultipleChoicesQuestions } from '../../models/MultipleChoicesQuestions.js';
 import QuestionFetchStrategy from './questionFetchStrategyInterface.js';
 
 class firstQuestionFetch extends QuestionFetchStrategy {

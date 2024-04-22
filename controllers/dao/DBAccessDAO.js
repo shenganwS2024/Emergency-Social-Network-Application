@@ -1,4 +1,4 @@
-import DBConnection from '../config/database.js';
+import DBConnection from '../../config/database.js';
 
 class DBAccessDAO {
   static switchDatabase = async (newDbUri) => {

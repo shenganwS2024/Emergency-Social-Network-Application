@@ -358,17 +358,16 @@ async function updateProfile(req, res) {
       userFound.username = new_username;
       io.emit('changeUsername', { username: username, new_username: new_username });
     }
-    if (password !== undefined ) {
+    else if (password !== undefined ) {
       //update userFound's password and save it to DB
       userFound.password = password;
-      console.log('password updated' + password);
     }
-    if (activeness !== undefined ) {
+    else if (activeness !== undefined ) {
       //update userFound's activenss and save it to DB
       userFound.activeness = activeness;
       io.emit('changeActiveness', { username: username, activeness: activeness });
     }
-    if (privilege !== undefined ) {
+    else if (privilege !== undefined ) {
       //update userFound's privilege and save it to DB
       let canChange = await privilegeChangeCheck(username, privilege);
       if (canChange === true) {
@@ -389,4 +388,25 @@ async function updateProfile(req, res) {
   }
 }
 
-  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked, updateProfile};
+// add a helper function to call updateProfile in the userController but the user's privilege level is administrator
+async function updateProfileByAdmin(req, res) {
+  try {
+    const username = req.params.username;
+    const userFound = await Users.findOne({ username: username });
+
+    if (userFound.privilege !== 'Administrator') {
+      return res.status(403).send('User does not have the privilege to update profile');
+    }
+    else {
+      updateProfile(req, res);
+    }
+
+  }
+  catch (error) {
+    console.error("update profile error: ", error);
+    res.status(500).send('User profile update server error');
+  }
+
+}
+
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked, updateProfile, updateProfileByAdmin};
