@@ -2,7 +2,88 @@
 <html>
   <head>
     <title>User Profile</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 40px;
+        color: #333;
+      }
+      h1 {
+        color: #0073e6;
+        text-align: center;
+        font-size: 60px; /* Increased from 50px for larger title */
+      }
+      form {
+        background: white;
+        padding: 30px; /* Increased padding for more internal space */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      div {
+        margin-bottom: 30px; /* Increased spacing between form fields */
+      }
+      label {
+        font-weight: bold;
+        font-size: 30px; /* Increased font size for better readability */
+      }
+      .input-box {
+        font-style: italic;
+        display: block; /* Makes the label take a new line */
+        margin-top: 5px; /* Optional: adds some space above the label */
+      }
+
+      input[type='text'],
+      input[type='password'],
+      select {
+        border-radius: 4px;
+        height: 40px; /* Increased height for better interaction */
+        font-size: 30px; /* Larger text within inputs */
+      }
+      .button-container {
+        overflow: hidden; /* Clears the float */
+        padding-top: 20px; /* Space above the buttons */
+      }
+      .button-container button {
+        padding: 12px 24px; /* Larger buttons */
+        text-transform: uppercase;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 30px; /* Larger font size for buttons */
+        border: none;
+      }
+      .submit-btn {
+        float: left;
+        background-color: #0073e6;
+        color: white;
+      }
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+      .validate-btn {
+        float: middle;
+        background-color: green;
+        color: white;
+        margin-left: 10px;
+      }
+      .validate-btn:hover {
+        background-color: green;
+      }
+      .back-btn {
+        float: right;
+        background-color: #d9534f;
+        color: white;
+      }
+      .back-btn:hover {
+        background-color: #c9302c;
+      }
+      #username,
+      #password,
+      #privilege,
+      #activeness {
+        font-size: 40px; /* Larger font size for user details */
+      }
+    </style>
   </head>
   <body>
     <h1>User Profile</h1>
@@ -54,6 +135,8 @@
         </button>
       </div>
     </form>
-    <script src="user_profile.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="profile.js">
+    </script>
   </body>
 </html>
