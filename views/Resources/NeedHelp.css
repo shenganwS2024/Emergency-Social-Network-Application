@@ -1,7 +1,7 @@
-/* Unique Container Styles */
 .container {
-  width: 90%;
-  max-width: 500px;
+  width: 90%; 
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 20px;
 }
 
@@ -17,12 +17,13 @@
   cursor: pointer;
 }
 
-/* Styles for Offer History and Related Components */
 .offer-history {
   background-color: #fff;
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding-bottom: 70px; 
+  margin-bottom: 70px; 
 }
 
 .offer-history-item {
@@ -115,40 +116,40 @@
   justify-content: center;
   background: #eeebeb;
   border: none;
-  padding: 0 10px; /* Adjust padding to ensure button content is centered */
-  height: 100%; /* Stretch to fill the height of the container */
-  border-radius: 0 5px 5px 0; /* Apply border-radius only to the right corners */
-  margin-left: auto; /* This ensures the button aligns to the right */
+  padding: 0 10px;
+  height: 100%;
+  border-radius: 0 5px 5px 0;
+  margin-left: auto;
 }
 
 .delete-btn .text {
   color: black;
   font-weight: bold;
-  font-size: 14px; /* Adjusted for readability within notification items */
-  margin-right: 5px; /* Space between text and icon */
+  font-size: 14px;
+  margin-right: 5px;
 }
 
 .delete-btn .icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 24px; /* Size adjusted for context */
-  width: 24px; /* Size adjusted for context */
+  height: 24px;
+  width: 24px;
 }
 
 .delete-btn svg {
   fill: black;
-  width: 15px; /* Icon size adjusted for balance */
+  width: 15px;
 }
 
 .delete-btn:hover {
-  background: #9a9a9a; /* Hover state color adjusted to fit scheme */
+  background: #9a9a9a;
 }
 
 .delete-btn:hover .text {
-  color: #fff; /* Ensures text remains visible on hover */
+  color: #fff;
 }
 
 .delete-btn:active .icon svg {
-  transform: scale(0.9); /* Slight shrink effect on click */
+  transform: scale(0.9);
 }

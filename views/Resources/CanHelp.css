@@ -1,7 +1,9 @@
 .needs-list-container {
-    width: 90%;
-    max-width: 500px;
-    margin-top: 20px;
+    width: 90%; 
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 70px; 
+    margin-bottom: 70px; 
 }
 
 .need-item {
