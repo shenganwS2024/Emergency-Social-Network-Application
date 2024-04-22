@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Needs List</title>
   <link rel="stylesheet" href="CanHelp.css">
+  <link rel="stylesheet" href="sharedElements.css">
 </head>
 <body>
     <header>
@@ -24,7 +25,7 @@
                 <div class="progress-bar">
                     <div class="progress" style="width: 0%;"></div>
                 </div>
-                <button class="offer-button" onclick="toggleOfferInput(this)">I can offer</button>
+                <button class="offer-button" onclick="toggleOfferInput(this)" style="border: none;">I can offer</button>
                 <div class="offer-section" style="display: none; margin-top: 25px">
                     <input type="number" class="offer-quantity" min="1" placeholder="Quantity" />
                     <button class="submit-offer" onclick="offerResource(this)">Submit Offer</button>
