@@ -371,16 +371,16 @@ async function updateProfile(req, res) {
         { $set: { receiver: new_username } }
       );
     }
-    else if (password !== undefined ) {
+    if (password !== undefined ) {
       //update userFound's password and save it to DB
       userFound.password = password;
     }
-    else if (activeness !== undefined ) {
+    if (activeness !== undefined ) {
       //update userFound's activenss and save it to DB
       userFound.activeness = activeness;
       io.emit('changeActiveness', { username: username, activeness: activeness });
     }
-    else if (privilege !== undefined ) {
+    if (privilege !== undefined ) {
       //update userFound's privilege and save it to DB
       let canChange = await privilegeChangeCheck(username, privilege);
       if (canChange === true) {
