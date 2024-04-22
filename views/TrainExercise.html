@@ -8,7 +8,6 @@
   </head>
   <body>
     <header class="app-header">
-      <a id="backButton" href="#" class="back-link">&lt; Back</a>
       <h1 class="page-title">Training Exercises</h1>
     </header>
 
@@ -17,6 +16,34 @@
     <footer class="upload-footer">
       <button id="uploadButton" class="upload-button">Upload New</button>
     </footer>
+
+    <div id="navigation-bar-container">
+      <a href="ESN Directory.html" class="nav-item">
+        <div class="nav-icon">📁</div>
+        <div class="nav-label">Directory</div>
+      </a>
+      <a href="chatroom.html" class="nav-item">
+        <div class="nav-icon">💬</div>
+        <div class="nav-label">Chatroom</div>
+      </a>
+      <a href="Announcement.html" class="nav-item">
+        <div class="nav-icon">📢</div>
+        <div class="nav-label">Announcement</div>
+      </a>
+      <a href="Settings.html" class="nav-item">
+        <div class="nav-icon">⚙️</div>
+        <div class="nav-label">Settings</div>
+      </a>
+      <a href="Resources/Resources.html" class="nav-item">
+        <div class="nav-icon">
+          <img src="Resources/handshake-svgrepo-com.svg" alt="Emergency Resources">
+        </div>
+        <div class="nav-label">Resources</div>
+      <a href="duelLobby.html" class="nav-item" id="enterDuel">
+        <div class="nav-icon">⚔️</div>
+        <div class="nav-label">Duel</div>
+      </a>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="TrainExercise.js"></script>

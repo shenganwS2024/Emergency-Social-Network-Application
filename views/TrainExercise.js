@@ -1,17 +1,15 @@
 // Socket initialization
-const socket = io('https://s24esnb2.onrender.com/', {
+const socket = io('http://localhost:3000', {
   query: {
     token: localStorage.getItem('token'),
   },
 })
 
 // DOM Elements
-const backButton = document.getElementById('backButton')
 const exercisesList = document.getElementById('exercisesList')
 const uploadButton = document.getElementById('uploadButton')
 
 // Event Listeners
-backButton.addEventListener('click', () => navigateTo('ESN Directory.html'))
 uploadButton.addEventListener('click', () => navigateTo('UploadExercise.html'))
 socket.on('new exercise', addExerciseToDOM)
 
