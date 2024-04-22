@@ -1,16 +1,39 @@
-const socket = io('http://localhost:3000', {
+const socket = io('https://s24esnb2.onrender.com', {
         query: {
           token: localStorage.getItem('token'),
         },
       })
       document.querySelector('button[type="submit"]').style.display = 'none'
       let bannedUsernames = []
-      let users = JSON.parse(localStorage.getItem('users'))
+      let users;
       let username
       let newUsername
       let password
       let privilege
       let activeness
+
+      async function fetchUsers() {
+        let url = '/users';
+      
+        // Return the promise chain here
+        return fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                
+                return data.data.users;  
+                
+            })
+            .catch(error => {
+                console.error('There has been a problem with your users fetch operation:', error);
+                // It's important to re-throw the error if you want the caller to be able to handle it
+                throw error;
+            });
+      }
 
       async function fetchBannedUsernames() {
         try {
@@ -23,10 +46,11 @@ const socket = io('http://localhost:3000', {
         }
       }
 
-      function loadUserData() {
+      async function loadUserData() {
         const userJson = localStorage.getItem('selectedUser')
         if (userJson) {
           try {
+            users = await fetchUsers();
             const user = JSON.parse(userJson)
             updateDisplay(user)
           } catch (e) {
