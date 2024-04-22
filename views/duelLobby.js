@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const username = localStorage.getItem('username');
 
-    const socket = io('https://s24esnb2.onrender.com/', {
+    const socket = io('http://localhost:3000/', {
       query: {
         token: localStorage.getItem('token'),
       },
@@ -236,142 +236,121 @@ async function challengeClicked (challenger, challenged) {
 
 
 
-// Function to create the player divs and buttons
+function clearElementContents(element) {
+  while (element.firstChild) {
+      element.removeChild(element.firstChild);
+  }
+}
+
+function createPlayerDiv(player, username) {
+  const playerDiv = document.createElement('div');
+  playerDiv.className = 'player';
+  playerDiv.appendChild(createPlayerNameSpan(player.playerName));
+
+  if (username !== player.playerName) {
+      playerDiv.appendChild(createChallengeButton(username, player));
+  }
+
+  return playerDiv;
+}
+
+function createPlayerNameSpan(playerName) {
+  const playerNameSpan = document.createElement('span');
+  playerNameSpan.textContent = playerName;
+  return playerNameSpan;
+}
+
+function createChallengeButton(username, player) {
+  const button = document.createElement('button');
+  button.textContent = 'Challenge';
+  button.className = 'challenge-button';
+  button.style.marginLeft = '4px';
+  button.onclick = () => challengeClicked(username, player.playerName);
+  button.disabled = player.inChallenge;
+  button.style.backgroundColor = player.inChallenge ? 'gray' : '';
+  button.style.color = player.inChallenge ? 'white' : '';
+  return button;
+}
+
 function populatePlayerList(players) {
-    const playerListDiv = document.getElementById('onlinePlayers');
-    while (playerListDiv.firstChild) {
-        playerListDiv.removeChild(playerListDiv.firstChild);
-    }
-    const username = localStorage.getItem('username')
-    const currentUserInChallenge = players.find(player => player.playerName === username)?.inChallenge || false;
+  const playerListDiv = document.getElementById('onlinePlayers');
+  clearElementContents(playerListDiv);
 
-    players.forEach(player => {
-        // Create a new div for each player
-        const playerDiv = document.createElement('div');
-        playerDiv.className = 'player';
+  const username = localStorage.getItem('username');
+  const currentUserInChallenge = players.find(player => player.playerName === username)?.inChallenge || false;
 
-        // Create and set up the span for the player's name
-        const playerNameSpan = document.createElement('span');
-        playerNameSpan.textContent = player.playerName;
-        playerDiv.appendChild(playerNameSpan);
+  players.forEach(player => {
+      playerListDiv.appendChild(createPlayerDiv(player, username));
+  });
+}
 
-        console.log("current player", player.playerName)
-        if (username !== player.playerName) {
-            // Create and set up the button
-            const detailsButton = document.createElement('button');
-            detailsButton.textContent = 'Challenge';
-            detailsButton.className = 'challenge-button';
-            detailsButton.style.marginLeft = '4px';
-            detailsButton.onclick = async function() { 
-              await challengeClicked (username, player.playerName); 
-            };
 
-            if (player.inChallenge|| currentUserInChallenge) {
-                detailsButton.style.backgroundColor = 'gray';  
-                detailsButton.style.color = 'white';  
-                detailsButton.disabled = true;
-            }
-            
-            playerDiv.appendChild(detailsButton);
-        }
-        
-
-        // Append the player div to the main playerList div
-        playerListDiv.appendChild(playerDiv);
-    });
+function createDuelDiv(duel) {
+  const duelDiv = document.createElement('div');
+  duelDiv.className = 'duel';
+  duelDiv.textContent = `${duel.challengerName} ⚔️ ${duel.challengedName}`;
+  return duelDiv;
 }
 
 function populateDuels(duels) {
-    const ongoingDuelsDiv = document.getElementById("ongoingDuels");
-    while (ongoingDuelsDiv.firstChild) {
-        ongoingDuelsDiv.removeChild(ongoingDuelsDiv.firstChild);
-    }
-    // Clear existing content
-    ongoingDuelsDiv.innerHTML = '';
+  const ongoingDuelsDiv = document.getElementById("ongoingDuels");
+  clearElementContents(ongoingDuelsDiv);
 
-    duels.forEach(duel => {
-        // Create a new div for each duel
-        const duelDiv = document.createElement('div');
-        duelDiv.className = 'player'; // Assuming you want to reuse the 'player' class for styling
+  duels.forEach(duel => ongoingDuelsDiv.appendChild(createDuelDiv(duel)));
+}
 
-        // Set the text content to show challenger and challenged names
-        duelDiv.textContent = `${duel.challengerName} ⚔️ ${duel.challengedName}`;
 
-        // Append the duel div to the ongoingDuels div
-        ongoingDuelsDiv.appendChild(duelDiv);
-    });
+function createChallengeHTML(challenger, challenged) {
+  return `
+      <div class="challenge-letter">
+          <p>Dear ${challenged},</p>
+          <p>Prepare thy blade, we shall settle our differences under the watchful eye of honor.</p>
+          <p>Yours in anticipation,</p>
+          <p>${challenger}</p>
+          <div class="response-buttons">
+              <button id="acceptButton" class="accept">Accept</button>
+              <button id="declineButton" class="decline">Decline</button>
+          </div>
+      </div>
+  `;
+}
+
+function setupChallengeResponseHandlers(challenger, challenged, messageDiv, autoDeclineTimer) {
+  document.getElementById('acceptButton').onclick = async () => {
+      clearTimeout(autoDeclineTimer);
+      await updateChallengeStatuses(challenger, challenged, true, true);
+      window.location.href = 'duelGame.html';
+  };
+
+  document.getElementById('declineButton').onclick = async () => {
+      clearTimeout(autoDeclineTimer);
+      declineChallenge(challenger, challenged, messageDiv);
+  };
 }
 
 function renderChallengeLetter(challenger, challenged) {
-    // Get the element where you want to display the challenge message
-    const messageDiv = document.getElementById('challengeMessage');
+  const messageDiv = document.getElementById('challengeMessage');
+  clearElementContents(messageDiv);
+  messageDiv.innerHTML = createChallengeHTML(challenger, challenged);
+  let autoDeclineTimer = setTimeout(() => declineChallenge(challenger, challenged, messageDiv), 15000);
 
-    // Clear any existing content
-    messageDiv.innerHTML = '';
-
-    // Create the message in HTML format
-    const challengeHTML = `
-        <div class="challenge-letter">
-            <p>Dear ${challenged},</p>
-            <p>Prepare thy blade, we shall settle our differences of disaster knowledge under the watchful eye of honor.</p>
-            <p>Yours in anticipation,</p>
-            <p>${challenger}</p>
-            <div class="response-buttons">
-                <button id="acceptButton" class="accept">Accept</button>
-                <button id="declineButton" class="decline">Decline</button>
-            </div>
-        </div>
-    `;
-
-    // Insert the challenge message into the div
-    messageDiv.innerHTML = challengeHTML;
-    let autoDeclineTimer = setTimeout(() => {
-       declineChallenge(challenger, challenged, messageDiv)
-    }, 15000);
-
-    document.getElementById('acceptButton').addEventListener('click', async function() {
-        // Handle the accept action
-        clearTimeout(autoDeclineTimer);
-        const accept = true;
-        await updateChallengeStatuses(challenger,challenged,true, accept)
-        window.location.href = 'duelGame.html';
-    });
-
-    //router.delete('/duels/:playerName', removeADuel);
-    document.getElementById('declineButton').addEventListener('click', async function()  {
-        // Handle the decline action
-        clearTimeout(autoDeclineTimer);
-        declineChallenge(challenger, challenged, messageDiv)
-    });
+  setupChallengeResponseHandlers(challenger, challenged, messageDiv, autoDeclineTimer);
 }
+
 
 function renderRejection() {
-    const messageDiv = document.getElementById('challengeMessage');
-    while (messageDiv.firstChild) {
-      messageDiv.removeChild(messageDiv.firstChild);
-    }
-    // Clear any existing content
-    messageDiv.innerHTML = '';
+  const messageDiv = document.getElementById('challengeMessage');
+  clearElementContents(messageDiv);
+  messageDiv.innerHTML = `
+      <div class="challenge-letter">
+          <p>Your challenge invitation was either rejected or has timed out.</p>
+          <button id="gotItButton">Got it</button>
+      </div>
+  `;
 
-    // Create the message in HTML format
-    const challengeHTML = `
-        <div class="challenge-letter">
-            <p>Your challenge invitation was either rejected or has timed out.</p>
-        </div>
-        <div class="response-buttons">
-          <button id="gotItButton" >Got it</button>
-        </div>
-    `;
-
-    // Insert the challenge message into the div
-    messageDiv.innerHTML = challengeHTML;
-
-    document.getElementById('gotItButton').addEventListener('click', function() {
-      while (messageDiv.firstChild) {
-        messageDiv.removeChild(messageDiv.firstChild);
-      }
-  });
+  document.getElementById('gotItButton').onclick = () => clearElementContents(messageDiv);
 }
+
 
 async function declineChallenge(challenger, challenged, messageDiv) {
     await deleteDuel(challenger);
