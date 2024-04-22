@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Needs List</title>
   <link rel="stylesheet" href="CanHelp.css">
+  <link rel="stylesheet" href="sharedElements.css">
 </head>
 <body>
     <header>
@@ -24,14 +25,37 @@
                 <div class="progress-bar">
                     <div class="progress" style="width: 0%;"></div>
                 </div>
-                <button class="offer-button" onclick="toggleOfferInput(this)">I can offer</button>
+                <button class="offer-button" onclick="toggleOfferInput(this)" style="border: none;">I can offer</button>
                 <div class="offer-section" style="display: none; margin-top: 25px">
                     <input type="number" class="offer-quantity" min="1" placeholder="Quantity" />
-                    <button class="submit-offer" onclick="offerResource(this)">Submit Offer</button>
+                    <button class="submit-offer" onclick="offerResource(this)" style="border: none;">Submit Offer</button>
                 </div>
                 <p class="quantity-error" style="color: red; display: none;"></p>
             </div>
         </template>
+
+        <div id="navigation-bar-container" style="position: fixed; bottom: 0; width: 100%; background-color: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);">
+            <a href="../ESN Directory.html" class="nav-item">
+                <div class="nav-icon">📁</div>
+                <div class="nav-label">Directory</div>
+            </a>
+            <a href="../chatroom.html" class="nav-item">
+                <div class="nav-icon">💬</div>
+                <div class="nav-label">Chatroom</div>
+            </a>
+            <a href="../Announcement.html" class="nav-item">
+                <div class="nav-icon">📢</div>
+                <div class="nav-label">Announcement</div>
+            </a>
+            <a href="../Settings.html" class="nav-item">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
+            </a>
+            <a href="../duelLobby.html" class="nav-item">
+                <div class="nav-icon">⚔️</div>
+                <div class="nav-label">Duel</div>
+            </a>
+        </div>        
     </main>
     <script src="/socket.io/socket.io.js"></script>
     <script src="CanHelp.js"></script>

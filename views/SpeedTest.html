@@ -5,20 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ESN Speed Test</title>
     <style>
-      /* Add CSS styles for better appearance */
+      /* General styles */
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
         padding: 20px;
+        background-color: #f4f4f4;
+        color: #333;
       }
-      .form-input {
-        margin-bottom: 10px;
+      h1 {
+        color: #0056b3;
       }
       label {
         display: block;
         margin-bottom: 5px;
+        font-weight: bold;
+        color: #444;
+      }
+      input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #0056b3;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #004494;
       }
       .results {
-        margin-top: 20px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: none; /* Hidden by default, shown during the test */
+      }
+      /* Specific adjustments */
+      #exitTest {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
       }
     </style>
   </head>
@@ -33,7 +67,7 @@
       <input type="number" id="interval" value="" />
     </div>
     <button id="startTest">Start Test</button>
-    <button id="exitTest">Exit Test</button>
+    <button id="exitTest">Back to ESN</button>
     <button id="stopTest">Stop Test</button>
 
     <div class="results" id="testResults" style="display: none">

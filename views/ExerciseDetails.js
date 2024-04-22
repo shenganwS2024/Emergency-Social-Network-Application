@@ -118,14 +118,14 @@ function extractVideoID(url) {
   return match && match[2].length === 11 ? match[2] : null
 }
 
-document.getElementById('backButton').addEventListener('click', function () {
-  window.location.href = 'TrainExercise.html'
-})
-
 document.getElementById('likeButton').addEventListener('click', handleLikeDislike)
 document.getElementById('dislikeButton').addEventListener('click', handleLikeDislike)
 document.getElementById('quizButton').addEventListener('click', takeQuiz)
 document.getElementById('submitComment').addEventListener('click', submitComment)
+
+document.getElementById('backButton').addEventListener('click', function () {
+  window.location.href = 'TrainExercise.html'
+})
 
 async function handleLikeDislike(event) {
   const action = event.target.id === 'likeButton' ? 'like' : 'dislike'

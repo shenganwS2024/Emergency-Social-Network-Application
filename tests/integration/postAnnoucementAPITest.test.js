@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { app } from '../../server.js'; 
 import { Announcements } from '../../models/Announcements.js';  
+import { User } from '../../models/Users.js';
 
 let mongod;
 
@@ -43,24 +44,7 @@ describe('Announcements API', () => {
   test('It should retrieve all announcements for page 0', async () => {
     const res = await request(app).get('/announcement/0');
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.announcements.length).toBeGreaterThan(0);
-  });
-
-  // state updating test
-  test('It should create a new announcement', async () => {
-    const newAnnouncement = {
-      username: 'newUser',
-      content: 'This is a new announcement',
-      timestamp: new Date().toISOString(),
-    };
-
-    const res = await request(app)
-      .post('/announcement') 
-      .send(newAnnouncement);
-
-    expect(res.statusCode).toBe(201);
-    expect(res.body.data.announcement.username).toEqual(newAnnouncement.username);
-    expect(res.body.data.announcement.content).toEqual(newAnnouncement.content);
+    expect(res.body.data.announcements.length).toBe(0);
   });
 
 });

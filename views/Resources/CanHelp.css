@@ -1,48 +1,13 @@
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
-}
-
-header {
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    background: #fff;
-}
-
-.header-btn {
-    background-color: #e0e0e0;
-    border: none;
-    width: 100%;
-    height: 100%;
-    padding: 20px 0;
-    border-radius: 0;
-    cursor: pointer;
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-    color: #000;
-    font-weight: bold;
-  }
-  
-  .header-btn:hover {
-    background-color: #d0d0d0; 
-  }
-
 .needs-list-container {
-    width: 90%;
-    max-width: 500px;
-    margin-top: 20px;
+    width: 90%; 
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 70px; 
+    margin-bottom: 70px; 
 }
 
 .need-item {
-    background-color: #fff;
+    background-color: #89bbf5;
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
@@ -50,23 +15,16 @@ header {
     border: 1px solid #d7d7d7;
 }
 
-input[type=number] {
+input[type="number"] {
     appearance: none;
     border: none;
     outline: none;
-    border-bottom: 2px solid #000;
-    background: #c2baba5e;
-    border-radius: 0.2em 0.2em 0 0;
+    border-bottom: 2px solid #fab855;
     padding: 10px;
-    color: #000;
 }
 
-
-.need-details p {
+.need-details p, .need-details span {
     margin: 10px 0;
-}
-
-.need-details span {
     font-weight: bold;
 }
 
@@ -80,16 +38,15 @@ input[type=number] {
 }
 
 .progress {
-    background-color: #77c8d9ba;
+    background-color: #4caf50;
     width: 0%;
     height: 100%;
     position: absolute;
 }
 
-.offer-button {
-    background-color: #000;
-    color: #fff;
-    border: none;
+.offer-button, .submit-offer {
+    background-color: #fab855;
+    color: #000;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -98,11 +55,5 @@ input[type=number] {
 }
 
 .submit-offer {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
     width: 53%;
 }

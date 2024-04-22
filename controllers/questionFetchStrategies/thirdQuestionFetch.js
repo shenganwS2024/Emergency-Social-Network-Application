@@ -1,4 +1,4 @@
-import { ShortAnswerQuestions } from '../models/ShortAnswerQuestions.js';
+import { ShortAnswerQuestions } from '../../models/ShortAnswerQuestions.js';
 import QuestionFetchStrategy from './questionFetchStrategyInterface.js';
 
 class thirdQuestionFetch extends QuestionFetchStrategy {

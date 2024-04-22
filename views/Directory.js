@@ -39,12 +39,7 @@ async function fetchMessages() {
     // Optionally, update the UI to notify the user that the search failed
   }
 }
-
-function displayMessages(messages) {
-  messages.forEach(renderMSG)
-}
-
-const socket = io('https://s24esnb2.onrender.com', {
+const socket = io('https://s24esnb2.onrender.com/', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -53,6 +48,7 @@ const app = document.querySelector('.modal-content')
 document.addEventListener('DOMContentLoaded', async () => {
   const statusSearchToggle = document.getElementById('status-search-toggle')
   let isChecked = false // Boolean flag to track the toggle state
+  const profileChatModal = document.getElementById('profile-chat-modal');
 
   statusSearchToggle.addEventListener('click', function () {
     const searchInput = document.getElementById('search-input')
@@ -79,9 +75,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userResponse = await fetch('/users')
     const data = await userResponse.json()
     users = data.data.users
+    console.log('the stored username ', localStorage.getItem('username'))
     currentUser = users.find((user) => user.username === localStorage.getItem('username'))
     localStorage.setItem('currentUser', JSON.stringify(currentUser))
-
     displayUsers(users, currentUser)
   } catch (error) {
     // Handle any fetch errors
@@ -121,6 +117,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     displayUsers(users, currentUser)
   })
+
+  socket.on('changeActiveness', function(data) {
+    console.log('Activeness Change Received:', data);
+    
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    // Check if the activeness is false
+    if (data.activeness === false && data.username === currentUser.username) {
+      // Perform your action here when activeness is false
+      console.log('Activeness for', data.username, 'is now inactive.');
+      // You can call any function here to handle what should happen when inactive
+      handleUserInactivity(data.username);
+    }
+  });
+
+  socket.on('changeUsername', function(data) {
+    // Check if the activeness is false
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    console.log('current', currentUser.username)
+    users.forEach((user) => {
+      if (user.username === data.username) {
+        user.username = data.new_username;
+        console.log('new username', data.new_username, currentUser.username)
+        
+        if (currentUser.username === data.username) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          console.log('current user', currentUser.username)
+          currentUser = user;
+
+          localStorage.setItem('username', currentUser.username)
+          console.log('set username to be: ', currentUser.username)
+        }
+      }
+    })
+    localStorage.setItem('users', JSON.stringify(users))
+
+    displayUsers(users, currentUser);
+  });
 
   // Get the notification
   var notification = document.getElementById('myNotification')
@@ -301,7 +334,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   })
 
   document.getElementById('speed-test-btn').addEventListener('click', function () {
-    window.location.href = 'SpeedTest.html'
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    if (currentUser.privilege === 'Administrator') {
+      window.location.href = 'SpeedTest.html'
+    }
+    else {
+      alert('You are not authorized to start a speed test')
+    }
   })
 
   document.getElementById('exit-chat').addEventListener('click', function () {
@@ -427,10 +466,34 @@ function addUserAlertIcon(user, currentUser, userElement) {
   }
 }
 
+function userOptionModal(){
+
+}
+
 function addUserClickListener(user, userElement) {
+  
+  const profileChatModal = document.getElementById('profile-chat-modal');
   userElement.addEventListener('click', () => {
-    updateChatStatus(localStorage.getItem('username'), user.username, 'join')
-    openChatModal(user.username)
+    //openChatModal(user.username)
+    profileChatModal.style.display = 'block';
+    document.getElementById('profile-option').addEventListener('click', function () {
+      let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+      console.log(currentUser.privilege)
+      if(currentUser.privilege == 'Administrator'){
+      localStorage.setItem('selectedUser', JSON.stringify(user))
+      // Redirect to the profile page
+      window.location.href = 'profile.html';}
+      else {
+        alert('You are not authorized to view this page')
+        profileChatModal.style.display = 'none';
+      }
+    });
+      document.getElementById('private-chat-option').addEventListener('click', function () {
+        updateChatStatus(localStorage.getItem('username'), user.username, 'join')
+        profileChatModal.style.display = 'none';
+        openChatModal(user.username)
+      });
+    
   })
 }
 
@@ -735,4 +798,12 @@ function registerNewPlayer(username) {
     .catch((error) => {
       console.error('Error:', error)
     })
+}
+
+// Function to handle user inactivity
+function handleUserInactivity(username) {
+  // Example action: display a message or modify the UI
+  console.log(username + ' is now inactive.');
+  logout();
+  // Additional logic can be added here, like updating the UI to show the user as inactive
 }

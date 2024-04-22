@@ -874,14 +874,19 @@ Required fields in JSON format:
 #### Update Profile
 
 <details>
- <summary><code>PUT</code> <code><b>users/profile</b></code> <code>(modify a citizen's profile)</code></summary>
+ <summary><code>PUT</code> <code><b>users/profile/:username/</b></code> <code>(modify a citizen's profile)</code></summary>
+
+##### Parameters: e.g. /users/profile/{User A}
+> | name      | type      | data type | description                 |
+> |-----------|-----------|-----------|-----------------------------|
+> | username  | required  | string    | the player whose profile gets changed     |
 
 ##### Req.body Field:
 
 > | name      | type       | data type | description                      |
 > |-----------|------------|-----------|----------------------------------|
-> | `username`| required   | string    | Username of the user         |
-> | `password`| required   | string    | Password for the user account|
+> | `new_username`| optional   | string    | New username of the user         |
+> | `password`| optional   | string    | Password for the user account|
 > | `activeness`  | optional   | string    | Activeness of the user           |
 > | `privilege`    | optional   | string    | Role assigned to the user    |
 

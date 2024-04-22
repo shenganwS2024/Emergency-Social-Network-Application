@@ -1,7 +1,7 @@
 import {Duels} from '../models/Duels.js';
 import {Players} from '../models/Players.js';
 import { io } from '../server.js';
-import getStrategy from '../questionFetchStrategies/questionFetchIndex.js'
+import getStrategy from './questionFetchStrategies/questionFetchIndex.js'
 
 async function getQuestion(req, res) {
     

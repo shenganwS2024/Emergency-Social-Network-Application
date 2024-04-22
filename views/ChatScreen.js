@@ -1,6 +1,6 @@
 // Global variables
 let pageNumber = 1
-const socket = io('https://s24esnb2.onrender.com', {
+const socket = io('https://s24esnb2.onrender.com/', {
   query: {
     token: localStorage.getItem('token'),
   },
@@ -23,6 +23,41 @@ socket.on('chat message', function (msg) {
     renderMSG(msg)
   }
 })
+
+socket.on('changeActiveness', function(data) {
+  console.log('Activeness Change Received:', data);
+
+  let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+  // Check if the activeness is false
+  if (data.activeness === false && data.username === currentUser.username) {
+    logout();
+  }
+});
+
+
+socket.on('changeUsername', function(data) {
+  // Check if the activeness is false
+  let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+  let users = JSON.parse(localStorage.getItem('users'))
+  console.log('current', currentUser.username)
+  users.forEach((user) => {
+    if (user.username === data.username) {
+      user.username = data.new_username;
+      console.log('new username', data.new_username, currentUser.username)
+      
+      if (currentUser.username === data.username) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        console.log('current user', currentUser.username)
+        currentUser = user;
+
+        localStorage.setItem('username', currentUser.username)
+        console.log('set username to be: ', currentUser.username)
+      }
+    }
+  })
+  localStorage.setItem('users', JSON.stringify(users))
+
+});
 
 // Initialize chat
 function initializeChat() {

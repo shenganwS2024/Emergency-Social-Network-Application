@@ -1,5 +1,5 @@
 import { PRODUCTION_DB_URI, TEST_DB_URI, io } from '../config/serverConfig.js';
-import DBAccessDAO from '../dao/DBAccessDAO.js';
+import DBAccessDAO from './dao/DBAccessDAO.js';
 import {Users} from '../models/Users.js'
 import { getIsSpeedTestMode, setIsSpeedTestMode } from '../config/globalVariables.js';
 
@@ -64,4 +64,15 @@ async function switchDatabase(req, res) {
     }
 }
 
-export { switchDatabase, PRODUCTION_DB_URI, TEST_DB_URI, checkSpeedTestMode };
+// add a helper checker function to check if the user's privilege level is Administrator then he should be able to switch the database
+async function allowToSpeedTest(req, res) {
+    const username = req.body.username;
+    const user = await Users.findOne({ username: username });
+    if (user.privilege !== 'Administrator') {
+        res.status(403).send('User does not have the privilege to switch to speed test mode');
+        return;
+    }
+    res.status(200).json({ message: 'User has the privilege to switch to speed test mode' });
+}
+
+export { switchDatabase, PRODUCTION_DB_URI, TEST_DB_URI, checkSpeedTestMode, allowToSpeedTest };

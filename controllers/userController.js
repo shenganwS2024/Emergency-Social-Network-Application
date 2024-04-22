@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-import {findAllUsers, Users} from '../models/Users.js';
+import {Messages} from '../models/Messages.js';
+import {findAllUsers, Users, privilegeChangeCheck} from '../models/Users.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { io } from '../config/serverConfig.js'
@@ -51,6 +52,10 @@ async function checkUserCredentials(username, password, userFound) {
     return { isValid: false, reason: 'New Account', statusCode: 201 };
   }
 
+  if (userFound.activeness === false) {
+    return { isValid: false, reason: 'Inactive user', statusCode: 403 };
+  }
+
   const isMatch = await comparePassword(password, userFound.password);
   if (!isMatch) {
     return { isValid: false, reason: 'Authentication failed', statusCode: 401 };
@@ -96,11 +101,11 @@ async function validateUser(req, res) {
   }
 }
 
-async function validateAndCreateUser(username, password, status, role) {
+async function validateAndCreateUser(username, password) {
   if (!(await validateUserInfo(username, password))) {
     throw new Error('Invalid username or password');
   }
-  const user = new Users({ username, password, status, role });
+  const user = new Users({ username, password});
   await user.save();
   return user;
 }
@@ -123,10 +128,9 @@ async function createJwtToken(user) {
 
 async function registerUser(req, res) {
   try {
-    const { username, password, status, role } = req.body;
-    const user = await validateAndCreateUser(username, password, status, role);
+    const { username, password} = req.body;
+    const user = await validateAndCreateUser(username, password);
     const token = await createJwtToken(user);
-    console.log('register true token', token);
 
     res.status(201).json({ data: { token: token, userID: user.id } });
   } catch (error) {
@@ -222,7 +226,6 @@ async function getUser(req, res) {
 
     directory = directory.map(serializeChatChecked);
     
-    console.log("current directory", directory);
     res.status(200).json({ data: { users: directory } });
   } catch (error) {
     console.error(error);
@@ -244,7 +247,6 @@ async function getOneStatus(req, res) {
     }
 
     let latestStatus = extractLatestStatus(user.status);
-    console.log("stats ", latestStatus.status);
 
     res.status(200).json({ data: { status: latestStatus.status } });
   } catch (error) {
@@ -296,7 +298,6 @@ async function updateChatChecked(req, res) {
       handleUserLeave(roomName, active_username);
     }
 
-    console.log("current userRoomMap: ", userRoomMap);
     res.status(200).send('User chatChecked update successful');
   } catch (error) {
     console.error("update check error: ", error);
@@ -343,4 +344,81 @@ async function updateUserChatChecked(username, roomName, newValue, passiveUser) 
   }
 }
 
-  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked};
+async function updateProfile(req, res) {
+  try {
+    const { new_username, password, activeness, privilege } = req.body;
+    const username = req.params.username;
+    const userFound = await Users.findOne({ username: username });
+
+    if (!userFound) {
+      return res.status(404).send('User not found');
+    }
+
+    if (new_username !== undefined ) {
+      //update userFound's username and save it to DB
+      userFound.username = new_username;
+      io.emit('changeUsername', { username: username, new_username: new_username });
+      // Update all messages where the old username was used as the sender
+      await Messages.updateMany(
+        { username: username },
+        { $set: { username: new_username } }
+      );
+
+      // Update all messages where the old username was used as the receiver
+      await Messages.updateMany(
+        { receiver: username },
+        { $set: { receiver: new_username } }
+      );
+    }
+    else if (password !== undefined ) {
+      //update userFound's password and save it to DB
+      userFound.password = password;
+    }
+    else if (activeness !== undefined ) {
+      //update userFound's activenss and save it to DB
+      userFound.activeness = activeness;
+      io.emit('changeActiveness', { username: username, activeness: activeness });
+    }
+    else if (privilege !== undefined ) {
+      //update userFound's privilege and save it to DB
+      let canChange = await privilegeChangeCheck(username, privilege);
+      if (canChange === true) {
+        userFound.privilege = privilege;
+      }
+      else {
+        return res.status(500).send('Attempt to change the privilege of the last administrator');
+      }
+    }
+    else {
+      return res.status(500).send('Attempt to update profile with invalid field');
+    }
+    await userFound.save();
+    res.status(200).send('User profile update successful');
+  } catch (error) {
+    console.error("update profile error: ", error);
+    res.status(500).send('User profile update server error');
+  }
+}
+
+// add a helper function to call updateProfile in the userController but the user's privilege level is administrator
+async function updateProfileByAdmin(req, res) {
+  try {
+    const username = req.params.username;
+    const userFound = await Users.findOne({ username: username });
+
+    if (userFound.privilege !== 'Administrator') {
+      return res.status(403).send('User does not have the privilege to update profile');
+    }
+    else {
+      updateProfile(req, res);
+    }
+
+  }
+  catch (error) {
+    console.error("update profile error: ", error);
+    res.status(500).send('User profile update server error');
+  }
+
+}
+
+  export { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, validateUserInfo, getOneStatus, updateOneStatus, updateChatChecked, updateProfile, updateProfileByAdmin};

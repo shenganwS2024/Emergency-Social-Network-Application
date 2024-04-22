@@ -1,12 +1,13 @@
-import { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, getOneStatus, updateOneStatus, updateChatChecked} from '../controllers/userController.js'
+import { validateUser, registerUser, logoutUser, UserAcknowledged, getUser, getOneStatus, updateOneStatus, updateChatChecked, updateProfile} from '../controllers/userController.js'
 import { updateContact, updateAddress, getOneAddress, deleteAddress, deleteContact } from '../controllers/emergencyContactController.js';
 import express from 'express';
 const router = express.Router();
 
 router.post('/registration', registerUser);
-router.post('/login', validateUser);
+router.post('/login', validateUser); 
 router.put('/logout', logoutUser);
 router.put('/acknowledgement', UserAcknowledged);
+router.put('/users/profile/:username', updateProfile);
 router.get('/users', getUser);
 router.get('/status/:username', getOneStatus);
 router.get('/address/:username',getOneAddress);
